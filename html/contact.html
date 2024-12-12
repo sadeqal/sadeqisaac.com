@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <link rel="stylesheet" href="../styles/contact.css">
+</head>
+<body>
+    <!-- Menu Toolbar -->
+    <div class="toolbar">
+        <!-- Toggle Icon -->
+        <button id="toggle-menu" class="toolbar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <!-- Toolbar Icons -->
+        <div class="toolbar-items" id="toolbar-items">
+            <!-- Home -->
+            <div class="toolbar-item">
+                <a href="../index.html">
+                    <i class="fas fa-home"></i> <!-- Home Icon -->
+                </a>
+            </div>
+            <!-- Works Icon -->
+            <div class="toolbar-item">
+                <a href="works.html">
+                    <i class="fas fa-palette"></i> <!-- Works Icon -->
+                </a>
+            </div>
+            <!-- Publications Icon -->
+            <div class="toolbar-item">
+                <a href="pubs.html">
+                    <i class="fas fa-book"></i> <!-- Publications Icon -->
+                </a>
+            </div>  
+            <!-- CV Icon -->
+            <div class="toolbar-item">
+                <a href="cv.html">
+                    <i class="fas fa-id-card"></i> <!-- CV Icon -->
+                </a>
+            </div>  
+            <!-- Contact Icon -->
+            <div class="toolbar-item">
+                <a href="contact.html">
+                    <i class="fas fa-envelope"></i> <!-- Contact Icon -->
+                </a>
+            </div>   
+        </div>
+    </div>
+
+    <!-- Contact Toolbar -->
+    <div id="contact-menu-container">
+        <!-- Contact Toggle Button -->
+        <button id="toggle-contact" class="menu-button">
+            <img src="../icons/phone.png" alt="Phone" />
+        </button>
+        <div id="contact-menu" class="contact-menu">
+            <!-- Email Icon -->
+            <a href="mailto:sadeqalisaac@gmail.com" class="contact-item">
+                <img src="../icons/email.png" alt="Email" />
+            </a>
+            <!-- LinkedIn Icon -->
+            <a href="https://www.linkedin.com/in/mohammed-sadeq-aleisac" target="_blank" class="contact-item">
+                <img src="../icons/linkedin.png" alt="LinkedIn" />
+            </a>
+            <!-- Google Scholar Icon -->
+            <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item">
+                <img src="../icons/scholar.png" alt="Google Scholar" />
+            </a>
+            <!-- Portal Cientifico UPM Icon -->
+            <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item">
+                <img src="../icons/uni.png" alt="Portal Cientifico UPM" />
+            </a>
+            <!-- ORCID Icon -->
+            <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item">
+                <img src="../icons/orcid.png" alt="ORCID" />
+            </a>
+            <!-- GitHub Icon -->
+            <a href="https://github.com/sadeqal" target="_blank" class="contact-item">
+                <img src="../icons/github.png" alt="GitHub" />
+            </a>
+            <!-- X (Twitter) Icon -->
+            <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item">
+                <img src="../icons/x.png" alt="X (Twitter)" />
+            </a>
+            <!-- Instagram Icon -->
+            <a href="https://www.instagram.com/sadeq.al.calligraphy" target="_blank" class="contact-item">
+                <img src="../icons/instagram.png" alt="Instagram" />
+            </a>
+        </div>
+    </div>
+
+    <!-- Contact page content -->
+    <div class="content">
+        <h2>Contacto</h2>
+        <p class="encouraging-message">
+            Bueno, ¿así que te atreves a acercarte, patético y desesperado por una respuesta? <br>
+            Escribe ahora, pero ten esto claro: solo las palabras de verdadero valor y respeto
+            serán dignas de atención. Demuestra que lo mereces.
+        </p>
+
+        <style>
+            /* Hover effect for the icons */
+            .social-icon:hover {
+                background-color: transparent; /* Makes the black part disappear */
+                transform: scale(1.05);
+                box-shadow: 0 0 25px 10px magenta;
+            }
+        </style>
+        
+        <!-- Contact form -->
+        <div class="contact-form">
+            <!-- Contact Form -->
+            <form action="mailto:shekerriganfaline@gmail.com" method="post" enctype="text/plain">
+                <!-- Subject Field -->
+                <label for="subject">Sujeto:</label>
+                <input type="text" id="subject" name="subject" required>
+                <br><br>
+    
+                <!-- Message Field -->
+                <label for="message">Mensaje:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+                <br><br>
+    
+                <!-- Send Button -->
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Session Content -->
+    <div class="content">
+        <h2>Book a Session</h2>
+        <p class="encouraging-message">
+            Vaya, vaya, mira quién finalmente se arrastró—patético, sumiso y tan dispuesto a obedecer. <br>
+            Deja de perder el tiempo y demuestra que eres digno. ¡Haz tu jugada, ahora!
+        </p>        
+
+        <!-- Session Form Container -->
+        <div class="session-form">
+            <!-- Date Picker -->
+            <label for="session-date">Elige la Fecha:</label>
+            <input type="date" id="session-date" name="session-date" required>
+            <br><br>
+
+            <!-- Time Picker -->
+            <label for="session-time">Elige la Hora:</label>
+            <select id="session-time" name="session-time" required>
+                <option value="" disabled selected>Select a time</option>
+                <option value="09:00">9:00 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="15:00">3:00 PM</option>
+                <option value="16:00">4:00 PM</option>
+                <option value="17:00">5:00 PM</option>
+            </select>
+            <br><br>
+
+            <!-- Done Button -->
+            <button id="done-button">Listo!</button>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('done-button').addEventListener('click', () => {
+            const date = document.getElementById('session-date').value;
+            const time = document.getElementById('session-time').value;
+    
+            if (!date || !time) {
+                alert('Elige una fecha y horario, cabrón!.');
+                return;
+            }
+    
+            const email = 'shekerriganfeline@gmail.com';
+            const subject = encodeURIComponent('Booking a Session');
+            const body = encodeURIComponent(`Hi,\n\nI would like to book a session on:\n\nDate: ${date}\nTime: ${time}\n\nThank you.`);
+            const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+    
+            window.location.href = mailtoLink;
+        });
+    </script>
+
+    <!-- Include Font Awesome -->
+    <script src="../scripts/menu.js"></script>
+    <script src="../scripts/contact.js"></script>
+    <!-- Include Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+
+    <!-- Emial JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS
+        emailjs.init('YOUR_USER_ID'); // Replace with your EmailJS user ID
+
+        document.getElementById('done-button').addEventListener('click', () => {
+            const date = document.getElementById('session-date').value;
+            const time = document.getElementById('session-time').value;
+
+            if (!date || !time) {
+                alert('Please select both a date and a time.');
+                return;
+            }
+
+            const emailParams = {
+                to_email: 'shekerriganfeline@gmail.com',
+                date: date,
+                time: time,
+            };
+
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailParams)
+                .then(() => {
+                    alert('Session booked! Confirmation email sent.');
+                })
+                .catch((error) => {
+                    console.error('Failed to send email:', error);
+                    alert('Something went wrong, please try again.');
+                });
+        });
+    </script>
+</body>
+</html>
