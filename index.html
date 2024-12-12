@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sadeq Isaac</title>
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="icon" type="image/png" href="icons/pageIcon.png">
+</head>
+<body>
+    <div class="background">
+        <!-- Menu Toolbar -->
+        <div class="toolbar">
+            <!-- Toggle Icon -->
+            <button id="toggle-menu" class="toolbar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <!-- Toolbar Icons -->
+            <div class="toolbar-items" id="toolbar-items">
+                <!-- Home -->
+                <div class="toolbar-item">
+                    <a href="../index.html">
+                        <i class="fas fa-home"></i> <!-- Home Icon -->
+                    </a>
+                </div>
+                <!-- Works Icon -->
+                <div class="toolbar-item">
+                    <a href="works.html">
+                        <i class="fas fa-palette"></i> <!-- Works Icon -->
+                    </a>
+                </div>
+                <!-- Publications Icon -->
+                <div class="toolbar-item">
+                    <a href="pubs.html">
+                        <i class="fas fa-book"></i> <!-- Publications Icon -->
+                    </a>
+                </div>  
+                <!-- CV Icon -->
+                <div class="toolbar-item">
+                    <a href="cv.html">
+                        <i class="fas fa-id-card"></i> <!-- CV Icon -->
+                    </a>
+                </div>  
+                <!-- Contact Icon -->
+                <div class="toolbar-item">
+                    <a href="contact.html">
+                        <i class="fas fa-envelope"></i> <!-- Contact Icon -->
+                    </a>
+                </div>   
+            </div>
+        </div>
+
+        <!-- Contact Toolbar -->
+        <div id="contact-menu-container">
+            <!-- Contact Toggle Button -->
+            <button id="toggle-contact" class="menu-button">
+                <img src="icons/phone.png" alt="Phone" />
+            </button>
+            <div id="contact-menu" class="contact-menu">
+                <!-- Email Icon -->
+                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item">
+                    <img src="icons/email.png" alt="Email" />
+                </a>
+                <!-- LinkedIn Icon -->
+                <a href="https://www.linkedin.com/in/mohammed-sadeq-aleisac" target="_blank" class="contact-item">
+                    <img src="icons/linkedin.png" alt="LinkedIn" />
+                </a>
+                <!-- Google Scholar Icon -->
+                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item">
+                    <img src="icons/scholar.png" alt="Google Scholar" />
+                </a>
+                <!-- Portal Cientifico UPM Icon -->
+                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item">
+                    <img src="icons/uni.png" alt="Portal Cientifico UPM" />
+                </a>
+                <!-- ORCID Icon -->
+                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item">
+                    <img src="icons/orcid.png" alt="ORCID" />
+                </a>
+                <!-- GitHub Icon -->
+                <a href="https://github.com/sadeqal" target="_blank" class="contact-item">
+                    <img src="icons/github.png" alt="GitHub" />
+                </a>
+                <!-- X (Twitter) Icon -->
+                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item">
+                    <img src="icons/x.png" alt="X (Twitter)" />
+                </a>
+                <!-- Instagram Icon -->
+                <a href="https://www.instagram.com/sadeq.al.calligraphy" target="_blank" class="contact-item">
+                    <img src="icons/instagram.png" alt="Instagram" />
+                </a>
+            </div>
+        </div>
+
+        <!-- Home Page Section -->
+        <section id="home" class="centered">
+            <div class="message">
+                <h1 id="animatedText"></h1> <!-- Empty initially for animation -->
+                <p id="nameRequest" style="display:none;">What's your name?</p>
+                <input type="text" id="nameInput" placeholder="Enter your name..." onkeypress="handleKeyPress(event)">
+                <button id="submitBtn" onclick="showName()">Submit</button>
+                <p id="response"></p>
+            </div>
+            <div class="double-eyes">
+                <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
+                <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
+            </div>        
+        </section>
+
+        <!-- Introduction (About Me) -->
+        <div id="aboutMe-content" class="hidden">
+   
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/menu.js"></script>
+    <script src="scripts/contact.js"></script>
+    <script src="scripts/index.js"></script>
+    <script src="scripts/ageVerification.js"></script>
+    <!-- Include Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <!-- Import Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</body>
+</html>
