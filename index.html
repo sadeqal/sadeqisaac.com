@@ -8,7 +8,11 @@
     <link rel="icon" type="image/png" href="icons/pageIcon.png">
 </head>
 <body>
+    <!-- Background particles -->
+    <div id="particles-js"></div>
     <div class="background">
+        
+
         <!-- Menu Toolbar -->
         <div class="toolbar">
             <!-- Toggle Icon -->
@@ -17,34 +21,34 @@
             </button>
             <!-- Toolbar Icons -->
             <div class="toolbar-items" id="toolbar-items">
-                <!-- Home -->
+                <!-- Home Icon -->
                 <div class="toolbar-item">
-                    <a href="../index.html">
-                        <i class="fas fa-home"></i> <!-- Home Icon -->
+                    <a href="html/index.html">
+                        <i class="fas fa-home"></i>
                     </a>
                 </div>
                 <!-- Works Icon -->
                 <div class="toolbar-item">
-                    <a href="works.html">
-                        <i class="fas fa-palette"></i> <!-- Works Icon -->
+                    <a href="html/works.html">
+                        <i class="fas fa-palette"></i>
                     </a>
                 </div>
                 <!-- Publications Icon -->
                 <div class="toolbar-item">
-                    <a href="pubs.html">
-                        <i class="fas fa-book"></i> <!-- Publications Icon -->
+                    <a href="html/pubs.html">
+                        <i class="fas fa-book"></i>
                     </a>
                 </div>  
                 <!-- CV Icon -->
                 <div class="toolbar-item">
-                    <a href="cv.html">
-                        <i class="fas fa-id-card"></i> <!-- CV Icon -->
+                    <a href="html/cv.html">
+                        <i class="fas fa-id-card"></i>
                     </a>
                 </div>  
                 <!-- Contact Icon -->
                 <div class="toolbar-item">
-                    <a href="contact.html">
-                        <i class="fas fa-envelope"></i> <!-- Contact Icon -->
+                    <a href="html/ontact.html">
+                        <i class="fas fa-envelope"></i>
                     </a>
                 </div>   
             </div>
@@ -95,12 +99,15 @@
         <!-- Home Page Section -->
         <section id="home" class="centered">
             <div class="message">
-                <h1 id="animatedText"></h1> <!-- Empty initially for animation -->
-                <p id="nameRequest" style="display:none;">What's your name?</p>
-                <input type="text" id="nameInput" placeholder="Enter your name..." onkeypress="handleKeyPress(event)">
-                <button id="submitBtn" onclick="showName()">Submit</button>
-                <p id="response"></p>
+                <div id="animatedText"></div>
+                <div id="nameRequest" style="display: none;">
+                    <input id="nameInput" type="text" placeholder="What's your name?" style="display: none;">
+                    <button id="submitBtn" style="display: none;">Submit</button>
+                </div>
+                <div id="response"></div>
             </div>
+
+            
             <div class="double-eyes">
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
@@ -116,11 +123,64 @@
     <!-- Scripts -->
     <script src="scripts/menu.js"></script>
     <script src="scripts/contact.js"></script>
-    <script src="scripts/index.js"></script>
-    <script src="scripts/ageVerification.js"></script>
-    <!-- Include Font Awesome -->
+    <!-- Import Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <!-- Import Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Hand Written Mode -->
+    <script src="scripts/typeWriter.js"></script>
+    <script>
+        // Call the typeSentence function when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            typeSentence(
+                "animatedText", // ID of the element to display the text
+                "Hey stranger, seems you are not here by accident...", // Sentence to type
+                50, // Typing speed in milliseconds
+                function () { // Callback after typing is complete
+                    const nameRequest = document.getElementById("nameRequest");
+                    const nameInput = document.getElementById("nameInput");
+                    const submitBtn = document.getElementById("submitBtn");
+
+                    // Show name input and button
+                    nameRequest.style.display = "block";
+                    nameInput.style.display = "inline-block";
+                    submitBtn.style.display = "inline-block";
+
+                    // Optional: Add animations
+                    nameInput.style.animation = "showInput 0.5s ease-in-out forwards";
+                    submitBtn.style.animation = "showInput 0.5s ease-in-out forwards";
+
+                    // Attach event listeners for button and Enter key
+                    submitBtn.addEventListener("click", function () {
+                        showName("nameInput", "response");
+                    });
+                    nameInput.addEventListener("keypress", function (event) {
+                        handleKeyPress(event, "nameInput", "response");
+                    });
+                }
+            );
+        });
+    </script>
+    <!-- Particles Animation -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            particles: {
+                number: {
+                    value: 100,
+                    density: {
+                        enable: true,
+                        value_area: 800,
+                    },
+                },
+                color: { value: "#F8E70B" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5 },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, color: "#CC6CE7", opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 6 },
+            },
+        });
+    </script>
 </body>
 </html>

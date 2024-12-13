@@ -5,7 +5,7 @@ body, html {
     padding: 0;
     height: 100%;
     background-color: #0c0c0c; /* Pure black with subtle hints of gray */
-    font-family: 'Cinzel', serif; /* Gothic and elegant font */
+    font-family: 'Poppins', sans-serif;
     color: #e0e0e0; /* Soft white for text */
     scroll-behavior: smooth;
     position: relative;
@@ -29,38 +29,38 @@ body::-webkit-scrollbar-track {
 }
 
 /****************************** BACKGROUND ******************************/
-
-
-.menu img {
-    width: 30px; /* Smaller icon size */
-    height: 30px;
-    background: none; /* No background */
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }
-.message h1, .message p {
-    font-size: 24px;
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    z-index: 1;
 }
+
+.message {
+    text-align: center;
+    z-index: 1;
+}
+
+.double-eyes {
+    display: flex;       /* Align images in a row */
+    justify-content: center;  /* Center the images horizontally */
+    gap: 30px;           /* Adjust spacing between the two GIFs */
+}
+
 .eyes-gif {
-    width: 100px; /* Adjust eye gif size */
-    display: block;
-    margin: 20px auto;
-}
-#nameInput, button {
-    display: none; /* Hide initially */
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    background: #000; /* Black background for textbox */
-    color: #fff;
-    font-size: 18px;
-}
-button {
-    cursor: pointer;
-}
-
-/* Animation for input box */
-@keyframes showInput {
-    0% { opacity: 0; transform: scale(0.8); }
-    100% { opacity: 1; transform: scale(1); }
+    width: 100px;         /* Adjust size of each GIF */
+    height: 100px;        /* Keep proportions consistent */
 }
 
 /****************************** TOOLBAR ******************************/
@@ -267,65 +267,32 @@ button {
     background-color: #1DA955;
 }
 
-/****************************** FIRST VIEW ******************************/
-/* Content Styling to Prevent Overlap */
-.content {
-    margin-top: 60px; /* Matches the height of the toolbar */
+/****************************** Home Page ******************************/
+.message h1, .message p {
+    font-size: 24px;
 }
-
-/* SheBlueprint image */
-.sheKerrigan-image {
-    position: absolute;
-    top: 3%;
-    left: 50%;
-    transform: translate(-50%, 0);
-    width: 500px; /* Adjust size as needed */
-    z-index: 1;
-}
-
-/* Title styling */
-.title {
-    position: absolute;
-    top: 50%;
-    left: 5%;
-    width: 30%;
-    transform: translateY(-50%);
-    text-align: left;
-    padding: 0 10px;
-    color: white;
-    overflow-wrap: break-word;
-}
-
-.title h1 {
-    font-size: 3rem;
-    line-height: 1.2;
-    text-shadow: 2px 2px 10px wheat; /* Adjust shadow for a horror effect */
-}
-
-/* Arrow styling */
-.down-arrow {
+.eyes-gif {
+    width: 100px; /* Adjust eye gif size */
     display: block;
-    margin: 20px auto 0; /* Spacing below the title */
-    font-size: 2rem;
-    text-align: center;
-    color: white; /* Arrow color */
-    text-decoration: none;
-    animation: bounce 2s infinite;
-    z-index: 1;
+    margin: 20px auto;
+}
+#nameInput, button {
+    display: none; /* Hide initially */
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    background: #000; /* Black background for textbox */
+    color: #fff;
+    font-size: 18px;
+}
+button {
+    cursor: pointer;
 }
 
-.down-arrow:hover {
-    color: darkred; /* Change color on hover */
-}
-
-/* Keyframes for bounce animation */
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(10px); /* Move downward slightly */
-    }
+/* Animation for input box */
+@keyframes showInput {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
 /****************************** ABOUT ME ******************************/
