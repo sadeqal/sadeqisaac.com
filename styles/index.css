@@ -14,6 +14,9 @@ body, html {
     scrollbar-width: thin;
     scrollbar-color: black;
     overflow-x: hidden; /* Disable horizontal scrolling */
+    overflow-y: hidden; /* Hide the scrollbar */
+    /* overflow-y: auto;  /* Allow scrolling when content overflows */
+    padding-right: 15px;
 }
 
 /* Custom scrollbar styles */
@@ -43,7 +46,7 @@ body::-webkit-scrollbar-track {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 40vh;
     z-index: 1;
 }
 
@@ -53,21 +56,74 @@ body::-webkit-scrollbar-track {
 }
 
 .double-eyes {
-    display: flex;       /* Align images in a row */
-    justify-content: center;  /* Center the images horizontally */
-    gap: 30px;           /* Adjust spacing between the two GIFs */
+    display: flex; /* Align images in a row */
+    justify-content: center;
+    gap: 30px;
 }
 
 .eyes-gif {
-    width: 100px;         /* Adjust size of each GIF */
-    height: 100px;        /* Keep proportions consistent */
+    width: 100px;
+    height: 100px;
+}
+
+/****************************** WELCOME ANIMATIONS ******************************/
+
+/* Hero Title with Flicker and Glitch Effect */
+.hero-title {
+    font-size: 4rem;
+    color: #222020; /* Blood red */
+    text-shadow: 0 0 5px #e711b2, 0 0 10px #53032b;
+    animation: glitch 3s infinite;
+    position: relative;
+    z-index: 1;
+    transform-origin: center;
+}
+
+/* Hero Subtitle with Uneasy Fade-In */
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: #f8f3f3; /* Pale gray for a ghostly look */
+    margin: 1rem 0;
+    animation: slowFade 5s infinite alternate;
+}
+
+/* Glitch Animation */
+@keyframes glitch {
+    0% {
+        text-shadow: 2px 2px #00FFC5, -2px -2px #8B00FF;
+        transform: translate(0, 0);
+    }
+    10% {
+        text-shadow: -2px 2px #00FFC5, -2px -2px #8B00FF;
+        transform: translate(-5px, 3px) skew(0.5deg);
+    }
+    20% {
+        text-shadow: 2px -2px #00FFC5, -2px -2px #8B00FF;
+        transform: translate(5px, -3px) skew(-0.5deg);
+    }
+    25%, 100% {
+        text-shadow: 2px 2px #00FFC5, -2px -2px #8B00FF;
+        transform: translate(0, 0);
+    }
+}
+
+/* Slow Uneasy Fade */
+@keyframes slowFade {
+    from {
+        opacity: 0.3;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /****************************** TOOLBAR ******************************/
 /* Toolbar Container */
 .toolbar {
     position: fixed;
-    top: 20px;
+    top: 0px;
     left: 10px;
     z-index: 1000;
 }
@@ -79,8 +135,8 @@ body::-webkit-scrollbar-track {
     height: 50px;
     border: none;
     border-radius: 50%;
-    background-color: #282929;
-    color: red;
+    background-color: #222222;
+    color: #8B00FF;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -150,7 +206,7 @@ body::-webkit-scrollbar-track {
 /* Container Styles */
 #contact-menu-container {
     position: fixed;
-    top: 5px;
+    top: 0px;
     right: 10px;
     z-index: 1000;
 }
@@ -267,26 +323,45 @@ body::-webkit-scrollbar-track {
     background-color: #1DA955;
 }
 
-/****************************** Home Page ******************************/
-.message h1, .message p {
-    font-size: 24px;
+/****************************** MAIN CONTENT ******************************/
+.message {
+    font-size: 1rem;
+    font-weight: bold;  /* Make text bold */
+    color: magenta;   /* Set text color to magenta */
+    width: 60%;         /* Limit width to 60% of the page */
+    margin: 0 auto;     /* Center horizontally */
+    text-align: center; /* Center text inside the div */
+    padding: 10px;      /* Optional: space around the text */
 }
+
 .eyes-gif {
-    width: 100px; /* Adjust eye gif size */
+    width: 100px;
     display: block;
     margin: 20px auto;
+    z-index: 100;
 }
+
 #nameInput, button {
-    display: none; /* Hide initially */
-    margin-top: 10px;
+    display: none;
+    margin-top: 20px;
     padding: 10px;
     border: none;
-    background: #000; /* Black background for textbox */
+    background: #222222;
     color: #fff;
     font-size: 18px;
 }
+
 button {
     cursor: pointer;
+}
+
+#home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;  /* Allow scrolling in the home section */
+    padding: 10px;
 }
 
 /* Animation for input box */
@@ -294,100 +369,6 @@ button {
     0% { opacity: 0; transform: scale(0.8); }
     100% { opacity: 1; transform: scale(1); }
 }
-
-/****************************** ABOUT ME ******************************/
-.hidden {
-    display: none;
-}
-
-#aboutMe-content {
-    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Fade Transitions */
-.fade-out {
-    opacity: 0;
-    transform: translateY(-50%);
-    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-}
-
-.fade-in {
-    display: block;
-    opacity: 0;
-    transform: translateY(50%);
-    animation: fadeIn 0.8s ease-in-out forwards;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(50%);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(20%);
-    }
-}
-
-/* Typing Animation */
-.aboutMe-content {
-    display: inline-block;
-    white-space: nowrap;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 18px;
-    color: white; /* Ensures all text is white */
-    animation: typing 5s steps(50, end) 1 normal forwards;
-    max-width: 100%;
-    margin: 200px auto;
-    text-align: center;
-}
-
-/* Title Styling */
-.aboutMeTitle-content {
-    font-size: 22px;
-    color: red;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-top: 10px;
-    margin-bottom: 2px;
-    display: block;
-}
-
-/* Enhanced Transition Styling */
-.highlight {
-    color: rgb(255, 255, 255); /* White text for highlighted parts */
-    font-weight: bold;
-}
-
-/* Centering the Section */
-.aboutMeTyping-content {
-    text-align: center;
-    margin: 20px auto;
-    padding: 20px;
-    width: 80%; /* Restricts the section width to 70% */
-    max-width: 700px;
-    border: 2px solid red;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border-radius: 8px;
-}
-
-/* Strap Images Styling */
-/*.strap1-image,
-.strap2-image {
-    max-width: 200px;
-    height: auto; 
-    margin: 0 20px; 
-    display: block;
-}*/
-
-
-
-
-
-
 
 /****************************** Mobile vertical mode adjustments ******************************/
 @media (max-width: 600px) and (orientation: portrait) {

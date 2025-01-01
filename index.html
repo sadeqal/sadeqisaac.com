@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sadeq Isaac</title>
+    <title>Sadeq Isaac - UI Developer</title>
     <link rel="stylesheet" href="styles/index.css">
     <link rel="icon" type="image/png" href="icons/pageIcon.png">
 </head>
 <body>
-    <!-- Background particles -->
+    <!-- Interactive Particle Background -->
     <div id="particles-js"></div>
+    
     <div class="background">
-        
-
         <!-- Menu Toolbar -->
         <div class="toolbar">
             <!-- Toggle Icon -->
@@ -96,90 +95,161 @@
             </div>
         </div>
 
-        <!-- Home Page Section -->
+        <!-- Welcome Content -->
+        <div class="centered">
+            <h1 class="hero-title">👾 Welcome to My Playground</h1>
+            <p class="hero-subtitle">Where pixels bow to my will. Let me show you how it's done.</p>
+            <button class="cta-button" onclick="alert('Watch the magic unfold!')">Explore Magic</button>
+        </div>
+
+        <!-- Hand Written Animated Content -->
         <section id="home" class="centered">
             <div class="message">
+                <!-- Animated Text -->
                 <div id="animatedText"></div>
+
+                <!-- Name Request -->
                 <div id="nameRequest" style="display: none;">
                     <input id="nameInput" type="text" placeholder="What's your name?" style="display: none;">
                     <button id="submitBtn" style="display: none;">Submit</button>
                 </div>
+
+                <!-- Response Message -->
                 <div id="response"></div>
+
+                <!-- Job Request -->
+                <div id="jobRequest" style="display: none;">
+                    <input id="jobInput" type="text" placeholder="What do you do for a living?" style="display: none;">
+                    <button id="jobSubmitBtn" style="display: none;">Submit</button>
+                </div>
             </div>
 
-            
+            <!-- Double Eyes Animation -->
             <div class="double-eyes">
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
-            </div>        
+            </div>
         </section>
-
-        <!-- Introduction (About Me) -->
-        <div id="aboutMe-content" class="hidden">
-   
-        </div>
     </div>
 
     <!-- Scripts -->
+    <!-- Menu and Contact -->
     <script src="scripts/menu.js"></script>
     <script src="scripts/contact.js"></script>
-    <!-- Import Font Awesome -->
+
+    <!-- Import Awesome and Google Fonts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
-    <!-- Import Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Hand Written Mode -->
+
+    <!-- Hand Motion Written Mode -->
     <script src="scripts/typeWriter.js"></script>
-    <script>
-        // Call the typeSentence function when the page loads
-        document.addEventListener('DOMContentLoaded', function () {
-            typeSentence(
-                "animatedText", // ID of the element to display the text
-                "Hey stranger, seems you are not here by accident...", // Sentence to type
-                50, // Typing speed in milliseconds
-                function () { // Callback after typing is complete
-                    const nameRequest = document.getElementById("nameRequest");
-                    const nameInput = document.getElementById("nameInput");
-                    const submitBtn = document.getElementById("submitBtn");
-
-                    // Show name input and button
-                    nameRequest.style.display = "block";
-                    nameInput.style.display = "inline-block";
-                    submitBtn.style.display = "inline-block";
-
-                    // Optional: Add animations
-                    nameInput.style.animation = "showInput 0.5s ease-in-out forwards";
-                    submitBtn.style.animation = "showInput 0.5s ease-in-out forwards";
-
-                    // Attach event listeners for button and Enter key
-                    submitBtn.addEventListener("click", function () {
-                        showName("nameInput", "response");
-                    });
-                    nameInput.addEventListener("keypress", function (event) {
-                        handleKeyPress(event, "nameInput", "response");
-                    });
-                }
-            );
-        });
-    </script>
-    <!-- Particles Animation -->
+   
+    <!-- Particles.js Script -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
     <script>
         particlesJS("particles-js", {
             particles: {
                 number: {
-                    value: 100,
+                    value: 75,
                     density: {
                         enable: true,
-                        value_area: 800,
+                        value_area: 700,
                     },
                 },
-                color: { value: "#F8E70B" },
-                shape: { type: "circle" },
-                opacity: { value: 0.5 },
-                size: { value: 3, random: true },
-                line_linked: { enable: true, color: "#CC6CE7", opacity: 0.4, width: 1 },
-                move: { enable: true, speed: 6 },
+                color: {
+                    value: ["#00FFC5", "#8B00FF", "#FFD700"],
+                },
+                shape: {
+                    type: ["star", "polygon"],
+                    stroke: {
+                        width: 1,
+                        color: "#000000",
+                    },
+                    polygon: {
+                        nb_sides: 6,
+                    },
+                },
+                opacity: {
+                    value: 0.7,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 1,
+                        opacity_min: 0.3,
+                        sync: false,
+                    },
+                },
+                size: {
+                    value: 5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 2,
+                        size_min: 1,
+                        sync: false,
+                    },
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#4ECCA3",
+                    opacity: 0.5,
+                    width: 1,
+                },
+                move: {
+                    enable: true,
+                    speed: 3,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200,
+                    },
+                },
             },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "grab",
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push",
+                    },
+                    resize: true,
+                },
+                modes: {
+                    grab: {
+                        distance: 200,
+                        line_linked: {
+                            opacity: 0.8,
+                        },
+                    },
+                    bubble: {
+                        distance: 200,
+                        size: 8,
+                        duration: 2,
+                        opacity: 0.6,
+                        speed: 3,
+                    },
+                    repulse: {
+                        distance: 150,
+                        duration: 0.4,
+                    },
+                    push: {
+                        particles_nb: 4,
+                    },
+                    remove: {
+                        particles_nb: 2,
+                    },
+                },
+            },
+            retina_detect: true,
         });
     </script>
 </body>
