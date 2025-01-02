@@ -1,14 +1,16 @@
-// Typing effect for any text
 function typeSentence(targetId, sentence, speed, callback) {
-    let i = 0;
-    const target = document.getElementById(targetId);
+    const container = document.getElementById("messageContainer");
+    const target = document.createElement("div"); // Create a new div for each message
+    container.appendChild(target); // Append the new div
     target.innerHTML = ""; // Clear previous content if any
+    let i = 0;
 
     function type() {
         if (i < sentence.length) {
-            target.innerHTML += sentence.charAt(i);
+            // Handle HTML characters properly
+            target.innerHTML = sentence.substring(0, i + 1); // Add up to the current character
             i++;
-            setTimeout(type, speed); // Adjust speed dynamically
+            setTimeout(type, speed);
         } else if (callback) {
             setTimeout(callback, 500); // Optional callback after typing
         }
@@ -55,7 +57,19 @@ function generateJobResponse(job) {
     } else if (lowerJob.includes("doctor")) {
         response = "Saving lives and making the world a healthier place? You're awesome!";
     }
-    return response;
+
+    // Typing effect for job response
+    typeSentence("animatedTextId", response, 50, () => {
+        // After job response, type introduction texts
+        const introductionText = `
+        I have recently been awarded a PhD in Aerospace/Flight Robotics from the Technical University of Madrid.<br>
+        I have a lot of experience in the field of Nonlinear Control, gained through both my academic studies and professional work.<br>  
+        Throughout my academic journey—from my bachelor's to master's and PhD degrees—I focused extensively on control systems, flight dynamics, and the design of nonlinear control algorithms, including adaptive and robust approaches.<br>
+        Professionally, over the past six years, I have been working on modifying industrial autopilot (Micropilot, UAV Navigation, Pixhawk, etc.) control loops and designing ground control system software.<br>
+        My doctoral thesis involved implementing thrust vector control on flap vanes in a hexa-ducted fan UAV to stabilize its attitude.<br>
+        `;
+        typeSentence("animatedTextId", introductionText, 50, null);
+    });
 }
 
 // Main conversation function
@@ -67,6 +81,7 @@ async function startConversation() {
     const jobSubmitBtn = document.getElementById("jobSubmitBtn");
 
     typeSentence(animatedTextId, "Hey stranger, seems you are not here by accident...", 50, async function () {
+        const doubleEyes = document.querySelector(".double-eyes");
         const nameRequest = document.getElementById("nameRequest");
         const nameInput = document.getElementById("nameInput");
         const submitBtn = document.getElementById("submitBtn");
@@ -80,6 +95,8 @@ async function startConversation() {
         submitBtn.addEventListener("click", async function () {
             const name = nameInput.value.trim();
             if (name) {
+                // Hide the double eyes
+                doubleEyes.style.display = "none";
                 nameRequest.style.display = "none";
                 const location = await fetchUserLocation();
                 const country = location.country || "Mystery Land";
@@ -87,12 +104,12 @@ async function startConversation() {
 
                 typeSentence(
                     animatedTextId,
-                    `Ahh, I knew your name was ${name}, and you live in ${country}. So you wish I could talk in ${language}!`,
+                    `Ahh, I knew your name was ${name}, and seems you live in ${country}.<br>So you wish I could talk in ${language}!`,
                     50,
                     function () {
                         typeSentence(
                             animatedTextId,
-                            "Let me introduce myself: My name is Sadeq. I am an Aerospace Engineer—consider me a self-empowered UI developer, not a professional one. But I believe love for something makes you create better than being an expert.",
+                            "Let me introduce myself,<br>My name is Sadeq.<br>I am an Aerospace Engineer—consider me a self-empowered UI developer, not a professional one.<br>But I believe love for something makes you create novelties.",
                             50,
                             function () {
                                 // Show job input and button
@@ -122,28 +139,6 @@ async function startConversation() {
                     }
                 );
             }
-        });
-
-        nameInput.addEventListener("keypress", function (event) {
-            handleKeyPress(event, "nameInput", async function (name) {
-                nameRequest.style.display = "none";
-                const location = await fetchUserLocation();
-                const country = location.country || "Mystery Land";
-                const language = country === "Spain" ? "Spanish" : "English"; // Simplified for the example
-
-                typeSentence(
-                    animatedTextId,
-                    `Ahh, I knew your name was ${name}, and you live in ${country}. So you wish I could talk in ${language}!`,
-                    50,
-                    function () {
-                        typeSentence(
-                            animatedTextId,
-                            "Let me introduce myself: My name is Sadeq. I am an Aerospace Engineer—consider me a self-empowered UI developer, not a professional one. But I believe love for something makes you create better than being an expert.",
-                            50
-                        );
-                    }
-                );
-            });
         });
     });
 }
