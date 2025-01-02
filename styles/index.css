@@ -3,6 +3,7 @@
 body, html {
     margin: 0;
     padding: 0;
+    width: 100%;
     height: 100%;
     background-color: #0c0c0c; /* Pure black with subtle hints of gray */
     font-family: 'Poppins', sans-serif;
@@ -12,11 +13,10 @@ body, html {
     align-items: center;
     justify-content: center;
     scrollbar-width: thin;
-    scrollbar-color: black;
+    scrollbar-color: black transparent; /* Customize scrollbar color */
     overflow-x: hidden; /* Disable horizontal scrolling */
-    overflow-y: hidden; /* Hide the scrollbar */
-    /* overflow-y: auto;  /* Allow scrolling when content overflows */
-    padding-right: 15px;
+    overflow-y: auto;  /* Always show the vertical scrollbar */
+    padding-right: 2px;
 }
 
 /* Custom scrollbar styles */
@@ -41,31 +41,6 @@ body::-webkit-scrollbar-track {
     z-index: 0;
 }
 
-.centered {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 40vh;
-    z-index: 1;
-}
-
-.message {
-    text-align: center;
-    z-index: 1;
-}
-
-.double-eyes {
-    display: flex; /* Align images in a row */
-    justify-content: center;
-    gap: 30px;
-}
-
-.eyes-gif {
-    width: 100px;
-    height: 100px;
-}
-
 /****************************** WELCOME ANIMATIONS ******************************/
 
 /* Hero Title with Flicker and Glitch Effect */
@@ -77,6 +52,7 @@ body::-webkit-scrollbar-track {
     position: relative;
     z-index: 1;
     transform-origin: center;
+    margin-bottom: 0;
 }
 
 /* Hero Subtitle with Uneasy Fade-In */
@@ -324,21 +300,42 @@ body::-webkit-scrollbar-track {
 }
 
 /****************************** MAIN CONTENT ******************************/
-.message {
-    font-size: 1rem;
-    font-weight: bold;  /* Make text bold */
-    color: magenta;   /* Set text color to magenta */
-    width: 60%;         /* Limit width to 60% of the page */
-    margin: 0 auto;     /* Center horizontally */
-    text-align: center; /* Center text inside the div */
-    padding: 10px;      /* Optional: space around the text */
+/* General Styling */
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    z-index: 1;
 }
 
-.eyes-gif {
-    width: 100px;
-    display: block;
-    margin: 20px auto;
-    z-index: 100;
+/* Message Container Styling */
+.message {
+    font-size: 1.3rem;
+    color: white;
+    width: 60%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 10px;
+    z-index: 1;
+}
+
+#animatedText {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    z-index: 1;
+}
+
+#messageContainer {
+    text-align: left;
+    z-index: 1;
+}
+
+#nameRequest,
+#jobRequest {
+  margin-top: 20px;
 }
 
 #nameInput, button {
@@ -349,21 +346,47 @@ body::-webkit-scrollbar-track {
     background: #222222;
     color: #fff;
     font-size: 18px;
+    z-index: 100;
+}
+
+input[type="text"] {
+  padding: 10px;
+  font-size: 1em;
+  width: 60%;
+  max-width: 300px;
+  border: none;
+  border-radius: 5px;
+  z-index: 1;
 }
 
 button {
-    cursor: pointer;
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #222222;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+  z-index: 1;
 }
 
-#home {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+button:hover {
+  background-color: #00FFC5;
+}
+
+.double-eyes {
+    display: flex; /* Align images in a row */
     justify-content: center;
-    overflow-y: auto;  /* Allow scrolling in the home section */
-    padding: 10px;
+    gap: 30px;
 }
 
+.eyes-gif {
+    width: 100px;
+    display: block;
+    margin: 20px auto;
+    z-index: 100;
+}
 /* Animation for input box */
 @keyframes showInput {
     0% { opacity: 0; transform: scale(0.8); }

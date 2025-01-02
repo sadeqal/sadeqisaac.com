@@ -95,41 +95,40 @@
             </div>
         </div>
 
-        <!-- Welcome Content -->
-        <div class="centered">
-            <h1 class="hero-title">👾 Welcome to My Playground</h1>
-            <p class="hero-subtitle">Where pixels bow to my will. Let me show you how it's done.</p>
-            <button class="cta-button" onclick="alert('Watch the magic unfold!')">Explore Magic</button>
-        </div>
-
         <!-- Hand Written Animated Content -->
         <section id="home" class="centered">
-            <div class="message">
-                <!-- Animated Text -->
-                <div id="animatedText"></div>
+            <!-- Welcome Content -->
+            <div class="centered">
+                <h1 class="hero-title">👾 Welcome to My Playground</h1>
+                <p class="hero-subtitle">Where pixels bow to my will. Let me show you how it's done.</p>
+                <button class="cta-button" onclick="alert('Watch the magic unfold!')">Explore Magic</button>
+            </div>
 
+            <div class="message">
+                <!-- Animated Text Container -->
+                <div id="messageContainer">
+                    <div id="animatedText"></div>
+                </div>
+        
                 <!-- Name Request -->
                 <div id="nameRequest" style="display: none;">
                     <input id="nameInput" type="text" placeholder="What's your name?" style="display: none;">
                     <button id="submitBtn" style="display: none;">Submit</button>
                 </div>
-
-                <!-- Response Message -->
-                <div id="response"></div>
-
+        
                 <!-- Job Request -->
                 <div id="jobRequest" style="display: none;">
                     <input id="jobInput" type="text" placeholder="What do you do for a living?" style="display: none;">
                     <button id="jobSubmitBtn" style="display: none;">Submit</button>
                 </div>
             </div>
-
+        
             <!-- Double Eyes Animation -->
             <div class="double-eyes">
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
             </div>
-        </section>
+        </section>        
     </div>
 
     <!-- Scripts -->
