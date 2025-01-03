@@ -1,193 +1,3 @@
-/****************************** MAIN BODY ******************************/
-/* Body and General Styling */
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: #0c0c0c; /* Pure black with subtle hints of gray */
-    font-family: 'Cinzel', serif; /* Gothic and elegant font */
-    color: #e0e0e0; /* Soft white for text */
-    scroll-behavior: smooth;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    scrollbar-width: thin;
-    scrollbar-color: black;
-    overflow-x: hidden; /* Disable horizontal scrolling */
-}
-
-/* Custom scrollbar styles */
-body::-webkit-scrollbar {
-    width: 4px; /* Thin scrollbar width */
-}
-body::-webkit-scrollbar-thumb {
-    background-color: black;
-    border-radius: 10px; /* Rounded scrollbar thumb */
-}
-body::-webkit-scrollbar-track {
-    background: transparent; /* Transparent track */
-}
-
-/****************************** CAT FELINE IMAGE ******************************/
-/* CatFeline Top Image */
-.catFeline-image {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, 0); /* Center horizontally */
-    width: 150px; /* Adjust as needed */
-    z-index: 1001; /* Above the content */
-    pointer-events: none; /* To avoid interaction issues */
-}
-
-/****************************** TOOLBAR ******************************/
-/* Toolbar Container */
-.toolbar {
-    position: fixed;
-    top: 20px;
-    left: 10px;
-    z-index: 1000;
-}
-
-/* Toggle Button */
-.toolbar-toggle {
-    font-size: 1.5rem;
-    width: 50px;
-    height: 50px;
-    border: none;
-    border-radius: 50%;
-    background-color: #282929;
-    color: red;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
-}
-
-.toolbar-toggle:hover {
-    background-color: #141414;
-    transform: scale(1.1);
-}
-
-.toolbar-toggle:active {
-    transform: scale(0.95);
-}
-
-/* Toolbar Items Container */
-.toolbar-items {
-    display: none; /* Initially hidden */
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    top: 60px; /* Below the toggle button */
-    left: 2px;
-    right: 2px;
-    background-color: #333;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Ensure proper visibility on toggle */
-.toolbar-items.active {
-    display: flex;
-}
-
-/* Individual Toolbar Item */
-.toolbar-item {
-    color: white;
-    text-decoration: none;
-    font-size: 2rem;
-    margin: 10px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.2s, color 0.2s;
-}
-
-.toolbar-item:hover {
-    color: #ffffff;
-    transform: scale(1.1);
-}
-
-.toolbar-item a i {
-    font-size: 30px;
-    color: white;
-    text-decoration: none;
-}
-
-.toolbar-item a {
-    color: inherit;
-    text-decoration: none;
-}
-
-/****************************** CONTACT ******************************/
-/* Container Styles */
-#contact-menu-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-}
-
-/* Updated Button Style */
-.menu-button {
-    font-size: 1.5rem;
-    width: 50px;
-    height: 50px;
-    border: none;
-    border-radius: 50%;
-    background-color: #25D366; /* WhatsApp green */
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
-}
-
-.menu-button:hover {
-    background-color: #1DA955;
-    transform: scale(1.1);
-}
-
-.menu-button:active {
-    transform: scale(0.95);
-}
-
-/* Contact Menu Style (unchanged) */
-.contact-menu {
-    display: none; /* Initially hidden */
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    background-color: #333;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.contact-item {
-    color: #e0e0e0;
-    text-decoration: none;
-    font-size: 2rem;
-    margin: 10px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.2s, color 0.2s;
-}
-
-.contact-item:hover {
-    color: #ffffff;
-    transform: scale(1.1);
-}
-
 /****************************** CONTACT MAIL CONTENT ******************************/
 /* Title and Header Styling */
 h2 {
@@ -203,11 +13,11 @@ h2 {
 /* Encouraging Message Styling */
 .encouraging-message {
     width: 80%;
-    color: red; /* Bloody red */
+    color: 8B00FF; /* Bloody red */
     font-size: 1.5rem;
     text-align: center;
     margin: auto;
-    text-shadow: 1px 1px 5px #900000;
+    text-shadow: 1px 1px 5px #8B00FF;
 }
 
 /* Contact Form Container */
@@ -215,9 +25,9 @@ h2 {
     width: 70%;
     margin: 20px auto; /* Center form with top margin */
     background: linear-gradient(145deg, #1a1a1a, #0f0f0f); /* Metallic dark gradients */
-    border: 2px solid crimson; /* Blood-red border */
+    border: 2px solid #8B00FF; /* Blood-red border */
     border-radius: 15px;
-    box-shadow: 0 0 15px 5px #900000; /* Bloody glow */
+    box-shadow: 0 0 15px 5px #8B00FF; /* Bloody glow */
     padding: 30px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -238,17 +48,17 @@ label {
     width: 90%;
     padding: 10px;
     margin: 10px 0;
-    border: 1px solid crimson;
+    border: 1px solid #8B00FF;
     border-radius: 8px;
     background: #1a1a1a;
     color: #ffffff;
-    box-shadow: 0 0 5px crimson;
+    box-shadow: 0 0 5px #8B00FF;
 }
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border: 1px solid crimson;
-    box-shadow: 0 0 8px 2px crimson;
+    border: 1px solid #8B00FF;
+    box-shadow: 0 0 8px 2px #8B00FF;
 }
 
 /* Submit Button Styling */
@@ -256,16 +66,17 @@ input:focus, select:focus, textarea:focus {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
-    background: crimson;
+    background: #8B00FF;
     color: #ffffff;
     font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 0 10px crimson;
+    box-shadow: 0 0 10px #8B00FF;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .contact-form button:hover {
-    background-color: #b30000; /* Darker crimson */
+    transform: scale(1.2);
+    box-shadow: 0 0 20px #C700FF, 0 0 40px #8B00FF;
 }
 
 /****************************** SESSION CONTENT ******************************/
@@ -275,9 +86,9 @@ input:focus, select:focus, textarea:focus {
     width: 60%;
     margin: 10px auto; /* Center form with top margin */
     background: linear-gradient(145deg, #1a1a1a, #0f0f0f); /* Metallic dark gradients */
-    border: 2px solid crimson; /* Blood-red border */
+    border: 2px solid #8B00FF; /* Blood-red border */
     border-radius: 15px;
-    box-shadow: 0 0 15px 5px #900000; /* Bloody glow */
+    box-shadow: 0 0 15px 5px #8B00FF; /* Bloody glow */
     padding: 30px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -307,8 +118,8 @@ input:focus, select:focus, textarea:focus {
 }
 
 .date-time-picker select:focus {
-    border-color: crimson;
-    box-shadow: 0 0 8px 2px crimson;
+    border-color: #8B00FF;
+    box-shadow: 0 0 8px 2px #8B00FF;
 }
 
 /****************************** Mobile vertical mode adjustments ******************************/

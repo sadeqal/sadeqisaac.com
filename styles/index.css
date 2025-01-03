@@ -1,36 +1,3 @@
-/****************************** MAIN BODY ******************************/
-/* Body and General Styling */
-body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #0c0c0c; /* Pure black with subtle hints of gray */
-    font-family: 'Poppins', sans-serif;
-    color: #e0e0e0; /* Soft white for text */
-    scroll-behavior: smooth;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    scrollbar-width: thin;
-    scrollbar-color: black transparent; /* Customize scrollbar color */
-    overflow-x: hidden; /* Disable horizontal scrolling */
-    overflow-y: auto;  /* Always show the vertical scrollbar */
-    padding-right: 2px;
-}
-
-/* Custom scrollbar styles */
-body::-webkit-scrollbar {
-    width: 4px; /* Thin scrollbar width */
-}
-body::-webkit-scrollbar-thumb {
-    background-color: black;
-    border-radius: 10px; /* Rounded scrollbar thumb */
-}
-body::-webkit-scrollbar-track {
-    background: transparent; /* Transparent track */
-}
-
 /****************************** BACKGROUND ******************************/
 #particles-js {
     position: absolute;
@@ -40,54 +7,74 @@ body::-webkit-scrollbar-track {
     height: 100%;
     z-index: 0;
 }
-
+/****************************** TOOLBAR ******************************/
+/* Toolbar Container */
+.toolbar {
+    top: -7px;
+    left: 0px;
+}
 /****************************** WELCOME ANIMATIONS ******************************/
-
-/* Hero Title with Flicker and Glitch Effect */
+/* Hero Title with Galactic Flow Effect */
 .hero-title {
     font-size: 4rem;
-    color: #222020; /* Blood red */
-    text-shadow: 0 0 5px #e711b2, 0 0 10px #53032b;
-    animation: glitch 3s infinite;
-    position: relative;
-    z-index: 1;
-    transform-origin: center;
-    margin-bottom: 0;
+    font-weight: 700;
+    background: linear-gradient(90deg, #e3b1ff, #94dfff, #f5e6b3, #e3b1ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 6s infinite ease-in-out;
+    letter-spacing: 0.1rem;
+    margin-bottom: 1rem;
 }
 
-/* Hero Subtitle with Uneasy Fade-In */
+/* Highlight Word for Emphasis */
+.highlight {
+    color: #e0e0e0;
+    text-shadow: 0 0 10px #ffffff, 0 0 30px #7d7dff, 0 0 50px #ffd700;
+}
+
+/* Subtitle with Smooth Fade */
 .hero-subtitle {
     font-size: 1.5rem;
-    color: #f8f3f3; /* Pale gray for a ghostly look */
-    margin: 1rem 0;
-    animation: slowFade 5s infinite alternate;
+    font-weight: 300;
+    opacity: 0.9;
+    line-height: 1.8;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    animation: fadeInSlide 4s ease-in-out;
+    max-width: 600px;
+    margin: 0 auto 1rem;
 }
 
-/* Glitch Animation */
-@keyframes glitch {
-    0% {
-        text-shadow: 2px 2px #00FFC5, -2px -2px #8B00FF;
-        transform: translate(0, 0);
-    }
-    10% {
-        text-shadow: -2px 2px #00FFC5, -2px -2px #8B00FF;
-        transform: translate(-5px, 3px) skew(0.5deg);
-    }
-    20% {
-        text-shadow: 2px -2px #00FFC5, -2px -2px #8B00FF;
-        transform: translate(5px, -3px) skew(-0.5deg);
-    }
-    25%, 100% {
-        text-shadow: 2px 2px #00FFC5, -2px -2px #8B00FF;
-        transform: translate(0, 0);
-    }
+/* Call-to-Action Button */
+.cta-button {
+    background: linear-gradient(90deg, #7d7dff, #ffd700);
+    border: none;
+    border-radius: 30px;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #222;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Slow Uneasy Fade */
-@keyframes slowFade {
+.cta-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+}
+
+/* Animations */
+@keyframes gradientShift {
+    0% { background-position: 0%; }
+    50% { background-position: 100%; }
+    100% { background-position: 0%; }
+}
+
+@keyframes fadeInSlide {
     from {
-        opacity: 0.3;
-        transform: translateY(10px);
+        opacity: 0;
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -95,211 +82,7 @@ body::-webkit-scrollbar-track {
     }
 }
 
-/****************************** TOOLBAR ******************************/
-/* Toolbar Container */
-.toolbar {
-    position: fixed;
-    top: 0px;
-    left: 10px;
-    z-index: 1000;
-}
-
-/* Toggle Button */
-.toolbar-toggle {
-    font-size: 1.5rem;
-    width: 50px;
-    height: 50px;
-    border: none;
-    border-radius: 50%;
-    background-color: #222222;
-    color: #8B00FF;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
-}
-
-.toolbar-toggle:hover {
-    background-color: #141414;
-    transform: scale(1.1);
-}
-
-.toolbar-toggle:active {
-    transform: scale(0.95);
-}
-
-/* Toolbar Items Container */
-.toolbar-items {
-    display: none; /* Initially hidden */
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    top: 60px; /* Below the toggle button */
-    left: 2px;
-    right: 2px;
-    background-color: #333;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Ensure proper visibility on toggle */
-.toolbar-items.active {
-    display: flex;
-}
-
-/* Individual Toolbar Item */
-.toolbar-item {
-    color: white;
-    text-decoration: none;
-    font-size: 2rem;
-    margin: 10px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.2s, color 0.2s;
-}
-
-.toolbar-item:hover {
-    color: #ffffff;
-    transform: scale(1.1);
-}
-
-.toolbar-item a i {
-    font-size: 30px;
-    color: white;
-    text-decoration: none;
-}
-
-.toolbar-item a {
-    color: inherit;
-    text-decoration: none;
-}
-
-/****************************** CONTACT ******************************/
-/* Container Styles */
-#contact-menu-container {
-    position: fixed;
-    top: 0px;
-    right: 10px;
-    z-index: 1000;
-}
-
-/* Toggle Button */
-.menu-button {
-    font-size: 1.5rem;
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 50%;
-    background-color: #25D366; /* WhatsApp green */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-.menu-button img {
-    width: 20px;
-    height: 20px;
-    filter: invert(1); /* Makes the image white */
-}
-
-.menu-button:hover {
-    transform: rotate(15deg) scale(1.1);
-    background-color: #1DA955;
-}
-
-.menu-button:active {
-    transform: scale(0.95);
-}
-
-/* Contact Menu Styles */
-.contact-menu {
-    display: none; /* Hidden by default */
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    top: 20px;
-    width: 30px;;
-    right: 0;
-    background-color: #333;
-    padding: 5px;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    animation: gradient-animation 6s infinite;
-}
-
-@keyframes gradient-animation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.contact-menu.show {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.contact-item {
-    text-decoration: none;
-    margin: 10px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.2s;
-}
-
-.contact-item img {
-    width: 25px;
-    height: 25px;
-    transition: transform 0.2s;
-}
-
-.contact-item:hover img {
-    transform: scale(1.2);
-}
-
-.contact-item:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    top: -25px;
-    background-color: #333;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 12px;
-    white-space: nowrap;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    opacity: 1;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 10;
-}
-
-.contact-item:hover::after {
-    opacity: 0;
-    transform: translateY(0);
-}
-
-#toggle-contact {
-    cursor: pointer;
-}
-
-#toggle-contact:active {
-    transform: scale(0.95);
-}
-
-#toggle-contact:hover {
-    background-color: #1DA955;
-}
-
-/****************************** MAIN CONTENT ******************************/
+/****************************** INDEX PAGE CONTENT ******************************/
 /* General Styling */
 .centered {
     display: flex;
@@ -395,102 +178,5 @@ button:hover {
 
 /****************************** Mobile vertical mode adjustments ******************************/
 @media (max-width: 600px) and (orientation: portrait) {
-    /* Background net */
-    .background::before {
-        width: 300px; /* Smaller size */
-        height: 300px; /* Smaller size */
-        opacity: 0.1; /* Adjust opacity */
-    }
 
-    /* Toolbar container adjustments */
-    .toolbar {
-        height: auto; /* Allow it to grow in height */
-        display: flex;
-        flex-direction: column; /* Change the direction to vertical */
-        align-items: flex-start; /* Align items to the left */
-        padding: 10px; /* Add padding for spacing */
-        width: 100%; /* Full width */
-        position: relative;
-        left: -2px;
-        top: 2px;
-    }
-
-    /* CatFeline image adjustments */
-    .catFeline-image {
-        position: absolute;
-        top: 5px; /* Adjust positioning */
-        left: 50%;
-        transform: translate(-50%, 0); /* Center horizontally */
-        width: 120px; /* Adjust size for mobile */
-    }
-
-    /* Toolbar items container adjustments */
-    .toolbar-items {
-        flex-direction: column; /* Stack items vertically */
-        align-items: flex-start; /* Align items to the left */
-        gap: 5px; /* Adjust space between items */
-        width: 50px;
-        left: 10px;
-        right: 10px;
-        margin-top: 10px; /* Add top margin to push items below the cat */
-        padding: 0; /* Remove any extra padding */
-        align-items: center;
-    }
-
-    /* Individual toolbar item adjustments */
-    .toolbar-item {
-        font-size: 20x; /* Adjust font size */
-        margin: 5px 0; /* Adjust spacing between items */
-    }
-
-    /* Icon adjustments */
-    .toolbar-item a i {
-        font-size: 25px; /* Adjust icon size */
-    }
-
-    #contact-menu-container {
-        right: 15px;
-        top: 12px;
-    }
-
-    /* SheBlueprint image */
-    .sheBlueprint-image {
-        width: 200px; /* Smaller size */
-        top: 0%; /* Move it lower */
-    }
-
-    /* Title (welcome text) */
-    .title {
-        position: absolute;
-        top: 80%;
-        left: 50%;
-        width: 90%; /* Centered width */
-        transform: translate(-50%, -50%); /* Fully centered */
-        text-align: center; /* Center align the text */
-    }
-
-    .title h1 {
-        font-size: 2rem; /* Adjust font size */
-        line-height: 1.5; /* Improve readability */
-    }
-
-    /* Down arrow (fletch) */
-    .down-arrow {
-        position: absolute;
-        top: 95%; /* Below the text */
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 1.5rem; /* Adjust size */
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(50%);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(5%);
-        }
-    }
 }

@@ -4,103 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Publications</title>
+    <link rel="stylesheet" href="../styles/common.css">
     <link rel="stylesheet" href="../styles/pubs.css">
 </head>
 <body>
-    <!-- Menu Toolbar -->
-    <div class="toolbar"></div>
-        <!-- Toggle Icon -->
-        <button id="toggle-menu" class="toolbar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        <!-- Toolbar Icons -->
-        <div class="toolbar-items" id="toolbar-items">
-            <!-- Home Icon -->
-            <div class="toolbar-item">
-                <a href="../index.html">
-                    <i class="fas fa-home"></i>
+    <div class="background">
+        <!-- Light Source for Background -->
+        <div class="light"></div>
+        
+        <!-- Menu Toolbar -->
+        <div class="toolbar">
+            <!-- Toggle Icon -->
+            <button id="toggle-menu" class="toolbar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <!-- Toolbar Icons -->
+            <div class="toolbar-items" id="toolbar-items">
+                <!-- Home Icon -->
+                <div class="toolbar-item">
+                    <a href="../index.html" class="toolbar-item" data-tooltip="Home">
+                        <img src="../icons/home.png" alt="Home" />
+                    </a>
+                </div>
+                <!-- Works Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/works.html" class="toolbar-item" data-tooltip="Works">
+                        <img src="../icons/work.png" alt="Works" />
+                    </a>
+                </div>
+                <!-- Publications Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/pubs.html" class="toolbar-item" data-tooltip="Publications">
+                        <img src="../icons/pub.png" alt="Publications" />
+                    </a>
+                </div>
+                <!-- Contact Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/contact.html" class="toolbar-item" data-tooltip="Contact">
+                        <img src="../icons/contact.png" alt="Contact" />
+                    </a>
+                </div>
+                <!-- CV Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/cv.html" class="toolbar-item" data-tooltip="CV">
+                        <img src="../icons/cv.png" alt="CV" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Toolbar -->
+        <div id="contact-menu-container">
+            <!-- Contact Toggle Button -->
+            <button id="toggle-contact" class="menu-button">
+                <img src="../icons/phone.png" alt="Phone" />
+            </button>
+            <div id="contact-menu" class="contact-menu">
+                <!-- Triangle for Toggle -->
+                <div id="toggle-triangle"></div>
+                <!-- Email Icon -->
+                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item" data-tooltip="Email">
+                    <img src="../icons/email.png" alt="Email" />
+                </a>
+                <!-- LinkedIn Icon -->
+                <a href="https://www.linkedin.com/in/mohammed-sadeq-aleisac" target="_blank" class="contact-item" data-tooltip="LinkedIn">
+                    <img src="../icons/linkedin.png" alt="LinkedIn" />
+                </a>
+                <!-- Google Scholar Icon -->
+                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item" data-tooltip="Google Scholar">
+                    <img src="../icons/scholar.png" alt="Google Scholar" />
+                </a>
+                <!-- Portal Cientifico UPM Icon -->
+                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item" data-tooltip="Portal Cientifico UPM">
+                    <img src="../icons/uni.png" alt="Portal Cientifico UPM" />
+                </a>
+                <!-- ORCID Icon -->
+                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item" data-tooltip="ORCID">
+                    <img src="../icons/orcid.png" alt="ORCID" />
+                </a>
+                <!-- GitHub Icon -->
+                <a href="https://github.com/sadeqal" target="_blank" class="contact-item" data-tooltip="GitHub">
+                    <img src="../icons/github.png" alt="GitHub" />
+                </a>
+                <!-- X (Twitter) Icon -->
+                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item" data-tooltip="X (Twitter)">
+                    <img src="../icons/x.png" alt="X (Twitter)" />
+                </a>
+                <!-- Instagram Icon -->
+                <a href="https://www.instagram.com/sadeq.al.calligraphy" target="_blank" class="contact-item" data-tooltip="Instagram">
+                    <img src="../icons/instagram.png" alt="Instagram" />
                 </a>
             </div>
-            <!-- Works Icon -->
-            <div class="toolbar-item">
-                <a href="works.html">
-                    <i class="fas fa-palette"></i>
-                </a>
+        </div>
+
+        <!-- Pubs page content -->
+        <div id="pubxs-content">
+            <div class="pubsTyping-content">
+                
             </div>
-            <!-- Publications Icon -->
-            <div class="toolbar-item">
-                <a href="pubs.html">
-                    <i class="fas fa-book"></i>
-                </a>
-            </div>  
-            <!-- CV Icon -->
-            <div class="toolbar-item">
-                <a href="cv.html">
-                    <i class="fas fa-id-card"></i>
-                </a>
-            </div>  
-            <!-- Contact Icon -->
-            <div class="toolbar-item">
-                <a href="contact.html">
-                    <i class="fas fa-envelope"></i>
-                </a>
-            </div>   
-        </div>
+        </div>       
     </div>
 
-    <!-- Contact Toolbar -->
-    <div id="contact-menu-container">
-        <!-- Contact Toggle Button -->
-        <button id="toggle-contact" class="menu-button">
-            <img src="../icons/phone.png" alt="Phone" />
-        </button>
-        <div id="contact-menu" class="contact-menu">
-            <!-- Email Icon -->
-            <a href="mailto:sadeqalisaac@gmail.com" class="contact-item">
-                <img src="../icons/email.png" alt="Email" />
-            </a>
-            <!-- LinkedIn Icon -->
-            <a href="https://www.linkedin.com/in/mohammed-sadeq-aleisac" target="_blank" class="contact-item">
-                <img src="../icons/linkedin.png" alt="LinkedIn" />
-            </a>
-            <!-- Google Scholar Icon -->
-            <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item">
-                <img src="../icons/scholar.png" alt="Google Scholar" />
-            </a>
-            <!-- Portal Cientifico UPM Icon -->
-            <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item">
-                <img src="../icons/uni.png" alt="Portal Cientifico UPM" />
-            </a>
-            <!-- ORCID Icon -->
-            <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item">
-                <img src="../icons/orcid.png" alt="ORCID" />
-            </a>
-            <!-- GitHub Icon -->
-            <a href="https://github.com/sadeqal" target="_blank" class="contact-item">
-                <img src="../icons/github.png" alt="GitHub" />
-            </a>
-            <!-- X (Twitter) Icon -->
-            <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item">
-                <img src="../icons/x.png" alt="X (Twitter)" />
-            </a>
-            <!-- Instagram Icon -->
-            <a href="https://www.instagram.com/sadeq.al.calligraphy" target="_blank" class="contact-item">
-                <img src="../icons/instagram.png" alt="Instagram" />
-            </a>
-        </div>
-    </div>
-
-    <!-- Pubs page content -->
-    <div id="pubs-content">
-        <div class="pubsTyping-content">
-            
-        </div>
-    </div>
-
-    <!-- Menu & Contact Toolbar -->
+    <!-- Scripts -->
+    <!-- Menu, Contact, and Background -->
     <script src="../scripts/menu.js"></script>
     <script src="../scripts/contact.js"></script>
-    <!-- Include Font Awesome -->
+    <script src="../scripts/background.js"></script>
+
+    <!-- Import Awesome and Google Fonts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </body>
 </html>
