@@ -56,19 +56,50 @@ function generateJobResponse(job) {
         response = "A student, huh? Keep learning, the world is full of exciting things to discover!";
     } else if (lowerJob.includes("doctor")) {
         response = "Saving lives and making the world a healthier place? You're awesome!";
-    }
+    } else if (lowerJob.includes("artist") || lowerJob.includes("designer")) {
+        response = "Creativity flows in your veins! The world needs more beautiful and inspiring work.";
+    } else if (lowerJob.includes("nurse")) {
+        response = "Compassion and dedication—nursing is such a noble profession!";
+    } else if (lowerJob.includes("scientist") || lowerJob.includes("researcher")) {
+        response = "Exploring the frontiers of knowledge? That's incredible!";
+    } else if (lowerJob.includes("lawyer")) {
+        response = "Upholding justice and protecting rights—what a critical role!";
+    } else if (lowerJob.includes("chef") || lowerJob.includes("cook")) {
+        response = "Creating delicious experiences? You're a master of flavors!";
+    } else if (lowerJob.includes("pilot")) {
+        response = "Flying high above the clouds? You're living the dream!";
+    } else if (lowerJob.includes("entrepreneur") || lowerJob.includes("business")) {
+        response = "Building dreams and shaping the future—entrepreneurship is thrilling!";
+    } else if (lowerJob.includes("musician") || lowerJob.includes("singer")) {
+        response = "Bringing melodies to life? Music has the power to move hearts!";
+    } else if (lowerJob.includes("athlete") || lowerJob.includes("sports")) {
+        response = "Pushing physical boundaries and inspiring others? Impressive!";
+    } else if (lowerJob.includes("writer") || lowerJob.includes("author")) {
+        response = "Weaving words into stories or ideas? That's magical!";
+    } else if (lowerJob.includes("mechanic")) {
+        response = "Fixing things and keeping the world moving—what a practical skill!";
+    } else if (lowerJob.includes("firefighter")) {
+        response = "Courageously saving lives and protecting communities? You're a hero!";
+    } else if (lowerJob.includes("police") || lowerJob.includes("officer")) {
+        response = "Serving and protecting—what an important responsibility!";
+    } else if (lowerJob.includes("photographer")) {
+        response = "Capturing moments that tell stories? That's an amazing art form!";
+    } else {
+        response = "Whatever you do, I'm sure it's amazing! Keep rocking it!";
+    }    
 
     // Typing effect for job response
     typeSentence("animatedTextId", response, 50, () => {
         // After job response, type introduction texts
         const introductionText = `
-        I have recently been awarded a PhD in Aerospace/Flight Robotics from the Technical University of Madrid.<br>
-        I have a lot of experience in the field of Nonlinear Control, gained through both my academic studies and professional work.<br>  
-        Throughout my academic journey—from my bachelor's to master's and PhD degrees—I focused extensively on control systems, flight dynamics, and the design of nonlinear control algorithms, including adaptive and robust approaches.<br>
-        Professionally, over the past six years, I have been working on modifying industrial autopilot (Micropilot, UAV Navigation, Pixhawk, etc.) control loops and designing ground control system software.<br>
-        My doctoral thesis involved implementing thrust vector control on flap vanes in a hexa-ducted fan UAV to stabilize its attitude.<br>
+            I have recently been awarded a PhD in Aerospace/Flight Robotics from the Technical University of Madrid.<br>
+            I have a lot of experience in the field of Nonlinear Control, gained through both my academic studies and professional work.<br>  
+            Throughout my academic journey—from my bachelor's to master's and PhD degrees—I focused extensively on control systems, flight dynamics, and the design of nonlinear control algorithms, including adaptive and robust approaches.<br>
+            Professionally, over the past six years, I have been working on modifying industrial autopilot (Micropilot, UAV Navigation, Pixhawk, etc.) control loops and designing ground control system software.<br>
+            My doctoral thesis involved implementing thrust vector control on flap vanes in a hexa-ducted fan UAV to stabilize its attitude.<br>
         `;
-        typeSentence("animatedTextId", introductionText, 50, null);
+        // Use setTimeout to ensure proper callback chaining
+        setTimeout(() => typeSentence("animatedTextId", introductionText, 50, null), 500);
     });
 }
 
@@ -109,7 +140,10 @@ async function startConversation() {
                     function () {
                         typeSentence(
                             animatedTextId,
-                            "Let me introduce myself,<br>My name is Sadeq.<br>I am an Aerospace Engineer—consider me a self-empowered UI developer, not a professional one.<br>But I believe love for something makes you create novelties.",
+                            `Allow me to introduce myself.<br>
+                            My name is Sadeq, and I am an Aerospace/Robotics Engineer with a passion for exploration and innovation.<br>
+                            While I may not be a professional UI developer, I consider myself a self-taught enthusiast who thrives on creativity and learning.<br>
+                            I firmly believe that passion and dedication have the power to inspire and bring novelties to life.`,
                             50,
                             function () {
                                 // Show job input and button

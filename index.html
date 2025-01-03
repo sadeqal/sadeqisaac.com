@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sadeq Isaac - UI Developer</title>
+    <link rel="stylesheet" href="styles/common.css">
     <link rel="stylesheet" href="styles/index.css">
     <link rel="icon" type="image/png" href="icons/pageIcon.png">
 </head>
 <body>
-    <!-- Interactive Particle Background -->
-    <div id="particles-js"></div>
-    
     <div class="background">
+        <!-- Dynamic Background -->
+        <div class="light"></div>
+        <div id="particles-js"></div>
+        
         <!-- Menu Toolbar -->
         <div class="toolbar">
             <!-- Toggle Icon -->
@@ -20,36 +22,30 @@
             </button>
             <!-- Toolbar Icons -->
             <div class="toolbar-items" id="toolbar-items">
-                <!-- Home Icon -->
-                <div class="toolbar-item">
-                    <a href="html/index.html">
-                        <i class="fas fa-home"></i>
-                    </a>
-                </div>
                 <!-- Works Icon -->
                 <div class="toolbar-item">
-                    <a href="html/works.html">
-                        <i class="fas fa-palette"></i>
+                    <a href="html/works.html" class="toolbar-item" data-tooltip="Works">
+                        <img src="icons/work.png" alt="Works" />
                     </a>
                 </div>
                 <!-- Publications Icon -->
                 <div class="toolbar-item">
-                    <a href="html/pubs.html">
-                        <i class="fas fa-book"></i>
+                    <a href="html/pubs.html" class="toolbar-item" data-tooltip="Publications">
+                        <img src="icons/pub.png" alt="Publications" />
                     </a>
-                </div>  
-                <!-- CV Icon -->
-                <div class="toolbar-item">
-                    <a href="html/cv.html">
-                        <i class="fas fa-id-card"></i>
-                    </a>
-                </div>  
+                </div>
                 <!-- Contact Icon -->
                 <div class="toolbar-item">
-                    <a href="html/ontact.html">
-                        <i class="fas fa-envelope"></i>
+                    <a href="html/contact.html" class="toolbar-item" data-tooltip="Contact">
+                        <img src="icons/contact.png" alt="Contact" />
                     </a>
-                </div>   
+                </div>
+                <!-- CV Icon -->
+                <div class="toolbar-item">
+                    <a href="html/cv.html" class="toolbar-item" data-tooltip="CV">
+                        <img src="icons/cv.png" alt="CV" />
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -60,36 +56,38 @@
                 <img src="icons/phone.png" alt="Phone" />
             </button>
             <div id="contact-menu" class="contact-menu">
+                <!-- Triangle for Toggle -->
+                <div id="toggle-triangle"></div>
                 <!-- Email Icon -->
-                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item">
+                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item" data-tooltip="Email">
                     <img src="icons/email.png" alt="Email" />
                 </a>
                 <!-- LinkedIn Icon -->
-                <a href="https://www.linkedin.com/in/mohammed-sadeq-aleisac" target="_blank" class="contact-item">
+                <a href="https://www.linkedin.com/in/mohammed-sadeq-aleisac" target="_blank" class="contact-item" data-tooltip="LinkedIn">
                     <img src="icons/linkedin.png" alt="LinkedIn" />
                 </a>
                 <!-- Google Scholar Icon -->
-                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item">
+                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item" data-tooltip="Google Scholar">
                     <img src="icons/scholar.png" alt="Google Scholar" />
                 </a>
                 <!-- Portal Cientifico UPM Icon -->
-                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item">
+                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item" data-tooltip="Portal Cientifico UPM">
                     <img src="icons/uni.png" alt="Portal Cientifico UPM" />
                 </a>
                 <!-- ORCID Icon -->
-                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item">
+                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item" data-tooltip="ORCID">
                     <img src="icons/orcid.png" alt="ORCID" />
                 </a>
                 <!-- GitHub Icon -->
-                <a href="https://github.com/sadeqal" target="_blank" class="contact-item">
+                <a href="https://github.com/sadeqal" target="_blank" class="contact-item" data-tooltip="GitHub">
                     <img src="icons/github.png" alt="GitHub" />
                 </a>
                 <!-- X (Twitter) Icon -->
-                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item">
+                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item" data-tooltip="X (Twitter)">
                     <img src="icons/x.png" alt="X (Twitter)" />
                 </a>
                 <!-- Instagram Icon -->
-                <a href="https://www.instagram.com/sadeq.al.calligraphy" target="_blank" class="contact-item">
+                <a href="https://www.instagram.com/sadeq.al.calligraphy" target="_blank" class="contact-item" data-tooltip="Instagram">
                     <img src="icons/instagram.png" alt="Instagram" />
                 </a>
             </div>
@@ -99,9 +97,13 @@
         <section id="home" class="centered">
             <!-- Welcome Content -->
             <div class="centered">
-                <h1 class="hero-title">👾 Welcome to My Playground</h1>
-                <p class="hero-subtitle">Where pixels bow to my will. Let me show you how it's done.</p>
-                <button class="cta-button" onclick="alert('Watch the magic unfold!')">Explore Magic</button>
+                <h1 class="hero-title">
+                    <span class="highlight">Welcome</span> to the Infinite Cosmos
+                </h1>
+                <p class="hero-subtitle">
+                    A journey through endless space and boundless creativity. Brace yourself for the extraordinary.
+                </p>
+                <button class="cta-button" onclick="alert('Prepare to be amazed!')">Dive In</button>
             </div>
 
             <div class="message">
@@ -132,9 +134,10 @@
     </div>
 
     <!-- Scripts -->
-    <!-- Menu and Contact -->
+    <!-- Menu, Contact, and Background -->
     <script src="scripts/menu.js"></script>
     <script src="scripts/contact.js"></script>
+    <script src="scripts/background.js"></script>
 
     <!-- Import Awesome and Google Fonts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
@@ -142,7 +145,7 @@
 
     <!-- Hand Motion Written Mode -->
     <script src="scripts/typeWriter.js"></script>
-   
+
     <!-- Particles.js Script -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
     <script>
