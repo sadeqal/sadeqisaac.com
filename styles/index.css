@@ -155,7 +155,7 @@ button {
 }
 
 button:hover {
-  background-color: #00FFC5;
+  background-color: #8B00FF;;
 }
 
 .double-eyes {
@@ -170,6 +170,7 @@ button:hover {
     margin: 20px auto;
     z-index: 100;
 }
+
 /* Animation for input box */
 @keyframes showInput {
     0% { opacity: 0; transform: scale(0.8); }
