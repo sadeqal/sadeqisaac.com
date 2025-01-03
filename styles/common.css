@@ -123,12 +123,29 @@ body::-webkit-scrollbar-track {
     }
 }
 
+/****************************** GENERAL BUTTON ******************************/
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #222222;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    z-index: 1;
+}
+  
+button:hover {
+    background-color: #8B00FF;;
+}
+
 /****************************** TOOLBAR ******************************/
 /* Toolbar Container */
 .toolbar {
     position: fixed;
-    top: 10px;
-    left: 10px;
+    top: 13px;
+    left: 0px;
     z-index: 1000;
     width: 100%;
     height: auto;
