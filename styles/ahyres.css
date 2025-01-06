@@ -351,6 +351,56 @@ footer {
 }
 
 /****************************** Mobile vertical mode adjustments ******************************/
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    .problem-items {
+        grid-template-columns: 1fr; /* Single column layout for smaller tablets */
+    }
+
+    .item-icon {
+        width: 30px; /* Adjust icon size for smaller screens */
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .problem-items {
+        grid-template-columns: 1fr; /* Single column layout for mobile */
+    }
+
+    .item-icon {
+        width: 25px; /* Further reduce icon size for smaller mobile devices */
+        height: auto;
+    }
+
+    #solve-problems h2 {
+        font-size: 2rem; /* Adjust heading size */
+    }
+
+    #solve-problems .section-subtitle {
+        font-size: 1.2rem; /* Adjust subtitle size */
+    }
+
+    .problem-item {
+        padding: 15px; /* Reduce padding for compact layout */
+    }
+
+    .problem-item h3 {
+        font-size: 1.5rem; /* Adjust item title size */
+    }
+
+    .problem-item p {
+        font-size: 1rem; /* Adjust paragraph font size */
+    }
+}
+
+/* Specific Mobile Portrait Mode Adjustments */
 @media (max-width: 600px) and (orientation: portrait) {
-    
+    .problem-items {
+        gap: 20px; /* Reduce gap for a tighter layout */
+    }
+
+    .item-icon {
+        width: 20px; /* Smaller icons in portrait mode */
+    }
 }
