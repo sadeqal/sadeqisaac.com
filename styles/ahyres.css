@@ -54,8 +54,13 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background: linear-gradient(to bottom, #095863, transparent);
+    background: linear-gradient(to bottom, #b9b9b47e, transparent);
     z-index: 100;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
 }
 
 .logo {
@@ -63,26 +68,22 @@ header {
     height: auto;
 }
 
-/* Navigation */
 nav ul {
     display: flex;
-    justify-content: space-evenly; /* Distribute icons evenly */
+    justify-content: space-evenly;
     align-items: center;
     list-style: none;
     margin: 0;
     padding: 0;
     width: 100%;
-    max-width: 1200px; /* Optional: limit max width to keep spacing neat */
+    max-width: 1200px;
 }
 
-/* Navigation list item */
 nav ul li {
     text-align: center;
-    margin-right: 25px; /* Increase space between items */
-    margin-bottom: 0px;
+    margin-right: 25px;
 }
 
-/* Icon styling */
 nav ul li a {
     display: block;
     color: white;
@@ -91,26 +92,24 @@ nav ul li a {
     text-align: center;
 }
 
-/* Styling for images inside navigation */
 nav ul li a img.icon-img {
-    width: 30px; /* Adjust width of the image */
-    height: auto; /* Maintain aspect ratio */
+    width: 30px;
+    height: auto;
 }
 
-/* Small text below images */
 nav ul li span {
     display: block;
-    font-size: 0.7rem; /* Small text below the image */
+    font-size: 0.7rem;
     margin-top: 0px;
-    color: #ddd; /* Light text color for the labels */
+    color: #ddd;
 }
 
 nav ul li i {
-    font-size: 2rem; /* Adjust the size of the icon */
+    font-size: 2rem;
 }
 
 nav ul li a:hover i, nav ul li a:hover span {
-    color: #00ace6; /* Highlight on hover */
+    color: #00ace6;
 }
 
 nav ul li a:hover {
@@ -160,7 +159,7 @@ nav ul li a:hover {
 .sub-title {
     font-size: 2.5rem;
     font-weight: 400;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
     letter-spacing: 2px;
     text-shadow: 1px 1px 6px rgba(0, 172, 230, 0.6);
 }
@@ -190,6 +189,7 @@ nav ul li a:hover {
     text-decoration: none;
     font-size: 1.2rem;
     border-radius: 30px;
+    margin-top: 20px;
     transition: all 0.3s ease; /* Smooth transition for the background */
     animation: buttonPulse 3s ease-in-out infinite;
     display: inline-block; /* Allow button to adjust to content */
@@ -236,6 +236,108 @@ main p {
     margin-bottom: 40px;
 }
 
+/****************************** FIRST SECTION ******************************/
+/* Autonomous Inspection Solution Section */
+#autonomous-solution {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+#autonomous-solution h2 {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+#autonomous-solution p {
+    font-size: 1.5rem;
+    color: #0cb8ec;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    line-height: 1.6;
+}
+
+/****************************** SECOND SECTION ******************************/
+/* Section Styling */
+#solve-problems {
+    padding: 50px 20px;
+    border-radius: 15px;
+    text-align: center;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#solve-problems h2 {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+#solve-problems .section-subtitle {
+    font-size: 1.5rem;
+    color: #0cb8ec;
+    margin-bottom: 40px;
+}
+
+/* Itemized Services */
+.problem-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 20px;
+    justify-items: center;
+}
+
+/* Individual Problem Item Styling */
+.problem-item {
+    background-color: #bfc2ba50;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 350px;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.problem-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px #0cb8ec;;
+}
+
+/* Item Icon Styling */
+.item-icon {
+    width: 40px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+/* Title and Description Styling */
+.problem-item h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #0cb8ec;;
+    margin-bottom: 15px;
+}
+
+.problem-item p {
+    font-size: 1.2rem;
+    color: #ffffff;
+    line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .problem-items {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .problem-items {
+        grid-template-columns: 1fr;
+    }
+}
+
 /****************************** FOOTER ******************************/
 footer {
     position: fixed; /* Fix it to the bottom */
@@ -246,4 +348,100 @@ footer {
     padding: 10px auto; /* Reduce padding for a thinner footer */
     background: transparent;
     color: #00ace6; /* Text color */
+}
+
+/****************************** Mobile vertical mode adjustments ******************************/
+@media (max-width: 600px) and (orientation: portrait) {
+    /* Make the Ahyres logo visible on mobile and clickable */
+    #menu-toggle {
+        display: block;
+        width: 50px;  /* Adjust logo size */
+        height: auto;
+        cursor: pointer;
+        position: absolute;
+        top: 15px;
+        left: 20px;  /* Position the logo in the top-left corner */
+        z-index: 102; /* Ensure it is above other elements */
+    }
+
+    /* Drawer (Sidebar) */
+    .drawer {
+        position: fixed;
+        top: 0;
+        left: -250px;  /* Initially hidden off-screen on the left */
+        width: 250px;
+        height: 100%;
+        background-color: #333;
+        color: white;
+        padding: 20px;
+        transition: all 0.3s ease; /* Smooth sliding transition */
+        z-index: 100;
+    }
+
+    .drawer.open {
+        left: 0;  /* Slide in from the left */
+    }
+
+    .drawer ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .drawer ul li {
+        margin: 20px 0;
+        text-align: left; /* Align text and icons */
+    }
+
+    .drawer ul li a {
+        display: flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+    }
+
+    .drawer ul li a img.icon-img {
+        width: 25px;  /* Adjust icon size */
+        height: auto;
+        margin-right: 10px; /* Space between icon and text */
+    }
+
+    .drawer ul li a:hover {
+        color: #00ace6; /* Hover effect */
+    }
+
+    /* Make the icons visible beside the text */
+    nav ul {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav ul li {
+        text-align: left;
+        margin-right: 20px;
+    }
+
+    nav ul li a {
+        display: flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        text-align: left;
+    }
+
+    nav ul li a img.icon-img {
+        width: 25px;
+        height: auto;
+        margin-right: 10px;
+    }
+
+    /* Hide navigation items in mobile when drawer is active */
+    nav ul {
+        display: none;
+    }
 }
