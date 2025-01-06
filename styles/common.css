@@ -51,7 +51,7 @@ body::-webkit-scrollbar-track {
     pointer-events: none;
 }
   
-  /* Debris (General Stars and Cosmic Objects) */
+/* Debris (General Stars and Cosmic Objects) */
 .debris {
     position: absolute;
     border-radius: 50%;
@@ -60,7 +60,7 @@ body::-webkit-scrollbar-track {
     transform: scale(1);
 }
   
-  /* Variations for Colors */
+/* Variations for Colors */
 .debris.star {
     width: 2px;
     height: 2px;
@@ -79,7 +79,7 @@ body::-webkit-scrollbar-track {
     background: rgba(255, 255, 153, 0.8); /* Warm yellow */
 }
   
-  .debris.red {
+.debris.red {
     width: 3px;
     height: 3px;
     background: rgba(255, 99, 71, 0.6); /* Faint red stars */

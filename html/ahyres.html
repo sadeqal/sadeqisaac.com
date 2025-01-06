@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahyres - Automated Drone Missions</title>
+    <link rel="stylesheet" href="../styles/ahyres.css">
+    <link rel="icon" href="../icons/ahyres.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- Haeder -->
+    <header>
+        <img src="../icons/ahyres.ico" alt="Ahyres Logo" class="logo">
+        <nav>
+            <ul>
+                <li><a href="#home"><img src="../icons/homePage.png" alt="Home" class="icon-img"><span>Home</span></a></li>
+                <li><a href="#services"><img src="../icons/services.png" alt="Services" class="icon-img"><span>Services</span></a></li>
+                <li><a href="#underControl"><img src="../icons/underControl.png" alt="Under Control" class="icon-img"><span>Under Control</span></a></li>
+                <li><a href="#sitl"><img src="../icons/simulation.png" alt="SITL" class="icon-img"><span>SITL</span></a></li>
+                <li><a href="#contact"><img src="../icons/contactUs.png" alt="Contact Us" class="icon-img"><span>Contact Us</span></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Intro Section with Stunning Title -->
+    <div id="intro-background">
+        <div id="intro-content">
+            <h1 class="title">Revolutionizing Drone Automation</h1>
+            <h2 class="sub-title">Welcome to Ahyres</h2>
+            <p class="intro-description">Your partner in the future of automated drone missions</p>
+            <a href="#home" class="btn-enter">Enter the Future</a>
+        </div>
+    </div>
+
+    <!-- Main Content Section -->
+    <main>
+        <section id="home">
+            <h1>Welcome to Ahyres</h1>
+            <p>Automating drone missions with cutting-edge technology.</p>
+        </section>
+        <section id="services">
+            <h2>Our Services</h2>
+            <p>From automatic drone missions to real-time data processing and SITL simulation.</p>
+        </section>
+        <section id="sitl">
+            <h2>Simulated Drone Flights</h2>
+            <p>Train with our advanced Ground Control Station and simulated environments.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Ahyres. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Galaxy Canvas Background -->
+    <div id="canvas-container">
+        <canvas id="webgl-canvas"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script>
+        // Set up the scene
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("webgl-canvas") });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 1);  // Set the background color to black
+        document.getElementById("canvas-container").appendChild(renderer.domElement);
+
+        // Create stars
+        var starGeometry = new THREE.SphereGeometry(1, 24, 24);
+        var starMaterial = new THREE.MeshStandardMaterial({
+            color: 0x888888,
+            emissive: 0x888888,
+            emissiveIntensity: 1,
+        });
+        var stars = [];
+        var starCount = 5000;
+
+        for (var i = 0; i < starCount; i++) {
+            var star = new THREE.Mesh(starGeometry, starMaterial);
+            star.position.set(
+                Math.random() * 1000 - 500,
+                Math.random() * 1000 - 500,
+                Math.random() * 1000 - 500
+            );
+            stars.push(star);
+            scene.add(star);
+        }
+
+        // Add Nebula Effect (colored)
+        var nebulaMaterial = new THREE.PointsMaterial({
+            color: new THREE.Color(0x3f6fbf),
+            size: 3,
+            transparent: true,
+            opacity: 0.5
+        });
+
+        var nebulaGeometry = new THREE.BufferGeometry();
+        var positions = [];
+        for (let i = 0; i < 3000; i++) {
+            positions.push(Math.random() * 1000 - 500);
+            positions.push(Math.random() * 1000 - 500);
+            positions.push(Math.random() * 1000 - 500);
+        }
+
+        nebulaGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        var nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
+        scene.add(nebula);
+
+        // Set camera position
+        camera.position.z = 200;
+
+        // Animation loop
+        var animate = function () {
+            requestAnimationFrame(animate);
+
+            // Rotate the galaxy
+            scene.rotation.x += 0.001;
+            scene.rotation.y += 0.001;
+
+            renderer.render(scene, camera);
+        };
+
+        animate();
+    </script>
+</body>
+</html>
