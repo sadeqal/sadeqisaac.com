@@ -1,0 +1,249 @@
+/****************************** MAIN BODY ******************************/
+/* Body and General Styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0a0a0a; /* Pure black with subtle hints of gray */
+    font-family: 'Poppins', sans-serif;
+    color: #e0e0e0; /* Soft white for text */
+    scroll-behavior: smooth;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    scrollbar-width: thin;
+    scrollbar-color: black transparent; /* Customize scrollbar color */
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+/* Custom scrollbar styles */
+body::-webkit-scrollbar {
+    width: 4px; /* Thin scrollbar width */
+}
+body::-webkit-scrollbar-thumb {
+    background-color: black;
+    border-radius: 10px; /* Rounded scrollbar thumb */
+}
+body::-webkit-scrollbar-track {
+    background: transparent; /* Transparent track */
+}
+
+/****************************** THREE.JS CANVAS ******************************/
+/* Galaxy Canvas Background */
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/****************************** HEADER ******************************/
+/* Header */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: linear-gradient(to bottom, #095863, transparent);
+    z-index: 100;
+}
+
+.logo {
+    width: 40px;
+    height: auto;
+}
+
+/* Navigation */
+nav ul {
+    display: flex;
+    justify-content: space-evenly; /* Distribute icons evenly */
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 1200px; /* Optional: limit max width to keep spacing neat */
+}
+
+/* Navigation list item */
+nav ul li {
+    text-align: center;
+    margin-right: 25px; /* Increase space between items */
+    margin-bottom: 0px;
+}
+
+/* Icon styling */
+nav ul li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    text-align: center;
+}
+
+/* Styling for images inside navigation */
+nav ul li a img.icon-img {
+    width: 30px; /* Adjust width of the image */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Small text below images */
+nav ul li span {
+    display: block;
+    font-size: 0.7rem; /* Small text below the image */
+    margin-top: 0px;
+    color: #ddd; /* Light text color for the labels */
+}
+
+nav ul li i {
+    font-size: 2rem; /* Adjust the size of the icon */
+}
+
+nav ul li a:hover i, nav ul li a:hover span {
+    color: #00ace6; /* Highlight on hover */
+}
+
+nav ul li a:hover {
+    transition: color 0.3s ease-in-out;
+}
+
+/****************************** INTRO SECTION ******************************/
+/* Intro Section with Stunning Title */
+#intro-background {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding-top: 50px;
+}
+
+#intro-content {
+    z-index: 2;
+}
+
+/* Main Title */
+.title {
+    font-size: 5rem; /* Super large title */
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 12px rgba(0, 172, 230, 1), 0 0 25px rgba(0, 172, 230, 0.8);
+    animation: titleAnimation 3s ease-out;
+}
+
+@keyframes titleAnimation {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Subtitle */
+.sub-title {
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 6px rgba(0, 172, 230, 0.6);
+}
+
+/* Description */
+.intro-description {
+    font-size: 1.5rem;
+    color: #ddd;
+    margin-bottom: 50px;
+    animation: fadeInDescription 2s ease-in-out;
+}
+
+@keyframes fadeInDescription {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Button */
+.btn-enter {
+    padding: 15px 30px;
+    background: linear-gradient(45deg, #ff00d9, #ff9e00); /* Gradient effect */
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    transition: all 0.3s ease; /* Smooth transition for the background */
+    animation: buttonPulse 3s ease-in-out infinite;
+    display: inline-block; /* Allow button to adjust to content */
+}
+
+.btn-enter:hover {
+    background: linear-gradient(45deg, #ff00d9, #ffcc00); /* Change gradient on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Keyframe for the pulse effect */
+@keyframes buttonPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/****************************** MAIN CONTENT ******************************/
+/* Main Content */
+main {
+    z-index: 1;
+    position: relative;
+    padding: 80px 20px;
+    text-align: center;
+    color: #ddd;
+}
+
+main h1, main h2 {
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+main p {
+    font-size: 1.2rem;
+    color: #ddd;
+    margin-bottom: 40px;
+}
+
+/****************************** FOOTER ******************************/
+footer {
+    position: fixed; /* Fix it to the bottom */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px auto; /* Reduce padding for a thinner footer */
+    background: transparent;
+    color: #00ace6; /* Text color */
+}
