@@ -27,29 +27,3 @@ document.querySelectorAll('.btn-enter').forEach(button => {
         }
     });
 });
-
-// Get the Ahyres logo (menu toggle) and the drawer
-const menuToggle = document.getElementById('menu-toggle');
-const drawer = document.querySelector('.drawer');
-
-// Toggle the drawer (sidebar) visibility when the logo is clicked
-menuToggle.addEventListener('click', function() {
-    drawer.classList.toggle('open');  // Adds/removes the "open" class
-});
-
-// Swipe to close functionality
-let touchStartX = 0;
-let touchEndX = 0;
-
-drawer.addEventListener('touchstart', function(event) {
-    touchStartX = event.changedTouches[0].screenX;  // Track where the touch starts
-});
-
-drawer.addEventListener('touchend', function(event) {
-    touchEndX = event.changedTouches[0].screenX;  // Track where the touch ends
-
-    // If the touch is swiping from right to left, close the drawer
-    if (touchEndX < touchStartX) {
-        drawer.classList.remove('open');  // Close the drawer
-    }
-});
