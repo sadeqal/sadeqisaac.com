@@ -251,11 +251,14 @@ main p {
 
 #autonomous-solution p {
     font-size: 1.5rem;
-    color: #0cb8ec;
+    background: linear-gradient(90deg, yellow, red, rgb(204, 79, 204)); /* Gradient colors */
+    -webkit-background-clip: text; /* Ensures the background is clipped to text */
+    -webkit-text-fill-color: transparent; /* Makes the text itself transparent */
     max-width: 800px;
     margin: 0 auto;
     margin-bottom: 50px;
     line-height: 1.6;
+    text-align: center; /* Optional for alignment */
 }
 
 /****************************** SECOND SECTION ******************************/
