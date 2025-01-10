@@ -8,6 +8,73 @@
     <link rel="icon" href="../icons/ahyres.ico" type="image/x-icon">
 </head>
 <body>
+    <!-- Cookie Consent Prompt -->
+    <div id="cookie-prompt" class="cookie-prompt">
+        <div class="cookie-content">
+            <h2>🍪 Cookie Preferences</h2>
+            <p>We use cookies to improve your experience on our website. Please select your preferences:</p>
+            
+            <!-- Cookie Options -->
+            <form id="cookie-form">
+                <label>
+                    <input type="radio" name="cookie-preference" value="necessary" checked>
+                    Necessary Cookies (Always enabled)
+                </label>
+                <label>
+                    <input type="radio" name="cookie-preference" value="performance">
+                    Performance & Analytics Cookies
+                </label>
+                <label>
+                    <input type="radio" name="cookie-preference" value="personalization">
+                    Personalization & Targeting Cookies
+                </label>
+                <label>
+                    <input type="radio" name="cookie-preference" value="all">
+                    Accept All Cookies
+                </label>
+            </form>
+            
+            <!-- Action Buttons -->
+            <div class="cookie-actions">
+                <button id="accept-cookies" class="btn accept">Accept</button>
+                <button id="reject-cookies" class="btn reject">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background -->
+    <background>
+        <div class="space-container"></div>
+            <!-- Stars Background -->
+            <div class="stars"></div>
+
+            <!-- Moving Particles -->
+            <div class="particles">
+                <!-- Orange Particles -->
+                <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+                <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+                <div class="particle" style="left: 50%; animation-delay: 1s;"></div>
+                <div class="particle" style="left: 70%; animation-delay: 3s;"></div>
+                <div class="particle" style="left: 90%; animation-delay: 4s;"></div>
+
+                <!-- Purple Particles -->
+                <div class="particle purple" style="left: 15%; animation-delay: 0.5s;"></div>
+                <div class="particle purple" style="left: 35%; animation-delay: 2.5s;"></div>
+                <div class="particle purple" style="left: 55%; animation-delay: 1.5s;"></div>
+                <div class="particle purple" style="left: 75%; animation-delay: 3.5s;"></div>
+                <div class="particle purple" style="left: 95%; animation-delay: 4.5s;"></div>
+
+                <!-- Leader Big Star -->
+                <div class="big-star"></div>
+
+                <!-- Smoke Effects -->
+                <div class="smoke"></div>
+                <div class="smoke"></div>
+                <div class="smoke"></div>
+            </div>
+        </div>
+    </background>
+
     <!-- Haeder -->
     <header>
         <img src="../icons/ahyres.ico" alt="Ahyres Logo" class="logo">
@@ -22,18 +89,33 @@
         </nav>
     </header>
 
-    <!-- Intro Section with Stunning Title -->
-    <div id="intro-background">
-        <div id="intro-content">
-            <h1 class="title">Revolutionizing Drone Automation</h1>
-            <h2 class="sub-title">Welcome to Ahyres</h2>
-            <p class="intro-description">Your partner in the future of automated drone missions</p>
-            <a href="#autonomous-solution" class="btn-enter">Enter the Future</a>
-        </div>
-    </div>
-
     <!-- Main Content Section -->
     <main>
+        <!-- Intro Section with Stunning Title -->
+        <div id="intro-background">
+            <div id="intro-content">
+                <h1 class="title">Revolutionizing Drone Automation</h1>
+                <h2 class="sub-title">Welcome to Ahyres</h2>
+                <p class="intro-description">Your partner in the future of automated drone missions</p>
+                
+                <!-- Car Section with Monitors -->
+                <div id="camp-van-container">
+                    <!-- Car with Monitors -->
+                    <div class="car-image">
+                        <!-- Mounted Monitors -->
+                        <div class="monitor monitor-left">
+                            <img src="../icons/gcs.png" alt="UAV Mission Control" class="monitor-screen">
+                        </div>
+                        <div class="monitor monitor-right">
+                            <img src="../icons/gcs.png" alt="Server Control" class="monitor-screen">
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#autonomous-solution" class="btn-enter">Enter the Future</a>
+            </div>
+        </div>
+
         <!-- First Section: Autonomous Inspection Solution -->
         <section id="autonomous-solution">
             <h2>Autonomous Inspection Solution</h2>
@@ -92,18 +174,22 @@
             <!-- Carousel Container -->
             <div class="carousel-container">
                 <div class="carousel">
+                    
+                    <!-- Military Tablet -->
+                    <div class="carousel-item tablet-1-mode">
+                        <img src="../icons/gcsTablet1.png" alt="Military Tablet Platform" class="carousel-image">
+                        <h3>Military Tablet</h3>
+                        <p>Military-grade durability and performance for critical missions and extreme environments.</p>
+                    </div>
+                    <!-- PC Workstation -->
                     <div class="carousel-item pc-mode">
                         <img src="../icons/gcsPC.png" alt="PC Platform" class="carousel-image">
                         <h3>PC Workstation</h3>
                         <p>High-performance computing for advanced mission control and real-time analytics.</p>
                     </div>
-                    <div class="carousel-item tablet-1-mode">
-                        <img src="../icons/gcsTablet1.png" alt="Tablet 1 Platform" class="carousel-image">
-                        <h3>Military Tablet</h3>
-                        <p>Military-grade durability and performance for critical missions and extreme environments.</p>
-                    </div>
+                    <!-- Iconic Tablet -->
                     <div class="carousel-item tablet-2-mode">
-                        <img src="../icons/gcsTablet2.png" alt="Tablet 2 Platform" class="carousel-image">
+                        <img src="../icons/gcsTablet2.png" alt="Normal Tablet Platform" class="carousel-image">
                         <h3>Iconic Tablet</h3>
                         <p>Portable and rugged for on-field operations with easy integration and usability.</p>
                     </div>
@@ -111,12 +197,13 @@
 
                 <!-- Navigation Dots -->
                 <div class="carousel-dots">
-                    <span class="dot active" data-slide="1"></span>
                     <span class="dot" data-slide="0"></span>
+                    <span class="dot active" data-slide="1"></span>
                     <span class="dot" data-slide="2"></span>
                 </div>
             </div>
         </section>
+
     </main>
 
     <!-- Footer -->
@@ -127,76 +214,7 @@
     <!-- Switch Between Contents -->
     <script src="../scripts/ahyresContent.js"></script>
 
-    <!-- Galaxy Canvas Background -->
-    <div id="canvas-container">
-        <canvas id="webgl-canvas"></canvas>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-    <script>
-        // Set up the scene
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        var renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("webgl-canvas") });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x000000, 1);  // Set the background color to black
-        document.getElementById("canvas-container").appendChild(renderer.domElement);
+    
 
-        // Create stars
-        var starGeometry = new THREE.SphereGeometry(1, 24, 24);
-        var starMaterial = new THREE.MeshStandardMaterial({
-            color: 0x888888,
-            emissive: 0x888888,
-            emissiveIntensity: 1,
-        });
-        var stars = [];
-        var starCount = 5000;
-
-        for (var i = 0; i < starCount; i++) {
-            var star = new THREE.Mesh(starGeometry, starMaterial);
-            star.position.set(
-                Math.random() * 1000 - 500,
-                Math.random() * 1000 - 500,
-                Math.random() * 1000 - 500
-            );
-            stars.push(star);
-            scene.add(star);
-        }
-
-        // Add Nebula Effect (colored)
-        var nebulaMaterial = new THREE.PointsMaterial({
-            color: new THREE.Color(0x3f6fbf),
-            size: 3,
-            transparent: true,
-            opacity: 0.5
-        });
-
-        var nebulaGeometry = new THREE.BufferGeometry();
-        var positions = [];
-        for (let i = 0; i < 3000; i++) {
-            positions.push(Math.random() * 1000 - 500);
-            positions.push(Math.random() * 1000 - 500);
-            positions.push(Math.random() * 1000 - 500);
-        }
-
-        nebulaGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        var nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
-        scene.add(nebula);
-
-        // Set camera position
-        camera.position.z = 200;
-
-        // Animation loop
-        var animate = function () {
-            requestAnimationFrame(animate);
-
-            // Rotate the galaxy
-            scene.rotation.x += 0.001;
-            scene.rotation.y += 0.001;
-
-            renderer.render(scene, camera);
-        };
-
-        animate();
-    </script>
 </body>
 </html>
