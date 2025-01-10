@@ -31,7 +31,99 @@ body::-webkit-scrollbar-track {
     background: transparent; /* Transparent track */
 }
 
-/****************************** THREE.JS CANVAS ******************************/
+/****************************** COOKIES ******************************/
+/* Cookie Prompt Styling */
+.cookie-prompt {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.95);
+    color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(100%);
+    transition: transform 0.5s ease-in-out;
+}
+
+.cookie-prompt.active {
+    transform: translateY(0);
+}
+
+.cookie-content {
+    max-width: 600px;
+    text-align: left;
+}
+
+.cookie-content h2 {
+    color: #0cb8ec;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.cookie-content p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.cookie-content label {
+    display: block;
+    margin: 10px 0;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.cookie-content input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.cookie-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.cookie-actions .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cookie-actions .accept {
+    background: #0cb8ec;
+    color: #ffffff;
+}
+
+.cookie-actions .accept:hover {
+    background: #0997c7;
+}
+
+.cookie-actions .reject {
+    background: #555555;
+    color: #ffffff;
+}
+
+.cookie-actions .reject:hover {
+    background: #444444;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .cookie-content {
+        max-width: 90%;
+    }
+}
+
+
+/****************************** BACKGROUND ******************************/
 /* Galaxy Canvas Background */
 #canvas-container {
     position: fixed;
@@ -40,6 +132,177 @@ body::-webkit-scrollbar-track {
     width: 100%;
     height: 100%;
     z-index: 0;
+}
+
+/* Main Container */
+.space-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* Dark Background with Stars */
+.space-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgb(0, 0, 0) 30%, rgb(22, 0, 18) 100%);
+    z-index: 0;
+}
+
+/* Small Shining Stars */
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #ffffff 1px, transparent 2px);
+    background-size: 3px 3px;
+    animation: twinkling 6s infinite alternate;
+    z-index: -1;
+}
+
+/* Twinkling Animation for Stars */
+@keyframes twinkling {
+    0% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0.8;
+    }
+}
+
+/* Dynamic Particles */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Individual Particle */
+.particle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 165, 0, 0.8) 20%, transparent 100%);
+    animation: moveParticle 8s linear infinite;
+    z-index: 3;
+    opacity: 0.8;
+}
+
+/* Purple Particles */
+.particle.purple {
+    background: radial-gradient(circle, rgba(128, 0, 128, 0.8) 20%, transparent 100%);
+}
+
+/* Particle Animation */
+@keyframes moveParticle {
+    0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-10vh) translateX(calc(100vw - 50%));
+        opacity: 0;
+    }
+}
+
+/* Bigger Shining Star (Leader Star) */
+.big-star {
+    position: absolute;
+    top: 70%;
+    left: 85%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle, #e4e75ab6 0%, rgba(255, 255, 255, 0) 80%);
+    box-shadow: 0 0 300px #d8b111, 0 0 60px #f4d03f;
+    border-radius: 50%;
+    animation: pulsate 4s infinite ease-in-out;
+    z-index: 3;
+}
+
+/* Pulsating Animation for Big Star */
+@keyframes pulsate {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Smoke */
+.smoke {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(128, 128, 128, 0.6) 0%, rgba(0, 0, 0, 0) 80%);
+    filter: blur(30px);
+    animation: rise 6s infinite ease-in-out, drift 6s infinite ease-in-out;
+    z-index: 2;
+    opacity: 0.6;
+}
+
+/* Smoke Animation */
+@keyframes rise {
+    0% {
+        transform: translate(-50%, 0) scale(0.8);
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        transform: translate(-50%, -300px) scale(1.2);
+        opacity: 0;
+    }
+}
+
+@keyframes drift {
+    0% {
+        left: 48%;
+    }
+    50% {
+        left: 52%;
+    }
+    100% {
+        left: 48%;
+    }
+}
+
+/* Additional Smoke Layers */
+.smoke:nth-child(2) {
+    animation-delay: 2s;
+    left: 45%;
+    width: 180px;
+    height: 180px;
+}
+
+.smoke:nth-child(3) {
+    animation-delay: 4s;
+    left: 55%;
+    width: 220px;
+    height: 220px;
 }
 
 /****************************** HEADER ******************************/
@@ -116,6 +379,61 @@ nav ul li a:hover {
     transition: color 0.3s ease-in-out;
 }
 
+/****************************** MAIN CONTENT ******************************/
+/* Main Content */
+main {
+    z-index: 1;
+    position: relative;
+    padding: 80px 20px;
+    text-align: center;
+    color: #ddd;
+}
+
+main h1, main h2 {
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+main p {
+    font-size: 1.2rem;
+    color: #ddd;
+    margin-bottom: 40px;
+}
+
+/* Button */
+.btn-enter {
+    padding: 15px 30px;
+    background: linear-gradient(45deg, #ff00d9, #ff9e00); /* Gradient effect */
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    margin-top: 20px;
+    transition: all 0.3s ease; /* Smooth transition for the background */
+    animation: buttonPulse 3s ease-in-out infinite;
+    display: inline-block; /* Allow button to adjust to content */
+}
+
+.btn-enter:hover {
+    background: linear-gradient(45deg, #ff00d9, #ffcc00); /* Change gradient on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Keyframe for the pulse effect */
+@keyframes buttonPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 /****************************** INTRO SECTION ******************************/
 /* Intro Section with Stunning Title */
 #intro-background {
@@ -181,59 +499,53 @@ nav ul li a:hover {
     }
 }
 
-/* Button */
-.btn-enter {
-    padding: 15px 30px;
-    background: linear-gradient(45deg, #ff00d9, #ff9e00); /* Gradient effect */
-    color: white;
-    text-decoration: none;
-    font-size: 1.2rem;
-    border-radius: 30px;
-    margin-top: 20px;
-    transition: all 0.3s ease; /* Smooth transition for the background */
-    animation: buttonPulse 3s ease-in-out infinite;
-    display: inline-block; /* Allow button to adjust to content */
-}
 
-.btn-enter:hover {
-    background: linear-gradient(45deg, #ff00d9, #ffcc00); /* Change gradient on hover */
-    transform: scale(1.05); /* Slightly enlarge on hover */
-}
 
-/* Keyframe for the pulse effect */
-@keyframes buttonPulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-/****************************** MAIN CONTENT ******************************/
-/* Main Content */
-main {
-    z-index: 1;
+/* Car Container */
+#camp-van-container {
     position: relative;
-    padding: 80px 20px;
-    text-align: center;
-    color: #ddd;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-main h1, main h2 {
-    margin-bottom: 20px;
-    font-size: 2.5rem;
-    font-weight: 600;
-    text-transform: uppercase;
+/* Car Image */
+.car-image {
+    position: relative;
+    width: 1000px; /* Adjust to fit your car image */
+    height: 400px; /* Adjust to fit your car image */
+    background: url('../icons/car.png') no-repeat center;
 }
 
-main p {
-    font-size: 1.2rem;
-    color: #ddd;
-    margin-bottom: 40px;
+/* Monitors */
+.monitor {
+    position: absolute;
+    width: 200px; /* Monitor width */
+    height: 150px; /* Monitor height */
+    background: #333; /* Monitor frame color */
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    border: 5px solid #222;
+    overflow: hidden; /* Ensure the image stays within the monitor */
+}
+
+/* Monitor Screens */
+.monitor-screen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Monitor Positioning */
+.monitor-left {
+    top: 100px; /* Adjust to fit the car */
+    left: 100px; /* Position relative to the car */
+}
+
+.monitor-right {
+    top: 100px; /* Adjust to fit the car */
+    right: 100px; /* Position relative to the car */
 }
 
 /****************************** FIRST SECTION ******************************/
@@ -355,7 +667,7 @@ main p {
 }
 
 #explore-platforms .section-subtitle {
-    margin-bottom: 30px;
+    margin-bottom: 0;
     font-size: 1.5rem;
     color: #0cb8ec;
 }
@@ -364,7 +676,7 @@ main p {
 .carousel-container {
     position: relative;
     overflow: hidden;
-    max-width: 80%;
+    max-width: 90%;
     margin: 0 auto;
 }
 
@@ -372,20 +684,21 @@ main p {
     display: flex;
     justify-content: center;
     transition: transform 0.5s ease-in-out;
+    will-change: transform;
 }
 
 .carousel-item {
-    flex: 0 0 50%; /* Width of the main item (PC) */
-    max-width: 60%;
-    margin: 0 10px;
+    flex: 0 0 50%; /* Width of the carousel items */
+    max-width: 50%;
     text-align: center;
+    padding: 10px;
     transition: transform 0.5s ease, opacity 0.5s ease;
     transform: scale(0.8); /* Scale down side items */
     opacity: 0.5; /* Dim side items */
 }
 
 .carousel-item.active {
-    transform: scale(1); /* Full size for active item */
+    transform: scale(1); /* Full size for the active item */
     opacity: 1; /* Fully visible */
 }
 
@@ -419,7 +732,7 @@ main p {
 
 /****************************** FOOTER ******************************/
 footer {
-    position: fixed; /* Fix it to the bottom */
+    position: relative; /* Fix it to the bottom */
     bottom: 0;
     left: 0;
     width: 100%;
