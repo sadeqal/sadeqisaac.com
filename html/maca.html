@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Maca</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: radial-gradient(circle, #0d1a2b, #000);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+        }
+        .container {
+            position: relative;
+        }
+        .message {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        #mysteryButton {
+            background: linear-gradient(45deg, #ff0080, #ff6600);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 30px;
+            color: white;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.8);
+        }
+        #mysteryButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(255, 102, 0, 1);
+        }
+        .floating-image {
+            position: absolute;
+            width: 100px;
+            height: auto;
+            opacity: 0;
+            animation: appearAndBounce 6s infinite ease-in-out;
+        }
+        @keyframes appearAndBounce {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(0) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p class="message">Maca, quiero agradecer toda tu fuerza hasta hoy ...</p>
+        <button id="mysteryButton">✨ Descubre el secreto ✨</button>
+        <div id="imageContainer"></div>
+    </div>
+    <script>
+        document.getElementById("mysteryButton").addEventListener("click", function() {
+            this.style.display = "none";
+            for (let i = 1; i <= 6; i++) {
+                let img = document.createElement("img");
+                img.src = `../icons/fuck (${i}).png`;
+                img.classList.add("floating-image");
+                img.style.left = `${Math.random() * 90}vw`;
+                img.style.animationDelay = `${Math.random() * 2}s`;
+                document.getElementById("imageContainer").appendChild(img);
+            }
+        });
+    </script>
+</body>
+</html>
