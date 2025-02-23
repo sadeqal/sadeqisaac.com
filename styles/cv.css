@@ -1,1 +1,209 @@
-/****************************** BACKGROUND ******************************/
+/****************************** CV CONTENT ******************************/
+/* CV Page General Styling */
+#cv-content {
+    max-width: 1100px;
+    margin: auto;
+    padding: 40px;
+    background: rgba(20, 20, 20, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    font-family: 'Poppins', sans-serif;
+    color: #e0e0e0;
+    backdrop-filter: blur(10px);
+}
+
+/* Header */
+.cv-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cv-header h1 {
+    font-size: 32px;
+    color: #FFD700;
+}
+
+.cv-header p {
+    font-size: 18px;
+    color: #ccc;
+}
+
+/* Section Titles */
+.cv-section h2 {
+    font-size: 24px;
+    border-bottom: 2px solid #FFD700;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+/* Skills section container (row display) */
+.cv-skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+/* Each skill box */
+.cv-skill {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 10px;
+    width: 29%; /* Ensures three boxes in a row */
+    min-width: 250px;
+}
+
+/* Skill section title */
+.skill-title {
+    font-size: 18px;
+    color: #ffcc00; /* Yellow Color */
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+/* Skill icons next to section titles */
+.skill-icon {
+    font-size: 20px;
+    color: #ffcc00; /* Yellow */
+    margin-right: 8px;
+}
+
+/* List of skills */
+.skill-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+/* Individual skill item */
+.skill-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds space between icon and text */
+    font-size: 16px;
+    color: white;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+/* FontAwesome icons */
+.skill-list li i {
+    font-size: 18px;
+    color: #ffcc00; /* Yellow */
+}
+
+/* Custom icons for software & languages */
+.icon-img {
+    width: 22px;
+    height: 22px;
+    vertical-align: middle;
+}
+
+/* Progress Bar */
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #444; /* Gray base */
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.progress {
+    height: 100%;
+    background: #ffcc00; /* Yellow progress */
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Grid Layout for Skills */
+.cv-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cv-grid div {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Timeline */
+.timeline {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.date {
+    width: 150px;
+    font-weight: bold;
+    color: #FFD700;
+}
+
+.content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.content h3 {
+    margin: 0;
+    color: #FFD700;
+}
+
+.content h4 {
+    margin: 5px 0;
+    font-weight: normal;
+    color: #ddd;
+}
+
+.content ul {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+/* Education List */
+.education-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.education-item {
+    display: flex;
+}
+
+.education-item .date {
+    width: 150px;
+    font-weight: bold;
+    color: #FFD700;
+}
+
+.education-item .content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* Responsive: Stack elements in smaller screens */
+@media (max-width: 900px) {
+    .cv-skills-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cv-skill {
+        width: 90%;
+    }
+}
