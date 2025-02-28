@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailing Professors</title>
+    <link rel="stylesheet" href="../styles/mailProfs.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Mailing Professors</h1>
+        <button onclick="searchProfessors()">Find Professors</button>
+
+        <h2>Results</h2>
+        <div id="profList">
+            <!-- Professors will be dynamically added here -->
+        </div>
+
+        <button id="sendEmailsBtn" onclick="sendEmails()">Send Emails</button>
+    </div>
+
+    <script src="../scripts/mailProfs.js"></script>
+</body>
+</html>
