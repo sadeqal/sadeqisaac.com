@@ -1,0 +1,6 @@
+# Ignore credentials file
+scripts/mailProfsCredentials.json
+
+# Ignore Python cache
+__pycache__/
+*.pyc
