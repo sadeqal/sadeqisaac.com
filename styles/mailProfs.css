@@ -1,32 +1,134 @@
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #282c36;
+    font-family: "Georgia", serif;
+    background-color: #121212;
     color: white;
     text-align: center;
+    margin: 0;
+    padding: 0;
 }
 
+/* Container */
 .container {
-    width: 60%;
+    width: 70%;
     margin: auto;
-    background: #3b3f47;
+    background: #1e1e2e;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
+/* Title */
+h1 {
+    font-size: 2em;
+    margin-bottom: 15px;
+    color: #f1c40f;
+}
+
+/* Fancy Buttons */
 button {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
+    padding: 12px 20px;
     border: none;
     cursor: pointer;
     font-size: 16px;
+    border-radius: 6px;
+    transition: 0.3s ease-in-out;
 }
 
-button:hover {
-    background-color: #218838;
+.btn-find {
+    background: #3498db;
+    color: white;
 }
 
-#profList {
-    text-align: left;
+.btn-find:hover {
+    background: #2980b9;
+}
+
+.btn-send {
+    background: #2ecc71;
+    color: white;
     margin-top: 20px;
+}
+
+.btn-send:hover {
+    background: #27ae60;
+}
+
+/* Professor Card */
+.professor {
+    background: #2c3e50;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 8px;
+    text-align: left;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+.professor h3 {
+    color: #f39c12;
+}
+
+.professor a {
+    color: #1abc9c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.professor a:hover {
+    text-decoration: underline;
+}
+
+/* Approve & Preview Buttons */
+.btn-approve {
+    background: #e74c3c;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-approve:hover {
+    background: #c0392b;
+}
+
+.btn-preview {
+    background: #9b59b6;
+    color: white;
+}
+
+.btn-preview:hover {
+    background: #8e44ad;
+}
+
+/* 🔥 Popup Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    overflow: auto;
+}
+
+.modal-content {
+    background: #1e1e2e;
+    margin: 10% auto;
+    padding: 20px;
+    width: 50%;
+    text-align: center;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.close {
+    color: #fff;
+    font-size: 24px;
+    float: right;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #f1c40f;
 }

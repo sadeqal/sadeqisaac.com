@@ -9,15 +9,24 @@
 <body>
 
     <div class="container">
-        <h1>Mailing Professors</h1>
-        <button onclick="searchProfessors()">Find Professors</button>
+        <h1>📩 Mailing Professors</h1>
+        <button class="btn-find" onclick="searchProfessors()">🔍 Find Professors</button>
 
         <h2>Results</h2>
         <div id="profList">
             <!-- Professors will be dynamically added here -->
         </div>
 
-        <button id="sendEmailsBtn" onclick="sendEmails()">Send Emails</button>
+        <button id="sendEmailsBtn" class="btn-send" onclick="sendEmails()">📨 Send Emails</button>
+    </div>
+
+    <!-- 📌 Popup Modal for Email Preview -->
+    <div id="emailPreviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePreview()">&times;</span>
+            <h2>📜 Email Preview</h2>
+            <p id="emailPreviewText"></p>
+        </div>
     </div>
 
     <script src="../scripts/mailProfs.js"></script>
