@@ -1,7 +1,7 @@
 function searchProfessors() {
     console.log("Fetching professors...");
 
-    fetch("http://127.0.0.1:5000/get_professors") // Ensure Flask is running!
+    fetch("https://242b-85-56-133-213.ngrok-free.app/get_professors") // Ensure Flask is running!
         .then(response => {
             console.log("Response status:", response.status);
             return response.json();
@@ -65,13 +65,11 @@ function closePreview() {
 }
 
 function approveEmail(email) {
-    fetch("/approve_email", {
+    fetch("https://242b-85-56-133-213.ngrok-free.app/approve_email", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email })
-    })
+    })    
     .then(response => response.json())
     .then(data => alert("✅ Email approved successfully!"))
     .catch(error => console.error("Error:", error));
