@@ -17,6 +17,7 @@
             font-family: 'Courier New', monospace;
             color: #ff4d4d;
             overflow: hidden;
+            position: relative;
         }
 
         .container {
@@ -27,16 +28,35 @@
         }
 
         .wanted-title {
-            font-size: 2.5em; /* Larger for mobile readability */
+            font-size: 2.5em;
             color: #ff3333;
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 20px;
             font-weight: bold;
+            position: relative;
+        }
+
+        /* Add Skulls Around Title */
+        .wanted-title::before,
+        .wanted-title::after {
+            content: '💀';
+            position: absolute;
+            font-size: 1.2em;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .wanted-title::before {
+            left: -40px;
+        }
+
+        .wanted-title::after {
+            right: -40px;
         }
 
         .photo-frame {
-            width: 250px; /* Reduced for mobile */
+            width: 250px;
             height: 250px;
             margin: 0 auto;
             border: 8px solid #4a2c2c;
@@ -44,6 +64,8 @@
             background: #1a0f0f;
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
             overflow: hidden;
+            position: relative;
+            animation: vibrate 0.1s infinite;
         }
 
         .photo-frame img {
@@ -54,14 +76,32 @@
         }
 
         .warning-text {
-            font-size: 1.2em; /* Increased for readability */
-            max-width: 90%; /* Responsive width */
+            font-size: 1.2em;
+            max-width: 90%;
             margin: 20px auto;
             padding: 15px;
             background: rgba(0, 0, 0, 0.7);
             border: 2px dashed #ff3333;
             border-radius: 8px;
-            line-height: 1.5; /* Better line spacing */
+            line-height: 1.5;
+            position: relative;
+        }
+
+        /* Add Chains Around Warning Text */
+        .warning-text::before,
+        .warning-text::after {
+            content: '⛓️';
+            position: absolute;
+            font-size: 1.5em;
+            top: -20px;
+        }
+
+        .warning-text::before {
+            left: 10px;
+        }
+
+        .warning-text::after {
+            right: 10px;
         }
 
         /* Blood Drip Animation */
@@ -76,10 +116,20 @@
 
         .drip {
             position: absolute;
-            width: 4px;
-            height: 15px;
+            width: 6px;
+            height: 20px;
             background: #ff0000;
-            animation: drip 4s infinite;
+            border-radius: 3px;
+            animation: drip 3s infinite;
+        }
+
+        /* Ghost Animation */
+        .ghost {
+            position: absolute;
+            font-size: 2em;
+            color: #ff4d4d;
+            opacity: 0.6;
+            animation: float 6s infinite;
         }
 
         @keyframes drip {
@@ -90,6 +140,29 @@
             100% {
                 transform: translateY(100vh);
                 opacity: 0.5;
+            }
+        }
+
+        @keyframes float {
+            0% {
+                opacity: 0;
+                transform: translateX(-100vw);
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100vw);
+            }
+        }
+
+        @keyframes vibrate {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(-2px) translateY(2px);
             }
         }
 
@@ -104,6 +177,14 @@
             .photo-frame {
                 width: 200px;
                 height: 200px;
+            }
+            .wanted-title::before,
+            .wanted-title::after {
+                font-size: 1em;
+                left: -30px;
+            }
+            .wanted-title::after {
+                right: -30px;
             }
         }
     </style>
@@ -123,11 +204,49 @@
     </div>
 
     <div class="blood-drip">
-        <div class="drip" style="left: 10%; animation-delay: 0s;"></div>
-        <div class="drip" style="left: 30%; animation-delay: 1s;"></div>
-        <div class="drip" style="left: 50%; animation-delay: 2s;"></div>
-        <div class="drip" style="left: 70%; animation-delay: 3s;"></div>
-        <div class="drip" style="left: 90%; animation-delay: 1.5s;"></div>
+        <!-- Increased number of blood drips -->
+        <div class="drip" style="left: 5%; animation-delay: 0s;"></div>
+        <div class="drip" style="left: 15%; animation-delay: 0.5s;"></div>
+        <div class="drip" style="left: 25%; animation-delay: 1s;"></div>
+        <div class="drip" style="left: 35%; animation-delay: 1.5s;"></div>
+        <div class="drip" style="left: 45%; animation-delay: 2s;"></div>
+        <div class="drip" style="left: 55%; animation-delay: 2.5s;"></div>
+        <div class="drip" style="left: 65%; animation-delay: 3s;"></div>
+        <div class="drip" style="left: 75%; animation-delay: 3.5s;"></div>
+        <div class="drip" style="left: 85%; animation-delay: 4s;"></div>
+        <div class="drip" style="left: 95%; animation-delay: 4.5s;"></div>
     </div>
+
+    <!-- Ghosts and Skulls Floating Around -->
+    <div class="ghost" style="top: 20%; animation-delay: 0s;">👻</div>
+    <div class="ghost" style="top: 40%; animation-delay: 2s;">💀</div>
+    <div class="ghost" style="top: 60%; animation-delay: 4s;">👻</div>
+    <div class="ghost" style="top: 80%; animation-delay: 6s;">💀</div>
+
+    <script>
+        // Dynamically Add More Blood Drips
+        function createDrip() {
+            const drip = document.createElement('div');
+            drip.className = 'drip';
+            drip.style.left = Math.random() * 100 + '%';
+            drip.style.animationDelay = Math.random() * 4 + 's';
+            document.querySelector('.blood-drip').appendChild(drip);
+            setTimeout(() => drip.remove(), 3000);
+        }
+
+        // Dynamically Add More Ghosts
+        function createGhost() {
+            const ghost = document.createElement('div');
+            ghost.className = 'ghost';
+            ghost.innerHTML = Math.random() > 0.5 ? '👻' : '💀';
+            ghost.style.top = Math.random() * 80 + 10 + '%';
+            ghost.style.animationDelay = Math.random() * 6 + 's';
+            document.body.appendChild(ghost);
+            setTimeout(() => ghost.remove(), 6000);
+        }
+
+        setInterval(createDrip, 200); // More frequent blood drips
+        setInterval(createGhost, 1000); // More ghosts appearing
+    </script>
 </body>
 </html>
