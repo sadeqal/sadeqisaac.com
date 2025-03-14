@@ -14,7 +14,8 @@
             align-items: center;
             background: url('https://www.transparenttextures.com/patterns/dark-mosaic.png'), linear-gradient(135deg, #1a0f0f, #3a2b2b);
             background-blend-mode: overlay;
-            font-family: 'Creepster', cursive;
+            font-family: 'Courier New', monospace;
+            color: #ff4d4d;
             overflow: hidden;
         }
 
@@ -22,27 +23,26 @@
             text-align: center;
             position: relative;
             z-index: 1;
-            color: #ff4d4d;
-            text-shadow: 2px 2px 5px #000;
+            text-shadow: 1px 1px 5px #000;
         }
 
         .wanted-title {
-            font-size: 4em;
+            font-size: 2.5em; /* Larger for mobile readability */
             color: #ff3333;
             text-transform: uppercase;
-            letter-spacing: 5px;
-            animation: flicker 2s infinite;
+            letter-spacing: 3px;
             margin-bottom: 20px;
+            font-weight: bold;
         }
 
         .photo-frame {
-            width: 300px;
-            height: 300px;
+            width: 250px; /* Reduced for mobile */
+            height: 250px;
             margin: 0 auto;
-            border: 10px solid #4a2c2c;
+            border: 8px solid #4a2c2c;
             border-radius: 10px;
             background: #1a0f0f;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
             overflow: hidden;
         }
 
@@ -54,14 +54,14 @@
         }
 
         .warning-text {
-            font-size: 1.5em;
-            max-width: 600px;
+            font-size: 1.2em; /* Increased for readability */
+            max-width: 90%; /* Responsive width */
             margin: 20px auto;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px dashed #ff3333;
-            border-radius: 10px;
-            animation: pulse 3s infinite;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px dashed #ff3333;
+            border-radius: 8px;
+            line-height: 1.5; /* Better line spacing */
         }
 
         /* Blood Drip Animation */
@@ -76,8 +76,8 @@
 
         .drip {
             position: absolute;
-            width: 5px;
-            height: 20px;
+            width: 4px;
+            height: 15px;
             background: #ff0000;
             animation: drip 4s infinite;
         }
@@ -93,26 +93,19 @@
             }
         }
 
-        @keyframes flicker {
-            0%, 100% {
-                opacity: 1;
+        /* Media Query for Mobile */
+        @media (max-width: 600px) {
+            .wanted-title {
+                font-size: 1.8em;
             }
-            50% {
-                opacity: 0.5;
+            .warning-text {
+                font-size: 1em;
             }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
+            .photo-frame {
+                width: 200px;
+                height: 200px;
             }
         }
-
-        /* Add Google Fonts for Creepy Text */
-        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
     </style>
 </head>
 <body>
@@ -136,19 +129,5 @@
         <div class="drip" style="left: 70%; animation-delay: 3s;"></div>
         <div class="drip" style="left: 90%; animation-delay: 1.5s;"></div>
     </div>
-
-    <script>
-        // Optional: Add more drips dynamically
-        function createDrip() {
-            const drip = document.createElement('div');
-            drip.className = 'drip';
-            drip.style.left = Math.random() * 100 + '%';
-            drip.style.animationDelay = Math.random() * 4 + 's';
-            document.querySelector('.blood-drip').appendChild(drip);
-            setTimeout(() => drip.remove(), 4000);
-        }
-
-        setInterval(createDrip, 500);
-    </script>
 </body>
 </html>
