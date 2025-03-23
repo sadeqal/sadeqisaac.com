@@ -1,196 +1,300 @@
-* {
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Gothic A1', sans-serif;
-}
-
-body {
-    overflow-x: hidden;
-    color: #e0d1ff;
-    background: #000;
-    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-}
-
-/* Background Effects */
-.background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, #100010 10%, #000 90%);
     overflow: hidden;
-    z-index: -1;
-}
-
-/* Lightning Effects */
-.lightning {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0);
-    animation: lightningFlash 10s infinite;
-}
-
-@keyframes lightningFlash {
-    0%, 25%, 75%, 100% { background: rgba(255, 255, 255, 0); }
-    15% { background: rgba(255, 255, 255, 0.4); }
-    17% { background: rgba(255, 255, 255, 0.1); }
-    50% { background: rgba(255, 255, 255, 0.2); }
-    52% { background: rgba(255, 255, 255, 0.05); }
-}
-
-/* Mist Effect */
-.mist {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: url('../images/mist.png') repeat-x;
-    opacity: 0.4;
-    animation: mistMove 30s linear infinite;
-}
-
-@keyframes mistMove {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-/* Header */
-header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    padding: 15px 0;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 10;
-}
-
-.main-nav ul {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-}
-
-.main-nav li {
-    margin: 0 20px;
-}
-
-.main-nav a {
-    color: #ff007f;
-    text-decoration: none;
-    font-size: 1.3em;
-    text-transform: uppercase;
-    transition: color 0.3s ease-in-out;
-}
-
-.main-nav a:hover {
-    color: #fff;
-}
-
-/* Hero Section */
-.hero {
     height: 100vh;
+}
+
+.background {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #1a0026; /* Dark purple base */
+    overflow: hidden;
+}
+
+/* Cosmic Milky Way Layer */
+.cosmic-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(80, 0, 120, 0.5), rgba(20, 0, 40, 0.2), transparent 70%);
+    opacity: 0.9;
+    animation: cosmic-swirl 20s infinite linear;
+}
+
+/* Spider Web and Satanic Overlay */
+.web-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.3"><path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill="none" stroke="rgba(255, 0, 0, 0.5)"/><path d="M10 10 L90 90 M90 10 L10 90" stroke="rgba(255, 255, 255, 0.2)"/></svg>') repeat;
+    opacity: 0.5;
+}
+
+/* Original Fast Particles */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.particles::before, .particles::after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    animation: move-random 5s infinite ease-in-out;
+}
+
+.particles::after {
+    animation-delay: 2s;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 0, 0, 0.7);
+}
+
+/* Enhanced Debris Layer */
+.debris {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.debris::before, .debris::after, 
+.debris span::before, .debris span::after,
+.debris div::before, .debris div::after {
+    content: '';
+    position: absolute;
+    background: rgba(200, 0, 200, 0.5); /* Brighter purple debris */
+    border-radius: 50%;
+    animation: move-slow 15s infinite ease-in-out;
+}
+
+.debris::before {
+    width: 6px;
+    height: 6px;
+    animation-delay: 0s;
+    top: 5%;
+}
+
+.debris::after {
+    width: 8px;
+    height: 8px;
+    animation-delay: 3s;
+    bottom: 5%;
+}
+
+.debris span::before {
+    width: 5px;
+    height: 5px;
+    animation-delay: 6s;
+    top: 10%;
+}
+
+.debris span::after {
+    width: 7px;
+    height: 7px;
+    animation-delay: 9s;
+    bottom: 10%;
+}
+
+.debris div::before {
+    width: 4px;
+    height: 4px;
+    animation-delay: 12s;
+    top: 15%;
+}
+
+.debris div::after {
+    width: 6px;
+    height: 6px;
+    animation-delay: 15s;
+    bottom: 15%;
+}
+
+/* Hack to add more debris elements */
+.debris span, .debris div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/* Top Navigation */
+.top-nav {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    display: flex;
+    gap: 20px;
+}
+
+.top-nav a {
+    color: #ff004d;
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-shadow: 0 0 5px rgba(255, 0, 77, 0.5);
+    transition: color 0.3s ease;
+}
+
+.top-nav a:hover {
+    color: #ff66b3;
+}
+
+/* Social Navigation */
+.social-nav {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2;
+    display: flex;
+    gap: 15px;
+}
+
+.social-nav a {
+    color: #ff004d;
+    font-size: 1.5rem;
+    text-decoration: none;
+    text-shadow: 0 0 5px rgba(255, 0, 77, 0.5);
+    transition: color 0.3s ease;
+}
+
+.social-nav a:hover {
+    color: #ff66b3;
+}
+
+/* Title and Image Content */
+.content {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    height: 100%;
     text-align: center;
 }
 
 h1 {
-    font-size: 3.8em;
+    color: #ff004d;
+    font-family: 'Arial', sans-serif;
+    font-size: 2.5rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0 0 15px #ff007f, 0 0 5px #000;
-    margin-bottom: 20px;
+    text-shadow: 0 0 15px rgba(255, 0, 77, 0.9), 0 0 30px rgba(255, 0, 77, 0.6);
+    margin: 0;
+    padding: 0 20px;
 }
 
-.lyx-photo {
-    width: 450px;
-    height: auto;
-    border-radius: 50%;
-    filter: drop-shadow(0 0 20px rgba(255, 0, 127, 0.7));
-    animation: pulse 2s infinite;
+/* Goddess Image */
+.goddess-image {
+    width: 300px;
+    height: 400px;
+    background: url('../images/lyx2.png');
+    background-size: cover;
+    margin-top: 40px;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 60px rgba(0, 0, 0, 0.9);
+    border: 3px solid rgba(255, 0, 77, 0.6);
+    border-radius: 15px;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
-}
-
-/* Button */
-.show-more {
-    padding: 15px 30px;
-    font-size: 1.2em;
+/* Discover Button */
+.discover-btn {
+    margin-top: 40px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
     color: #fff;
-    background: linear-gradient(45deg, #ff007f, #57007f);
+    background: linear-gradient(45deg, #ff004d, #ff00ff, #00ffcc);
     border: none;
-    border-radius: 30px;
+    border-radius: 5px;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
-    transition: all 0.3s;
+    box-shadow: 0 0 10px rgba(255, 0, 77, 0.5);
+    transition: transform 0.3s ease;
 }
 
-.show-more:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(255, 0, 127, 0.8);
+.discover-btn:hover {
+    transform: scale(1.05);
 }
 
-/* Footer */
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 10px 0;
+/* Animations */
+@keyframes cosmic-swirl {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.social-nav ul {
-    display: flex;
-    justify-content: center;
-    list-style: none;
+@keyframes move-random {
+    0% { transform: translate(0, 0); opacity: 0; }
+    20% { transform: translate(100vw, 50vh); opacity: 1; }
+    40% { transform: translate(20vw, 80vh); }
+    60% { transform: translate(80vw, 20vh); }
+    80% { transform: translate(50vw, 70vh); }
+    100% { transform: translate(0, 0); opacity: 0; }
 }
 
-.social-nav li {
-    margin: 0 15px;
+@keyframes move-slow {
+    0% { transform: translate(30vw, 0); opacity: 0.5; }
+    25% { transform: translate(70vw, 10vh); opacity: 1; }
+    50% { transform: translate(20vw, 20vh); }
+    75% { transform: translate(80vw, 10vh); }
+    100% { transform: translate(30vw, 0); opacity: 0.5; }
 }
 
-.social-nav a {
-    color: #ff007f;
-    text-decoration: none;
-    font-size: 1.1em;
-    transition: color 0.3s;
+/* Original particle alt animation */
+.particles::before {
+    animation: move-random-alt 7s infinite ease-in-out;
 }
 
-.social-nav a:hover {
-    color: #fff;
+@keyframes move-random-alt {
+    0% { transform: translate(50vw, 10vh); opacity: 0; }
+    25% { transform: translate(10vw, 90vh); opacity: 1; }
+    50% { transform: translate(90vw, 30vh); }
+    75% { transform: translate(30vw, 60vh); }
+    100% { transform: translate(50vw, 10vh); opacity: 0; }
 }
 
-/* Mobile Styles */
+/* Responsive Design */
 @media (max-width: 768px) {
     h1 {
-        font-size: 2.5em;
+        font-size: 2.5rem;
+        padding: 0 10px;
     }
 
-    .lyx-photo {
-        width: 250px;
+    .goddess-image {
+        width: 300px;
+        height: 400px;
     }
 
-    .main-nav ul, .social-nav ul {
-        flex-direction: column;
-        align-items: center;
+    .discover-btn {
+        font-size: 1rem;
+        padding: 8px 16px;
     }
 
-    .main-nav li, .social-nav li {
-        margin: 10px 0;
+    .top-nav {
+        top: 10px;
+        left: 10px;
+        gap: 15px;
     }
 
-    .show-more {
-        padding: 10px 20px;
-        font-size: 1em;
+    .top-nav a {
+        font-size: 0.9rem;
+        gap: 5px;
+    }
+
+    .social-nav {
+        bottom: 10px;
+        right: 10px;
+        gap: 10px;
+    }
+
+    .social-nav a {
+        font-size: 1.2rem;
     }
 }
