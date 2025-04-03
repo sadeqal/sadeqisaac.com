@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pixhawk Telemetry</title>
+    <link rel="stylesheet" href="../styles/common.css">
+    <link rel="stylesheet" href="../styles/mavlink.css">
+</head>
+<body>
+    <div class="background">
+        <!-- Menu Toolbar -->
+        <div class="toolbar">
+            <!-- Toggle Icon -->
+            <button id="toggle-menu" class="toolbar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <!-- Toolbar Icons -->
+            <div class="toolbar-items" id="toolbar-items">
+                <!-- Home Icon -->
+                <div class="toolbar-item">
+                    <a href="../index.html" class="toolbar-item" data-tooltip="Home">
+                        <img src="../icons/home.png" alt="Home" />
+                    </a>
+                </div>
+                <!-- Works Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/works.html" class="toolbar-item" data-tooltip="Works">
+                        <img src="../icons/work.png" alt="Works" />
+                    </a>
+                </div>
+                <!-- Publications Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/pubs.html" class="toolbar-item" data-tooltip="Publications">
+                        <img src="../icons/pub.png" alt="Publications" />
+                    </a>
+                </div>
+                <!-- Contact Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/contact.html" class="toolbar-item" data-tooltip="Contact">
+                        <img src="../icons/contact.png" alt="Contact" />
+                    </a>
+                </div>
+                <!-- CV Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/cv.html" class="toolbar-item" data-tooltip="CV">
+                        <img src="../icons/cv.png" alt="CV" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Toolbar -->
+        <div id="contact-menu-container">
+            <!-- Contact Toggle Button -->
+            <button id="toggle-contact" class="menu-button">
+                <img src="../icons/phone.png" alt="Phone" />
+            </button>
+            <div id="contact-menu" class="contact-menu">
+                <!-- Triangle for Toggle -->
+                <div id="toggle-triangle"></div>
+                <!-- Email Icon -->
+                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item" data-tooltip="Email">
+                    <img src="../icons/email.png" alt="Email" />
+                </a>
+                <!-- LinkedIn Icon -->
+                <a href="https://www.linkedin.com/in/mohammed-sadeq-aleisac" target="_blank" class="contact-item" data-tooltip="LinkedIn">
+                    <img src="../icons/linkedin.png" alt="LinkedIn" />
+                </a>
+                <!-- Google Scholar Icon -->
+                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item" data-tooltip="Google Scholar">
+                    <img src="../icons/scholar.png" alt="Google Scholar" />
+                </a>
+                <!-- Portal Cientifico UPM Icon -->
+                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item" data-tooltip="Portal Cientifico UPM">
+                    <img src="../icons/uni.png" alt="Portal Cientifico UPM" />
+                </a>
+                <!-- ORCID Icon -->
+                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item" data-tooltip="ORCID">
+                    <img src="../icons/orcid.png" alt="ORCID" />
+                </a>
+                <!-- GitHub Icon -->
+                <a href="https://github.com/sadeqal" target="_blank" class="contact-item" data-tooltip="GitHub">
+                    <img src="../icons/github.png" alt="GitHub" />
+                </a>
+                <!-- X (Twitter) Icon -->
+                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item" data-tooltip="X (Twitter)">
+                    <img src="../icons/x.png" alt="X (Twitter)" />
+                </a>
+                <!-- Instagram Icon -->
+                <a href="https://www.instagram.com/sadeq.al.calligraphy" target="_blank" class="contact-item" data-tooltip="Instagram">
+                    <img src="../icons/instagram.png" alt="Instagram" />
+                </a>
+            </div>
+        </div>
+
+        <!-- Mavlink Telemetry page content -->
+        <div id="mavlink-content">
+            <h1>Pixhawk Telemetry Dashboard</h1>
+            <div class="controls">
+                <select id="portSelect">
+                    <option value="">Select Port</option>
+                </select>
+                <select id="baudSelect">
+                    <option value="57600">57600 (Default)</option>
+                    <option value="115200">115200</option>
+                    <option value="921600">921600</option>
+                </select>
+                <button onclick="connectSerial()">Connect</button>
+                <button onclick="disconnectSerial()">Disconnect</button>
+            </div>
+            <div id="status">Disconnected</div>
+            <div id="data-rate">Data Rate: 0 B/s</div>
+            <div class="dashboard-container">
+                <!-- Sidebar for Topics -->
+                <div class="sidebar">
+                    <h3>Topics</h3>
+                    <ul id="topic-list"></ul>
+                </div>
+                <!-- Main Area for Selected Topic -->
+                <div class="main-content">
+                    <div id="selected-topic-container" class="telemetry-container">
+                        <h3 id="selected-topic-title">Select a Topic</h3>
+                        <div id="selected-telemetry-table"></div>
+                        <canvas id="selected-topic-chart" class="chart-container"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu, Contact, Background, and Mavlink -->
+    <script src="../scripts/menu.js"></script>
+    <script src="../scripts/contact.js"></script>
+    <!-- <script src="../scripts/background.js"></script> -->
+    <script src="../scripts/mavlink.js"></script>
+
+    <!-- Import Awesome and Google Fonts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Include Chart.js and the date adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>   
+</body>
+</html>
