@@ -10,6 +10,11 @@ class MAVLinkParser {
         this.MAVLINK_MSG_ID_GPS_RAW_INT = 24;
         this.MAVLINK_MSG_ID_ATTITUDE = 30;
         this.MAVLINK_MSG_ID_VFR_HUD = 74;
+        this.MAVLINK_MSG_ID_RAW_IMU = 27;
+        this.MAVLINK_MSG_ID_SCALED_IMU = 26;
+        this.MAVLINK_MSG_ID_AHRS = 163;
+        this.MAVLINK_MSG_ID_LOCAL_POSITION_NED = 32;
+        this.MAVLINK_MSG_ID_GLOBAL_POSITION_INT = 33;
     }
 
     on(messageType, callback) {
@@ -46,7 +51,6 @@ class MAVLinkParser {
     parseMessage(msgId, data) {
         try {
             if (msgId === this.MAVLINK_MSG_ID_HEARTBEAT) {
-                console.log("Received HEARTBEAT message");
                 return {
                     name: 'HEARTBEAT',
                     type: data[6],
@@ -57,7 +61,6 @@ class MAVLinkParser {
                 };
             } else if (msgId === this.MAVLINK_MSG_ID_SYS_STATUS) {
                 if (data.length < 23) return null;
-                console.log("Received SYS_STATUS message");
                 return {
                     name: 'SYS_STATUS',
                     battery_voltage: new DataView(data.buffer, data.byteOffset + 18, 2).getUint16(0, true) / 1000.0,
@@ -67,30 +70,26 @@ class MAVLinkParser {
             } else if (msgId === this.MAVLINK_MSG_ID_PARAM_VALUE) {
                 if (data.length < 31) return null;
                 const paramId = String.fromCharCode.apply(null, data.slice(6, 22)).trim();
-                const paramValue = new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true);
-                console.log("Received PARAM_VALUE message");
                 return {
                     name: 'PARAM_VALUE',
                     param_id: paramId,
-                    param_value: paramValue,
+                    param_value: new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true),
                     param_type: data[26],
                     param_count: new DataView(data.buffer, data.byteOffset + 27, 2).getUint16(0, true),
                     param_index: new DataView(data.buffer, data.byteOffset + 29, 2).getUint16(0, true)
                 };
             } else if (msgId === this.MAVLINK_MSG_ID_GPS_RAW_INT) {
                 if (data.length < 32) return null;
-                console.log("Received GPS_RAW_INT message");
                 return {
                     name: 'GPS_RAW_INT',
                     fix_type: data[14],
-                    lat: new DataView(data.buffer, data.byteOffset + 15, 4).getInt32(0, true),
-                    lon: new DataView(data.buffer, data.byteOffset + 19, 4).getInt32(0, true),
-                    alt: new DataView(data.buffer, data.byteOffset + 23, 4).getInt32(0, true),
+                    lat: new DataView(data.buffer, data.byteOffset + 15, 4).getInt32(0, true) / 1e7,
+                    lon: new DataView(data.buffer, data.byteOffset + 19, 4).getInt32(0, true) / 1e7,
+                    alt: new DataView(data.buffer, data.byteOffset + 23, 4).getInt32(0, true) / 1000,
                     satellites_visible: data[31]
                 };
             } else if (msgId === this.MAVLINK_MSG_ID_ATTITUDE) {
                 if (data.length < 28) return null;
-                console.log("Received ATTITUDE message");
                 return {
                     name: 'ATTITUDE',
                     roll: new DataView(data.buffer, data.byteOffset + 6, 4).getFloat32(0, true),
@@ -99,7 +98,6 @@ class MAVLinkParser {
                 };
             } else if (msgId === this.MAVLINK_MSG_ID_VFR_HUD) {
                 if (data.length < 26) return null;
-                console.log("Received VFR_HUD message");
                 return {
                     name: 'VFR_HUD',
                     airspeed: new DataView(data.buffer, data.byteOffset + 6, 4).getFloat32(0, true),
@@ -108,6 +106,70 @@ class MAVLinkParser {
                     throttle: new DataView(data.buffer, data.byteOffset + 16, 2).getUint16(0, true),
                     alt: new DataView(data.buffer, data.byteOffset + 18, 4).getFloat32(0, true),
                     climb: new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true)
+                };
+            } else if (msgId === this.MAVLINK_MSG_ID_RAW_IMU) {
+                if (data.length < 28) return null;
+                return {
+                    name: 'RAW_IMU',
+                    xacc: new DataView(data.buffer, data.byteOffset + 6, 2).getInt16(0, true),
+                    yacc: new DataView(data.buffer, data.byteOffset + 8, 2).getInt16(0, true),
+                    zacc: new DataView(data.buffer, data.byteOffset + 10, 2).getInt16(0, true),
+                    xgyro: new DataView(data.buffer, data.byteOffset + 12, 2).getInt16(0, true),
+                    ygyro: new DataView(data.buffer, data.byteOffset + 14, 2).getInt16(0, true),
+                    zgyro: new DataView(data.buffer, data.byteOffset + 16, 2).getInt16(0, true),
+                    xmag: new DataView(data.buffer, data.byteOffset + 18, 2).getInt16(0, true),
+                    ymag: new DataView(data.buffer, data.byteOffset + 20, 2).getInt16(0, true),
+                    zmag: new DataView(data.buffer, data.byteOffset + 22, 2).getInt16(0, true)
+                };
+            } else if (msgId === this.MAVLINK_MSG_ID_SCALED_IMU) {
+                if (data.length < 26) return null;
+                return {
+                    name: 'SCALED_IMU',
+                    xacc: new DataView(data.buffer, data.byteOffset + 6, 2).getInt16(0, true),
+                    yacc: new DataView(data.buffer, data.byteOffset + 8, 2).getInt16(0, true),
+                    zacc: new DataView(data.buffer, data.byteOffset + 10, 2).getInt16(0, true),
+                    xgyro: new DataView(data.buffer, data.byteOffset + 12, 2).getInt16(0, true),
+                    ygyro: new DataView(data.buffer, data.byteOffset + 14, 2).getInt16(0, true),
+                    zgyro: new DataView(data.buffer, data.byteOffset + 16, 2).getInt16(0, true),
+                    xmag: new DataView(data.buffer, data.byteOffset + 18, 2).getInt16(0, true),
+                    ymag: new DataView(data.buffer, data.byteOffset + 20, 2).getInt16(0, true),
+                    zmag: new DataView(data.buffer, data.byteOffset + 22, 2).getInt16(0, true)
+                };
+            } else if (msgId === this.MAVLINK_MSG_ID_AHRS) {
+                if (data.length < 34) return null;
+                return {
+                    name: 'AHRS',
+                    omegaIx: new DataView(data.buffer, data.byteOffset + 6, 4).getFloat32(0, true),
+                    omegaIy: new DataView(data.buffer, data.byteOffset + 10, 4).getFloat32(0, true),
+                    omegaIz: new DataView(data.buffer, data.byteOffset + 14, 4).getFloat32(0, true),
+                    accel_weight: new DataView(data.buffer, data.byteOffset + 18, 4).getFloat32(0, true),
+                    renorm_val: new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true),
+                    error_rp: new DataView(data.buffer, data.byteOffset + 26, 4).getFloat32(0, true),
+                    error_yaw: new DataView(data.buffer, data.byteOffset + 30, 4).getFloat32(0, true)
+                };
+            } else if (msgId === this.MAVLINK_MSG_ID_LOCAL_POSITION_NED) {
+                if (data.length < 34) return null;
+                return {
+                    name: 'LOCAL_POSITION_NED',
+                    x: new DataView(data.buffer, data.byteOffset + 6, 4).getFloat32(0, true),
+                    y: new DataView(data.buffer, data.byteOffset + 10, 4).getFloat32(0, true),
+                    z: new DataView(data.buffer, data.byteOffset + 14, 4).getFloat32(0, true),
+                    vx: new DataView(data.buffer, data.byteOffset + 18, 4).getFloat32(0, true),
+                    vy: new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true),
+                    vz: new DataView(data.buffer, data.byteOffset + 26, 4).getFloat32(0, true)
+                };
+            } else if (msgId === this.MAVLINK_MSG_ID_GLOBAL_POSITION_INT) {
+                if (data.length < 34) return null;
+                return {
+                    name: 'GLOBAL_POSITION_INT',
+                    lat: new DataView(data.buffer, data.byteOffset + 6, 4).getInt32(0, true) / 1e7,
+                    lon: new DataView(data.buffer, data.byteOffset + 10, 4).getInt32(0, true) / 1e7,
+                    alt: new DataView(data.buffer, data.byteOffset + 14, 4).getInt32(0, true) / 1000,
+                    relative_alt: new DataView(data.buffer, data.byteOffset + 18, 4).getInt32(0, true) / 1000,
+                    vx: new DataView(data.buffer, data.byteOffset + 22, 2).getInt16(0, true) / 100,
+                    vy: new DataView(data.buffer, data.byteOffset + 24, 2).getInt16(0, true) / 100,
+                    vz: new DataView(data.buffer, data.byteOffset + 26, 2).getInt16(0, true) / 100,
+                    hdg: new DataView(data.buffer, data.byteOffset + 28, 2).getUint16(0, true) / 100
                 };
             }
         } catch (error) {
@@ -152,18 +214,36 @@ class MAVLinkParser {
 let port, reader;
 const statusDiv = document.getElementById('status');
 const dataRateDiv = document.getElementById('data-rate');
-const topicList = document.getElementById('topic-list');
-const selectedTopicTitle = document.getElementById('selected-topic-title');
-const selectedTelemetryTable = document.getElementById('selected-telemetry-table');
 const mavlinkParser = new MAVLinkParser();
 let byteCount = 0;
 let lastUpdate = Date.now();
-
-// Data logging structure: { topic: { subtopic: [{time, value}] } }
-const loggedData = {};
-let selectedTopicChart = null;
 const telemetryData = {};
-let selectedTopic = null;
+let map, marker;
+
+// Initialize Mapbox
+mapboxgl.accessToken = 'pk.eyJ1Ijoic2FkZXFhbCIsImEiOiJjbDA0ZHBpZDgwYjl5M2Rud2wweDVhaWVtIn0.PSwxdzBQL8ZCh0kYT4UA9g';
+map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/sadeqal/cl04dpzyq000v15o3nlcnpn9d',
+    center: [-3.70405, 40.41662], // Madid, Sol
+    zoom: 16,
+    pitch: 75, // 3D tilt
+    bearing: 0,
+    interactive: true
+});
+
+// Add terrain
+map.on('load', () => {
+    map.addSource('mapbox-dem', {
+        'type': 'raster-dem',
+        'url': 'mapbox://mapbox.terrain-rgb'
+    });
+    map.addLayer({
+        'id': 'terrain',
+        'type': 'hillshade',
+        'source': 'mapbox-dem'
+    });
+});
 
 // Populate available ports
 async function populatePorts() {
@@ -217,6 +297,7 @@ async function disconnectSerial() {
         statusDiv.style.color = '#0ff';
         byteCount = 0;
         dataRateDiv.textContent = 'Data Rate: 0 B/s';
+        if (marker) marker.remove();
     }
 }
 
@@ -266,7 +347,8 @@ function requestParams() {
 // Request data streams
 function requestDataStreams() {
     const streams = [
-        { req_stream_id: 0, req_message_rate: 10, start_stop: 1 }, // ALL
+        { req_stream_id: 0, req_message_rate: 10, start_stop: 1 }, //വ
+
         { req_stream_id: 1, req_message_rate: 10, start_stop: 1 }, // RAW_SENSORS
         { req_stream_id: 2, req_message_rate: 10, start_stop: 1 }, // EXTENDED_STATUS (SYS_STATUS)
         { req_stream_id: 3, req_message_rate: 10, start_stop: 1 }, // RC_CHANNELS
@@ -298,153 +380,75 @@ mavlinkParser.on('PARAM_VALUE', (msg) => handleMessage('PARAM_VALUE', msg));
 mavlinkParser.on('GPS_RAW_INT', (msg) => handleMessage('GPS_RAW_INT', msg));
 mavlinkParser.on('ATTITUDE', (msg) => handleMessage('ATTITUDE', msg));
 mavlinkParser.on('VFR_HUD', (msg) => handleMessage('VFR_HUD', msg));
+mavlinkParser.on('RAW_IMU', (msg) => handleMessage('RAW_IMU', msg));
+mavlinkParser.on('SCALED_IMU', (msg) => handleMessage('SCALED_IMU', msg));
+mavlinkParser.on('AHRS', (msg) => handleMessage('AHRS', msg));
+mavlinkParser.on('LOCAL_POSITION_NED', (msg) => handleMessage('LOCAL_POSITION_NED', msg));
+mavlinkParser.on('GLOBAL_POSITION_INT', (msg) => handleMessage('GLOBAL_POSITION_INT', msg));
 
 function handleMessage(type, msg) {
-    console.log(`Handling message: ${type}`, msg);
-    if (!telemetryData[type]) {
-        telemetryData[type] = {};
-        loggedData[type] = {};
-        addTopicToSidebar(type);
-    }
-    Object.assign(telemetryData[type], msg);
-    logData(type, msg);
-    if (selectedTopic === type) {
-        updateSelectedTopicTable(type);
-        updateSelectedTopicChart(type);
+    Object.assign(telemetryData[type] = telemetryData[type] || {}, msg);
+    updateInspector();
+    if (type === 'GPS_RAW_INT' || type === 'GLOBAL_POSITION_INT') {
+        updateMapMarker(msg);
     }
 }
 
-// Add topic to sidebar
-function addTopicToSidebar(type) {
-    console.log(`Adding topic to sidebar: ${type}`);
-    const li = document.createElement('li');
-    li.textContent = type;
-    li.onclick = () => selectTopic(type);
-    topicList.appendChild(li);
+// Update map marker
+function updateMapMarker(msg) {
+    const lat = msg.lat;
+    const lon = msg.lon;
+    const alt = msg.alt || msg.relative_alt || 0;
+
+    if (lat && lon) {
+        if (marker) marker.remove();
+        marker = new mapboxgl.Marker({
+            element: createMarkerElement()
+        })
+            .setLngLat([lon, lat])
+            .addTo(map);
+        map.flyTo({ center: [lon, lat], zoom: 16, speed: 0.8 });
+    }
 }
 
-// Select a topic and display its data
-function selectTopic(type) {
-    selectedTopic = type;
-    selectedTopicTitle.textContent = type;
-    document.querySelectorAll('#topic-list li').forEach(li => li.classList.remove('active'));
-    const selectedLi = Array.from(topicList.children).find(li => li.textContent === type);
-    if (selectedLi) selectedLi.classList.add('active');
-    updateSelectedTopicTable(type);
-    initSelectedTopicChart(type);
+// Create FontAwesome marker element
+function createMarkerElement() {
+    const el = document.createElement('div');
+    el.innerHTML = '<i class="fas fa-plane" style="font-size: 24px; color: #ff00ff;"></i>';
+    return el;
 }
 
-// Log data with timestamps
-function logData(type, msg) {
-    const timestamp = Date.now();
-    for (const [field, value] of Object.entries(msg)) {
-        if (field === 'name') continue;
-        if (!loggedData[type][field]) {
-            loggedData[type][field] = [];
+// Update inspector content
+function updateInspector() {
+    const inspectorContent = document.getElementById('inspector-content');
+    inspectorContent.innerHTML = '';
+    for (const [type, data] of Object.entries(telemetryData)) {
+        const table = document.createElement('table');
+        table.className = 'telemetry-table';
+        table.innerHTML = `<thead><tr><th>Field</th><th>Value</th></tr></thead><tbody></tbody>`;
+        const tbody = table.querySelector('tbody');
+        for (const [field, value] of Object.entries(data)) {
+            if (field === 'name') continue;
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${field}</td><td>${value}</td>`;
+            tbody.appendChild(row);
         }
-        loggedData[type][field].push({ time: timestamp, value });
-        if (loggedData[type][field].length > 100) {
-            loggedData[type][field].shift();
-        }
+        const section = document.createElement('div');
+        section.className = 'telemetry-container';
+        section.innerHTML = `<h3>${type}</h3>`;
+        section.appendChild(table);
+        inspectorContent.appendChild(section);
     }
 }
 
-// Update the table for the selected topic
-function updateSelectedTopicTable(type) {
-    selectedTelemetryTable.innerHTML = `
-        <table id="${type}-table">
-            <thead><tr><th>Field</th><th>Value</th><th>Action</th></tr></thead>
-            <tbody></tbody>
-        </table>
-    `;
-    const tbody = selectedTelemetryTable.querySelector('tbody');
-    for (const [field, value] of Object.entries(telemetryData[type])) {
-        if (field === 'name') continue;
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${field}</td>
-            <td id="${type}-${field}-value">${value}</td>
-            <td>
-                <button onclick="toggleChart('${type}', '${field}')">Plot</button>
-                <button onclick="showValue('${type}', '${field}')">Value</button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    }
-}
-
-// Initialize chart for the selected topic
-function initSelectedTopicChart(type) {
-    // Destroy the previous chart if it exists
-    if (selectedTopicChart) {
-        selectedTopicChart.destroy();
-        selectedTopicChart = null;
-    }
-
-    const ctx = document.getElementById('selected-topic-chart').getContext('2d');
-    // Clear the canvas context to avoid reuse issues
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    selectedTopicChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: []
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'second',
-                        displayFormats: {
-                            second: 'HH:mm:ss'
-                        }
-                    },
-                    title: { display: true, text: 'Time' }
-                },
-                y: { title: { display: true, text: 'Value' } }
-            },
-            plugins: { legend: { display: true } },
-            maintainAspectRatio: false
-        }
-    });
-    updateSelectedTopicChart(type);
-}
-
-// Update chart with logged data
-function updateSelectedTopicChart(type) {
-    if (!selectedTopicChart) return;
-    selectedTopicChart.data.datasets.forEach(dataset => {
-        const field = dataset.label;
-        dataset.data = loggedData[type][field].map(d => ({ x: d.time, y: d.value }));
-    });
-    selectedTopicChart.update();
-}
-
-// Toggle plotting for a subtopic
-function toggleChart(type, field) {
-    if (!selectedTopicChart) return;
-    const chart = selectedTopicChart;
-    const existing = chart.data.datasets.find(d => d.label === field);
-    if (existing) {
-        chart.data.datasets = chart.data.datasets.filter(d => d.label !== field);
-    } else {
-        chart.data.datasets.push({
-            label: field,
-            data: loggedData[type][field].map(d => ({ x: d.time, y: d.value })),
-            borderColor: '#0ff',
-            backgroundColor: 'rgba(0, 255, 255, 0.2)',
-            fill: false
-        });
-    }
-    chart.update();
-}
-
-// Show real-time value
-function showValue(type, field) {
-    alert(`Real-time value for ${type}.${field}: ${telemetryData[type][field]}`);
-    console.log(`${type}.${field}: ${telemetryData[type][field]}`);
-}
+// Toggle inspector
+document.getElementById('analyze-btn').addEventListener('click', () => {
+    const overlay = document.getElementById('inspector-overlay');
+    overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
+});
+document.getElementById('close-inspector').addEventListener('click', () => {
+    document.getElementById('inspector-overlay').style.display = 'none';
+});
 
 // Initialize port selection
 populatePorts();
