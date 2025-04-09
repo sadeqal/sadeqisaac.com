@@ -2,28 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pixhawk Telemetry</title>
+    <title>Pixhawk Telemetry - sadeqisaac.com</title>
     <link rel="stylesheet" href="../styles/common.css">
     <link rel="stylesheet" href="../styles/mavlink.css">
-    <!-- Mapbox GL JS -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-    <!-- FontAwesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Mapbox Map -->
     <div id="map"></div>
-
     <div class="background">
-        <!-- MAVLink Telemetry Controls -->
         <div id="mavlink-content">
             <h1>MavLink Online Telemetry</h1>
             <div class="controls">
-                <select id="portSelect">
-                    <option value="">Select Port</option>
-                </select>
+                <select id="portSelect"></select>
                 <select id="baudSelect">
                     <option value="57600">57600 (Default)</option>
                     <option value="115200">115200</option>
@@ -34,22 +27,18 @@
             </div>
             <div id="status">Disconnected</div>
             <div id="data-rate">Data Rate: 0 B/s</div>
+            <div class="controls">
+                <button class="command-btn" onclick="sendTakeoff()">Takeoff</button>
+                <button class="command-btn" onclick="sendLand()">Land</button>
+            </div>
         </div>
-
-        <!-- Analyze Button -->
-        <button id="analyze-btn" title="Analyze Telemetry">
-            <i class="fas fa-chart-line"></i>
-        </button>
-
-        <!-- Inspector Overlay -->
+        <button id="analyze-btn" title="Analyze Telemetry"><i class="fas fa-chart-line"></i></button>
         <div id="inspector-overlay">
             <h2>MAVLink Inspector</h2>
             <button id="close-inspector">Close</button>
             <div id="inspector-content"></div>
         </div>
     </div>
-
-    <!-- Scripts -->
     <script src="../scripts/mavlink.js"></script>
 </body>
 </html>
