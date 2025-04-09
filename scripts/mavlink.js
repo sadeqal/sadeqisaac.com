@@ -1,4 +1,3 @@
-// Enhanced MAVLink Parser
 class MAVLinkParser {
     constructor() {
         this.buffer = new Uint8Array(0);
@@ -6,15 +5,13 @@ class MAVLinkParser {
         this.callbacks = {};
         this.MAVLINK_MSG_ID_HEARTBEAT = 0;
         this.MAVLINK_MSG_ID_SYS_STATUS = 1;
-        this.MAVLINK_MSG_ID_PARAM_VALUE = 22;
-        this.MAVLINK_MSG_ID_GPS_RAW_INT = 24;
-        this.MAVLINK_MSG_ID_ATTITUDE = 30;
-        this.MAVLINK_MSG_ID_VFR_HUD = 74;
-        this.MAVLINK_MSG_ID_RAW_IMU = 27;
-        this.MAVLINK_MSG_ID_SCALED_IMU = 26;
-        this.MAVLINK_MSG_ID_AHRS = 163;
+        this.MAVLINK_MSG_ID_RC_CHANNELS = 65;
         this.MAVLINK_MSG_ID_LOCAL_POSITION_NED = 32;
         this.MAVLINK_MSG_ID_GLOBAL_POSITION_INT = 33;
+        this.MAVLINK_MSG_ID_VFR_HUD = 74;
+        this.MAVLINK_MSG_ID_ATTITUDE = 30;
+        this.MAVLINK_MSG_ID_COMMAND_LONG = 76;
+        this.MAVLINK_MSG_ID_REQUEST_DATA_STREAM = 66;
     }
 
     on(messageType, callback) {
@@ -28,18 +25,20 @@ class MAVLinkParser {
         this.buffer = newBuffer;
 
         while (this.buffer.length >= 8) {
-            if (this.buffer[0] === 0xFE || this.buffer[0] === 0xFD) {
+            if (this.buffer[0] === 0xFD) {
                 const len = this.buffer[1];
-                const totalLen = (this.buffer[0] === 0xFE ? 8 : 12) + len;
+                const totalLen = 12 + len;
                 if (this.buffer.length < totalLen) break;
 
-                const msgId = this.buffer[5];
-                let msg = this.parseMessage(msgId, this.buffer.slice(0, totalLen));
+                const msgId = (this.buffer[6] << 16) | (this.buffer[5] << 8) | this.buffer[4];
+                const payload = this.buffer.slice(10, 10 + len);
+                console.log(`Packet: ID=${msgId}, Len=${len}, Payload=[${Array.from(payload)}]`);
+                const msg = this.parseMessage(msgId, payload);
                 if (msg) {
                     this.messages[msg.name] = msg;
-                    if (this.callbacks[msg.name]) {
-                        this.callbacks[msg.name](msg);
-                    }
+                    if (this.callbacks[msg.name]) this.callbacks[msg.name](msg);
+                } else {
+                    console.log(`Unknown ID ${msgId}, payload:`, Array.from(payload));
                 }
                 this.buffer = this.buffer.slice(totalLen);
             } else {
@@ -49,203 +48,166 @@ class MAVLinkParser {
     }
 
     parseMessage(msgId, data) {
+        const offset = 65929; // Adjust if logs suggest otherwise
+        const adjustedId = msgId - offset;
         try {
-            if (msgId === this.MAVLINK_MSG_ID_HEARTBEAT) {
+            if (adjustedId === this.MAVLINK_MSG_ID_HEARTBEAT) {
                 return {
                     name: 'HEARTBEAT',
-                    type: data[6],
-                    autopilot: data[7],
-                    base_mode: data[8],
-                    custom_mode: data[9],
-                    system_status: data[10]
+                    type: new DataView(data.buffer, data.byteOffset, 1).getUint8(0),
+                    system_status: new DataView(data.buffer, data.byteOffset + 1, 1).getUint8(0),
                 };
-            } else if (msgId === this.MAVLINK_MSG_ID_SYS_STATUS) {
-                if (data.length < 23) return null;
+            } else if (adjustedId === this.MAVLINK_MSG_ID_SYS_STATUS) {
                 return {
                     name: 'SYS_STATUS',
-                    battery_voltage: new DataView(data.buffer, data.byteOffset + 18, 2).getUint16(0, true) / 1000.0,
-                    battery_current: new DataView(data.buffer, data.byteOffset + 20, 2).getInt16(0, true) / 100.0,
-                    battery_remaining: data[22]
+                    voltage_battery: new DataView(data.buffer, data.byteOffset, 4).getUint32(0, true) / 1000,
+                    current_battery: new DataView(data.buffer, data.byteOffset + 4, 4).getInt32(0, true) / 100,
+                    battery_remaining: new DataView(data.buffer, data.byteOffset + 8, 1).getInt8(0),
                 };
-            } else if (msgId === this.MAVLINK_MSG_ID_PARAM_VALUE) {
-                if (data.length < 31) return null;
-                const paramId = String.fromCharCode.apply(null, data.slice(6, 22)).trim();
+            } else if (adjustedId === this.MAVLINK_MSG_ID_RC_CHANNELS) {
                 return {
-                    name: 'PARAM_VALUE',
-                    param_id: paramId,
-                    param_value: new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true),
-                    param_type: data[26],
-                    param_count: new DataView(data.buffer, data.byteOffset + 27, 2).getUint16(0, true),
-                    param_index: new DataView(data.buffer, data.byteOffset + 29, 2).getUint16(0, true)
+                    name: 'RC_CHANNELS',
+                    chan1_raw: new DataView(data.buffer, data.byteOffset, 2).getUint16(0, true),
+                    chan2_raw: new DataView(data.buffer, data.byteOffset + 2, 2).getUint16(0, true),
+                    chan3_raw: new DataView(data.buffer, data.byteOffset + 4, 2).getUint16(0, true),
+                    chan4_raw: new DataView(data.buffer, data.byteOffset + 6, 2).getUint16(0, true),
                 };
-            } else if (msgId === this.MAVLINK_MSG_ID_GPS_RAW_INT) {
-                if (data.length < 32) return null;
-                return {
-                    name: 'GPS_RAW_INT',
-                    fix_type: data[14],
-                    lat: new DataView(data.buffer, data.byteOffset + 15, 4).getInt32(0, true) / 1e7,
-                    lon: new DataView(data.buffer, data.byteOffset + 19, 4).getInt32(0, true) / 1e7,
-                    alt: new DataView(data.buffer, data.byteOffset + 23, 4).getInt32(0, true) / 1000,
-                    satellites_visible: data[31]
-                };
-            } else if (msgId === this.MAVLINK_MSG_ID_ATTITUDE) {
-                if (data.length < 28) return null;
-                return {
-                    name: 'ATTITUDE',
-                    roll: new DataView(data.buffer, data.byteOffset + 6, 4).getFloat32(0, true),
-                    pitch: new DataView(data.buffer, data.byteOffset + 10, 4).getFloat32(0, true),
-                    yaw: new DataView(data.buffer, data.byteOffset + 14, 4).getFloat32(0, true)
-                };
-            } else if (msgId === this.MAVLINK_MSG_ID_VFR_HUD) {
-                if (data.length < 26) return null;
-                return {
-                    name: 'VFR_HUD',
-                    airspeed: new DataView(data.buffer, data.byteOffset + 6, 4).getFloat32(0, true),
-                    groundspeed: new DataView(data.buffer, data.byteOffset + 10, 4).getFloat32(0, true),
-                    heading: new DataView(data.buffer, data.byteOffset + 14, 2).getInt16(0, true),
-                    throttle: new DataView(data.buffer, data.byteOffset + 16, 2).getUint16(0, true),
-                    alt: new DataView(data.buffer, data.byteOffset + 18, 4).getFloat32(0, true),
-                    climb: new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true)
-                };
-            } else if (msgId === this.MAVLINK_MSG_ID_RAW_IMU) {
-                if (data.length < 28) return null;
-                return {
-                    name: 'RAW_IMU',
-                    xacc: new DataView(data.buffer, data.byteOffset + 6, 2).getInt16(0, true),
-                    yacc: new DataView(data.buffer, data.byteOffset + 8, 2).getInt16(0, true),
-                    zacc: new DataView(data.buffer, data.byteOffset + 10, 2).getInt16(0, true),
-                    xgyro: new DataView(data.buffer, data.byteOffset + 12, 2).getInt16(0, true),
-                    ygyro: new DataView(data.buffer, data.byteOffset + 14, 2).getInt16(0, true),
-                    zgyro: new DataView(data.buffer, data.byteOffset + 16, 2).getInt16(0, true),
-                    xmag: new DataView(data.buffer, data.byteOffset + 18, 2).getInt16(0, true),
-                    ymag: new DataView(data.buffer, data.byteOffset + 20, 2).getInt16(0, true),
-                    zmag: new DataView(data.buffer, data.byteOffset + 22, 2).getInt16(0, true)
-                };
-            } else if (msgId === this.MAVLINK_MSG_ID_SCALED_IMU) {
-                if (data.length < 26) return null;
-                return {
-                    name: 'SCALED_IMU',
-                    xacc: new DataView(data.buffer, data.byteOffset + 6, 2).getInt16(0, true),
-                    yacc: new DataView(data.buffer, data.byteOffset + 8, 2).getInt16(0, true),
-                    zacc: new DataView(data.buffer, data.byteOffset + 10, 2).getInt16(0, true),
-                    xgyro: new DataView(data.buffer, data.byteOffset + 12, 2).getInt16(0, true),
-                    ygyro: new DataView(data.buffer, data.byteOffset + 14, 2).getInt16(0, true),
-                    zgyro: new DataView(data.buffer, data.byteOffset + 16, 2).getInt16(0, true),
-                    xmag: new DataView(data.buffer, data.byteOffset + 18, 2).getInt16(0, true),
-                    ymag: new DataView(data.buffer, data.byteOffset + 20, 2).getInt16(0, true),
-                    zmag: new DataView(data.buffer, data.byteOffset + 22, 2).getInt16(0, true)
-                };
-            } else if (msgId === this.MAVLINK_MSG_ID_AHRS) {
-                if (data.length < 34) return null;
-                return {
-                    name: 'AHRS',
-                    omegaIx: new DataView(data.buffer, data.byteOffset + 6, 4).getFloat32(0, true),
-                    omegaIy: new DataView(data.buffer, data.byteOffset + 10, 4).getFloat32(0, true),
-                    omegaIz: new DataView(data.buffer, data.byteOffset + 14, 4).getFloat32(0, true),
-                    accel_weight: new DataView(data.buffer, data.byteOffset + 18, 4).getFloat32(0, true),
-                    renorm_val: new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true),
-                    error_rp: new DataView(data.buffer, data.byteOffset + 26, 4).getFloat32(0, true),
-                    error_yaw: new DataView(data.buffer, data.byteOffset + 30, 4).getFloat32(0, true)
-                };
-            } else if (msgId === this.MAVLINK_MSG_ID_LOCAL_POSITION_NED) {
-                if (data.length < 34) return null;
+            } else if (adjustedId === this.MAVLINK_MSG_ID_LOCAL_POSITION_NED) {
                 return {
                     name: 'LOCAL_POSITION_NED',
-                    x: new DataView(data.buffer, data.byteOffset + 6, 4).getFloat32(0, true),
-                    y: new DataView(data.buffer, data.byteOffset + 10, 4).getFloat32(0, true),
-                    z: new DataView(data.buffer, data.byteOffset + 14, 4).getFloat32(0, true),
-                    vx: new DataView(data.buffer, data.byteOffset + 18, 4).getFloat32(0, true),
-                    vy: new DataView(data.buffer, data.byteOffset + 22, 4).getFloat32(0, true),
-                    vz: new DataView(data.buffer, data.byteOffset + 26, 4).getFloat32(0, true)
+                    x: new DataView(data.buffer, data.byteOffset, 4).getFloat32(0, true),
+                    y: new DataView(data.buffer, data.byteOffset + 4, 4).getFloat32(0, true),
+                    z: new DataView(data.buffer, data.byteOffset + 8, 4).getFloat32(0, true),
                 };
-            } else if (msgId === this.MAVLINK_MSG_ID_GLOBAL_POSITION_INT) {
-                if (data.length < 34) return null;
+            } else if (adjustedId === this.MAVLINK_MSG_ID_GLOBAL_POSITION_INT) {
+                const latRaw = new DataView(data.buffer, data.byteOffset, 4).getInt32(0, true);
+                const lonRaw = new DataView(data.buffer, data.byteOffset + 4, 4).getInt32(0, true);
+                const lat = latRaw / 1e7;
+                const lon = lonRaw / 1e7;
+                console.log(`GLOBAL_POSITION_INT: raw lat=${latRaw}, lon=${lonRaw}, adjusted lat=${lat}, lon=${lon}`);
                 return {
                     name: 'GLOBAL_POSITION_INT',
-                    lat: new DataView(data.buffer, data.byteOffset + 6, 4).getInt32(0, true) / 1e7,
-                    lon: new DataView(data.buffer, data.byteOffset + 10, 4).getInt32(0, true) / 1e7,
-                    alt: new DataView(data.buffer, data.byteOffset + 14, 4).getInt32(0, true) / 1000,
-                    relative_alt: new DataView(data.buffer, data.byteOffset + 18, 4).getInt32(0, true) / 1000,
-                    vx: new DataView(data.buffer, data.byteOffset + 22, 2).getInt16(0, true) / 100,
-                    vy: new DataView(data.buffer, data.byteOffset + 24, 2).getInt16(0, true) / 100,
-                    vz: new DataView(data.buffer, data.byteOffset + 26, 2).getInt16(0, true) / 100,
-                    hdg: new DataView(data.buffer, data.byteOffset + 28, 2).getUint16(0, true) / 100
+                    lat: lat,
+                    lon: lon,
+                    alt: new DataView(data.buffer, data.byteOffset + 8, 4).getInt32(0, true) / 1000,
+                };
+            } else if (adjustedId === this.MAVLINK_MSG_ID_VFR_HUD) {
+                return {
+                    name: 'VFR_HUD',
+                    airspeed: new DataView(data.buffer, data.byteOffset, 4).getFloat32(0, true),
+                    groundspeed: new DataView(data.buffer, data.byteOffset + 4, 4).getFloat32(0, true),
+                    heading: new DataView(data.buffer, data.byteOffset + 8, 2).getInt16(0, true),
+                    alt: new DataView(data.buffer, data.byteOffset + 12, 4).getFloat32(0, true),
+                };
+            } else if (adjustedId === this.MAVLINK_MSG_ID_ATTITUDE) {
+                const rollRad = new DataView(data.buffer, data.byteOffset, 4).getFloat32(0, true);
+                const pitchRad = new DataView(data.buffer, data.byteOffset + 4, 4).getFloat32(0, true);
+                const yawRad = new DataView(data.buffer, data.byteOffset + 8, 4).getFloat32(0, true);
+                const toDeg = (rad) => (rad * 180 / Math.PI).toFixed(2); // Convert to degrees
+                console.log(`ATTITUDE: raw roll=${rollRad}, pitch=${pitchRad}, yaw=${yawRad}, deg roll=${toDeg(rollRad)}, pitch=${toDeg(pitchRad)}, yaw=${toDeg(yawRad)}`);
+                return {
+                    name: 'ATTITUDE',
+                    roll: toDeg(rollRad),
+                    pitch: toDeg(pitchRad),
+                    yaw: toDeg(yawRad),
                 };
             }
+            return null;
         } catch (error) {
-            console.error(`Error parsing message ID ${msgId}: ${error.message}`);
+            console.error(`Error parsing ID ${msgId}: ${error.message}`);
             return null;
         }
-        return null;
     }
 
     pack(msgId, fields) {
-        if (msgId === 21) { // PARAM_REQUEST_LIST
-            const buffer = new Uint8Array(8);
-            buffer[0] = 0xFE;
-            buffer[1] = 2;
+        const offset = 65929;
+        const adjustedId = msgId + offset;
+        if (msgId === this.MAVLINK_MSG_ID_COMMAND_LONG) {
+            const buffer = new Uint8Array(45);
+            buffer[0] = 0xFD;
+            buffer[1] = 33;
             buffer[2] = 0;
-            buffer[3] = 1;
-            buffer[4] = 1;
-            buffer[5] = 21;
-            buffer[6] = fields.target_system;
-            buffer[7] = fields.target_component;
+            buffer[3] = 0;
+            buffer[4] = adjustedId & 0xFF;
+            buffer[5] = (adjustedId >> 8) & 0xFF;
+            buffer[6] = (adjustedId >> 16) & 0xFF;
+            buffer[7] = 0;
+            buffer[8] = 1;
+            buffer[9] = 1;
+            const view = new DataView(buffer.buffer);
+            view.setFloat32(10, fields.param1 || 0, true);
+            view.setFloat32(14, fields.param2 || 0, true);
+            view.setFloat32(18, fields.param3 || 0, true);
+            view.setFloat32(22, fields.param4 || 0, true);
+            view.setFloat32(26, fields.param5 || 0, true);
+            view.setFloat32(30, fields.param6 || 0, true);
+            view.setFloat32(34, fields.param7 || 0, true);
+            view.setUint8(38, fields.target_system);
+            view.setUint8(39, fields.target_component);
+            view.setUint16(40, fields.command, true);
+            view.setUint8(42, fields.confirmation || 0);
+            const crc = this.calculateCRC(buffer.slice(0, 43));
+            buffer[43] = crc & 0xFF;
+            buffer[44] = (crc >> 8) & 0xFF;
             return buffer;
-        } else if (msgId === 20) { // REQUEST_DATA_STREAM
-            const buffer = new Uint8Array(12);
-            buffer[0] = 0xFE;
+        } else if (msgId === this.MAVLINK_MSG_ID_REQUEST_DATA_STREAM) {
+            const buffer = new Uint8Array(18); // 10 header + 6 payload + 2 checksum
+            buffer[0] = 0xFD;
             buffer[1] = 6;
             buffer[2] = 0;
-            buffer[3] = 1;
-            buffer[4] = 1;
-            buffer[5] = 20;
-            buffer[6] = fields.target_system;
-            buffer[7] = fields.target_component;
-            buffer[8] = fields.req_stream_id;
-            buffer[9] = fields.req_message_rate & 0xFF;
-            buffer[10] = (fields.req_message_rate >> 8) & 0xFF;
-            buffer[11] = fields.start_stop;
+            buffer[3] = 0;
+            buffer[4] = adjustedId & 0xFF;
+            buffer[5] = (adjustedId >> 8) & 0xFF;
+            buffer[6] = (adjustedId >> 16) & 0xFF;
+            buffer[7] = 0;
+            buffer[8] = 1;
+            buffer[9] = 1;
+            const view = new DataView(buffer.buffer);
+            view.setUint8(10, fields.target_system);
+            view.setUint8(11, fields.target_component);
+            view.setUint8(12, fields.req_stream_id);
+            view.setUint16(13, fields.req_message_rate, true);
+            view.setUint8(15, fields.start_stop);
+            const crc = this.calculateCRC(buffer.slice(0, 16));
+            buffer[16] = crc & 0xFF;
+            buffer[17] = (crc >> 8) & 0xFF;
             return buffer;
         }
         return null;
     }
+
+    calculateCRC(data) {
+        let crc = 0xFFFF;
+        for (let i = 1; i < data.length; i++) {
+            crc ^= data[i];
+            for (let j = 0; j < 8; j++) {
+                crc = (crc & 1) ? (crc >> 1) ^ 0xA001 : crc >> 1;
+            }
+        }
+        return crc;
+    }
 }
 
-let port, reader;
-const statusDiv = document.getElementById('status');
-const dataRateDiv = document.getElementById('data-rate');
+let port, reader, writer;
 const mavlinkParser = new MAVLinkParser();
-let byteCount = 0;
-let lastUpdate = Date.now();
 const telemetryData = {};
 let map, marker;
 
-// Initialize Mapbox
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2FkZXFhbCIsImEiOiJjbDA0ZHBpZDgwYjl5M2Rud2wweDVhaWVtIn0.PSwxdzBQL8ZCh0kYT4UA9g';
 map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/sadeqal/cl04dpzyq000v15o3nlcnpn9d',
-    center: [-3.70405, 40.41662], // Madid, Sol
+    center: [-3.70405, 40.41662],
     zoom: 16,
-    pitch: 75, // 3D tilt
+    pitch: 75,
     bearing: 0,
-    interactive: true
 });
 
-// Add terrain
 map.on('load', () => {
-    map.addSource('mapbox-dem', {
-        'type': 'raster-dem',
-        'url': 'mapbox://mapbox.terrain-rgb'
-    });
-    map.addLayer({
-        'id': 'terrain',
-        'type': 'hillshade',
-        'source': 'mapbox-dem'
-    });
+    map.addSource('mapbox-dem', { 'type': 'raster-dem', 'url': 'mapbox://mapbox.terrain-rgb' });
+    map.addLayer({ 'id': 'terrain', 'type': 'hillshade', 'source': 'mapbox-dem' });
 });
 
-// Populate available ports
 async function populatePorts() {
     const ports = await navigator.serial.getPorts();
     const portSelect = document.getElementById('portSelect');
@@ -258,7 +220,6 @@ async function populatePorts() {
     });
 }
 
-// Connect to serial port
 async function connectSerial() {
     const portSelect = document.getElementById('portSelect');
     const baudSelect = document.getElementById('baudSelect');
@@ -273,152 +234,135 @@ async function connectSerial() {
         }
         await port.open({ baudRate });
         reader = port.readable.getReader();
-        statusDiv.textContent = 'Connected to Pixhawk!';
-        statusDiv.style.color = '#0f0';
+        writer = port.writable.getWriter();
+        document.getElementById('status').textContent = 'Connected to Pixhawk!';
+        document.getElementById('status').style.color = '#0f0';
+        requestDataStreams(); // Request faster updates
         readData();
-        requestParams();
-        requestDataStreams();
     } catch (error) {
-        statusDiv.textContent = `Error: ${error.message}`;
-        statusDiv.style.color = '#f00';
+        document.getElementById('status').textContent = `Error: ${error.message}`;
+        document.getElementById('status').style.color = '#f00';
     }
 }
 
-// Disconnect from serial port
 async function disconnectSerial() {
     if (reader) {
         await reader.cancel();
         reader.releaseLock();
     }
+    if (writer) {
+        writer.releaseLock();
+    }
     if (port) {
         await port.close();
         port = null;
-        statusDiv.textContent = 'Disconnected';
-        statusDiv.style.color = '#0ff';
-        byteCount = 0;
-        dataRateDiv.textContent = 'Data Rate: 0 B/s';
+        document.getElementById('status').textContent = 'Disconnected';
+        document.getElementById('status').style.color = '#0ff';
         if (marker) marker.remove();
     }
 }
 
-// Read and parse MAVLink data
 async function readData() {
+    let byteCount = 0;
+    let lastUpdate = Date.now();
     while (true) {
         try {
             const { value, done } = await reader.read();
             if (done) {
-                statusDiv.textContent = 'Stream closed';
+                document.getElementById('status').textContent = 'Stream closed';
                 reader.releaseLock();
                 break;
             }
             byteCount += value.length;
-            updateDataRate();
+            const now = Date.now();
+            if (now - lastUpdate >= 1000) {
+                const rate = byteCount / ((now - lastUpdate) / 1000);
+                document.getElementById('data-rate').textContent = `Data Rate: ${rate.toFixed(2)} B/s`;
+                byteCount = 0;
+                lastUpdate = now;
+            }
             mavlinkParser.parseBuffer(value);
         } catch (error) {
-            statusDiv.textContent = `Read error: ${error.message}`;
-            statusDiv.style.color = '#f00';
+            document.getElementById('status').textContent = `Read error: ${error.message}`;
+            document.getElementById('status').style.color = '#f00';
             break;
         }
     }
 }
 
-// Update data rate display
-function updateDataRate() {
-    const now = Date.now();
-    const deltaTime = (now - lastUpdate) / 1000;
-    if (deltaTime >= 1) {
-        const rate = byteCount / deltaTime;
-        dataRateDiv.textContent = `Data Rate: ${rate.toFixed(2)} B/s`;
-        byteCount = 0;
-        lastUpdate = now;
+async function sendCommand(command, params = {}) {
+    const msg = mavlinkParser.pack(mavlinkParser.MAVLINK_MSG_ID_COMMAND_LONG, {
+        target_system: 1,
+        target_component: 1,
+        command,
+        confirmation: 0,
+        ...params
+    });
+    if (writer && msg) {
+        await writer.write(msg);
     }
 }
 
-// Request all parameters from Pixhawk
-function requestParams() {
-    const msg = mavlinkParser.pack(21, { target_system: 1, target_component: 1 });
-    if (port && port.writable) {
-        const writer = port.writable.getWriter();
-        writer.write(msg);
-        writer.releaseLock();
-    }
-}
-
-// Request data streams
-function requestDataStreams() {
+async function requestDataStreams() {
     const streams = [
-        { req_stream_id: 0, req_message_rate: 10, start_stop: 1 }, //വ
-
-        { req_stream_id: 1, req_message_rate: 10, start_stop: 1 }, // RAW_SENSORS
-        { req_stream_id: 2, req_message_rate: 10, start_stop: 1 }, // EXTENDED_STATUS (SYS_STATUS)
-        { req_stream_id: 3, req_message_rate: 10, start_stop: 1 }, // RC_CHANNELS
-        { req_stream_id: 4, req_message_rate: 10, start_stop: 1 }, // RAW_CONTROLLER
-        { req_stream_id: 6, req_message_rate: 10, start_stop: 1 }, // ATTITUDE
-        { req_stream_id: 10, req_message_rate: 10, start_stop: 1 }, // RC_CHANNELS
-        { req_stream_id: 12, req_message_rate: 10, start_stop: 1 }  // POSITION (GPS)
+        { req_stream_id: 6, req_message_rate: 10, start_stop: 1 }, // ATTITUDE (stream 6 in Ardupilot)
+        { req_stream_id: 2, req_message_rate: 10, start_stop: 1 }, // SYS_STATUS
+        { req_stream_id: 12, req_message_rate: 10, start_stop: 1 } // POSITION (GPS)
     ];
-    streams.forEach(stream => {
-        const msg = mavlinkParser.pack(20, {
+    for (const stream of streams) {
+        const msg = mavlinkParser.pack(mavlinkParser.MAVLINK_MSG_ID_REQUEST_DATA_STREAM, {
             target_system: 1,
             target_component: 1,
             req_stream_id: stream.req_stream_id,
             req_message_rate: stream.req_message_rate,
             start_stop: stream.start_stop
         });
-        if (port && port.writable) {
-            const writer = port.writable.getWriter();
-            writer.write(msg);
-            writer.releaseLock();
+        if (writer && msg) {
+            await writer.write(msg);
         }
-    });
+    }
 }
 
-// Handle incoming MAVLink messages
+function sendTakeoff() {
+    sendCommand(22, { param1: 10.0 });
+}
+
+function sendLand() {
+    sendCommand(21);
+}
+
 mavlinkParser.on('HEARTBEAT', (msg) => handleMessage('HEARTBEAT', msg));
 mavlinkParser.on('SYS_STATUS', (msg) => handleMessage('SYS_STATUS', msg));
-mavlinkParser.on('PARAM_VALUE', (msg) => handleMessage('PARAM_VALUE', msg));
-mavlinkParser.on('GPS_RAW_INT', (msg) => handleMessage('GPS_RAW_INT', msg));
-mavlinkParser.on('ATTITUDE', (msg) => handleMessage('ATTITUDE', msg));
-mavlinkParser.on('VFR_HUD', (msg) => handleMessage('VFR_HUD', msg));
-mavlinkParser.on('RAW_IMU', (msg) => handleMessage('RAW_IMU', msg));
-mavlinkParser.on('SCALED_IMU', (msg) => handleMessage('SCALED_IMU', msg));
-mavlinkParser.on('AHRS', (msg) => handleMessage('AHRS', msg));
+mavlinkParser.on('RC_CHANNELS', (msg) => handleMessage('RC_CHANNELS', msg));
 mavlinkParser.on('LOCAL_POSITION_NED', (msg) => handleMessage('LOCAL_POSITION_NED', msg));
 mavlinkParser.on('GLOBAL_POSITION_INT', (msg) => handleMessage('GLOBAL_POSITION_INT', msg));
+mavlinkParser.on('VFR_HUD', (msg) => handleMessage('VFR_HUD', msg));
+mavlinkParser.on('ATTITUDE', (msg) => handleMessage('ATTITUDE', msg));
 
 function handleMessage(type, msg) {
     Object.assign(telemetryData[type] = telemetryData[type] || {}, msg);
     updateInspector();
-    if (type === 'GPS_RAW_INT' || type === 'GLOBAL_POSITION_INT') {
+    if (type === 'GLOBAL_POSITION_INT') {
         updateMapMarker(msg);
     }
 }
 
-// Update map marker
 function updateMapMarker(msg) {
     const lat = msg.lat;
     const lon = msg.lon;
-    const alt = msg.alt || msg.relative_alt || 0;
-
-    if (lat && lon) {
+    if (lat && lon && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
         if (marker) marker.remove();
-        marker = new mapboxgl.Marker({
-            element: createMarkerElement()
-        })
+        const el = document.createElement('div');
+        el.innerHTML = '<i class="fas fa-plane" style="font-size: 24px; color: #ff00ff;"></i>';
+        marker = new mapboxgl.Marker({ element: el })
             .setLngLat([lon, lat])
             .addTo(map);
         map.flyTo({ center: [lon, lat], zoom: 16, speed: 0.8 });
+    } else {
+        console.error(`Invalid coordinates: lat=${lat}, lon=${lon}`);
     }
 }
 
-// Create FontAwesome marker element
-function createMarkerElement() {
-    const el = document.createElement('div');
-    el.innerHTML = '<i class="fas fa-plane" style="font-size: 24px; color: #ff00ff;"></i>';
-    return el;
-}
-
-// Update inspector content
 function updateInspector() {
     const inspectorContent = document.getElementById('inspector-content');
     inspectorContent.innerHTML = '';
@@ -434,14 +378,12 @@ function updateInspector() {
             tbody.appendChild(row);
         }
         const section = document.createElement('div');
-        section.className = 'telemetry-container';
         section.innerHTML = `<h3>${type}</h3>`;
         section.appendChild(table);
         inspectorContent.appendChild(section);
     }
 }
 
-// Toggle inspector
 document.getElementById('analyze-btn').addEventListener('click', () => {
     const overlay = document.getElementById('inspector-overlay');
     overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
@@ -450,7 +392,6 @@ document.getElementById('close-inspector').addEventListener('click', () => {
     document.getElementById('inspector-overlay').style.display = 'none';
 });
 
-// Initialize port selection
 populatePorts();
 navigator.serial.addEventListener('connect', populatePorts);
 navigator.serial.addEventListener('disconnect', populatePorts);
