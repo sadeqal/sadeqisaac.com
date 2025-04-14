@@ -369,3 +369,165 @@ button:hover {
         transform: translateY(0);
     }
 }
+
+/****************************** MOBILE STYLES ******************************/
+@media screen and (max-width: 768px) {
+    /* Menu Drawer */
+    .toolbar-items {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 15%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .toolbar-items.active {
+        display: flex;
+        transform: translateX(0);
+    }
+
+    .toolbar-item {
+        margin: 15px -5px 15px 0;
+        opacity: 0;
+        transform: translateX(-20px);
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .toolbar-item img {
+        width: 40px;
+        height: 40px;
+        margin-right: 15px;
+    }
+
+    .toolbar-item a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: white;
+        font-size: 1.2rem;
+        font-family: Arial, sans-serif;
+    }
+
+    .toolbar-item.active {
+        animation: slideIn 0.5s forwards;
+    }
+
+    @keyframes slideIn {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Hide tooltips on mobile */
+    .toolbar-item:hover::after {
+        display: none;
+    }
+
+    /* Close Button */
+    .close-toolbar {
+        position: fixed;
+        top: 20px;
+        left: 40px;
+        font-size: 2rem;
+        color: rgb(240, 9, 9);
+        background: none;
+        border: none;
+        cursor: pointer;
+        z-index: 2000;
+    }
+
+    /* Contact Drawer */
+    .contact-menu {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 75%;
+        width: 20%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .contact-menu.show {
+        display: flex;
+        transform: translateX(0);
+    }
+
+    .contact-item {
+        margin: 15px 10px 15px 0;
+        opacity: 0;
+        transform: translateX(20px);
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .contact-item img {
+        width: 40px;
+        height: 40px;
+        margin-right: 15px;
+    }
+
+    .contact-item a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: white;
+        font-size: 1.2rem;
+        font-family: Arial, sans-serif;
+    }
+
+    .contact-item.show {
+        animation: slideInRight 0.5s forwards;
+    }
+
+    @keyframes slideInRight {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Hide tooltips on mobile */
+    .contact-item:hover::after {
+        display: none;
+    }
+
+    /* Hide triangle on mobile */
+    #toggle-triangle {
+        display: none;
+    }
+
+    /* Close Button */
+    .close-contact {
+        position: fixed;
+        bottom: 60px;
+        right: 65px;
+        font-size: 2rem;
+        color: rgb(240, 9, 9);
+        background: none;
+        border: none;
+        cursor: pointer;
+        z-index: 2000;
+    }
+
+    .close-button:hover {
+        color: #8B00FF;
+    }
+}
