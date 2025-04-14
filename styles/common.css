@@ -184,7 +184,7 @@ button:hover {
     position: fixed;
     top: 10px;
     left: calc(40%);
-    width: 200px;
+    width: 250px;
     height: 15px;
     transform: translateX(-50%);
     background: linear-gradient(145deg, rgba(50, 50, 50, 0.8), rgba(10, 10, 10, 0.9));
