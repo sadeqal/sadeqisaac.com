@@ -164,7 +164,7 @@
 .content h4 {
     margin: 5px 0;
     font-weight: normal;
-    color: #ddd;
+    color: #0ae25d;
 }
 
 .content ul {
@@ -196,8 +196,33 @@
     border-radius: 5px;
 }
 
-/* Responsive: Stack elements in smaller screens */
-@media (max-width: 900px) {
+/* education details list */
+.education-details {
+    padding: 0;
+    margin: 0;
+}
+
+/* list item in education details */
+.education-details li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #e0e0e0;
+}
+
+/* Ensure links are consistent and professional */
+.content a {
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.content a:hover {
+    color: #ffcc00;
+}
+
+/****************************** MOBILE VIEW ******************************/
+@media (max-width: 768px) {
     .cv-skills-container {
         flex-direction: column;
         align-items: center;
@@ -205,5 +230,28 @@
 
     .cv-skill {
         width: 90%;
+    }
+
+    .timeline-item,
+    .education-item {
+        position: relative; /* Allow absolute positioning of date */
+        display: flex;
+        align-items: flex-start; /* Align items to the top */
+    }
+
+    .date {
+        width: 150px;
+        height: 10px;
+        transform: rotate(90deg);
+        transform-origin: left top;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .content {
+        margin-left: 20px;
+        width: calc(100% - 10px);
+        box-sizing: border-box;
     }
 }
