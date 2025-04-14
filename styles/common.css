@@ -183,8 +183,8 @@ button:hover {
     justify-content: center;
     position: fixed;
     top: 10px;
-    left: calc(39%);
-    width: 300px;
+    left: calc(40%);
+    width: 200px;
     height: 15px;
     transform: translateX(-50%);
     background: linear-gradient(145deg, rgba(50, 50, 50, 0.8), rgba(10, 10, 10, 0.9));
@@ -307,7 +307,7 @@ button:hover {
     justify-content: center;
     position: fixed;
     bottom: 5px;
-    left: calc(36%);
+    left: calc(33%);
     transform: translateX(-50%);
     background: linear-gradient(145deg, rgba(50, 50, 50, 0.8), rgba(10, 10, 10, 0.9));
     border: 2px solid rgba(255, 255, 255, 0.1);
@@ -368,6 +368,14 @@ button:hover {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.close-toolbar {
+    display: none;
+}
+
+.close-contact {
+    display: none;
 }
 
 /****************************** MOBILE STYLES ******************************/
@@ -436,6 +444,7 @@ button:hover {
 
     /* Close Button */
     .close-toolbar {
+        display: flex;
         position: fixed;
         top: 20px;
         left: 40px;
@@ -516,6 +525,7 @@ button:hover {
 
     /* Close Button */
     .close-contact {
+        display: flex;
         position: fixed;
         bottom: 60px;
         right: 65px;
