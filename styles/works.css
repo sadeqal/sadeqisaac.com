@@ -18,12 +18,11 @@
 }
 
 .works-title {
-    font-size: 2.5rem;
+    font-size: 2.5em;
     color: #e0e0e0;
+    text-align: center;
     margin-bottom: 40px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(139, 0, 255, 0.8);
+    text-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
 }
 
 .works-title i {
@@ -69,11 +68,13 @@
     font-size: 1rem;
     line-height: 1.5;
     margin-bottom: 15px;
+    text-align: left;
 }
 
 .work-description ul {
     list-style: none;
     padding: 0;
+    text-align: left;
 }
 
 .work-description li {
@@ -130,7 +131,7 @@
     color: #fff;
 }
 
-/****************************** RESPONSIVE DESIGN ******************************/
+/****************************** MOBILE VIEW ******************************/
 @media (max-width: 768px) {
     .works-grid {
         grid-template-columns: 1fr;
