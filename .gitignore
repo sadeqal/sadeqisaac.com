@@ -3,7 +3,9 @@ scripts/mailProfs.py
 scripts/gmailProfs.py
 scripts/mailProfsCredentials.json
 scripts/gmailProfsCredentials.json
-scripts/analyticsCredentials.json
+scripts/token.json
+scripts/analyticsCredential.js
+scripts/analyticsTracking.js
 
 # Ignore Python cache
 __pycache__/
