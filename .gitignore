@@ -4,7 +4,7 @@ scripts/gmailProfs.py
 scripts/mailProfsCredentials.json
 scripts/gmailProfsCredentials.json
 scripts/token.json
-scripts/analyticsCredential.js
+scripts/analyticsCredentials.js
 scripts/analyticsTracking.js
 
 # Ignore Python cache
