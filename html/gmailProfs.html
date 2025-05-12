@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailing Professors</title>
+    <link rel="stylesheet" href="../styles/gmailProfs.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📩 Mailing Professors</h1>
+
+        <h2>Add Recipient</h2>
+        <div class="input-group">
+            <input type="text" id="profName" placeholder="Professor Name (e.g., Dr. John Smith)">
+            <input type="email" id="profEmail" placeholder="Email (e.g., john.smith@example.com)">
+            <button onclick="addRecipient()">+</button>
+        </div>
+
+        <h2>Recipients</h2>
+        <div id="profList">
+            <!-- Recipients will be dynamically added here -->
+        </div>
+
+        <button id="sendEmailsBtn" class="btn-send" onclick="sendEmails()">📨 Send Emails</button>
+    </div>
+
+    <!-- 📌 Popup Modal for Email Preview -->
+    <div id="emailPreviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePreview()">×</span>
+            <h2>📜 Email Preview</h2>
+            <p id="emailPreviewText"></p>
+        </div>
+    </div>
+
+    <script src="../scripts/gmailProfs.js"></script>
+</body>
+</html>

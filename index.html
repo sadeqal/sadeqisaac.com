@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="styles/common.css">
     <link rel="stylesheet" href="styles/index.css">
     <link rel="icon" type="image/png" href="icons/pageIcon.png">
+    <!-- Google Analytics Tracking Code -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QQRS3Z845D"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QQRS3Z845D');
+        console.log("Analytics loaded");
+    </script>
 </head>
 <body>
     <div class="background">
@@ -136,7 +145,14 @@
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
             </div>
-        </section>        
+        </section>
+        
+        <!-- Analytics Display -->
+        <div class="analytics-display">
+            <p><span class="label">Now:</span> <span id="current-viewers">0</span></p>
+            <p><span class="label">L. Mo.:</span> <span id="last-month">0</span></p>
+            <p><span class="label">Total:</span> <span id="total-visits">0</span></p>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -260,5 +276,9 @@
             retina_detect: true,
         });
     </script>
+
+    <!-- Google API Client Library -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="scripts/analyticsCredentials.js"></script>
 </body>
 </html>

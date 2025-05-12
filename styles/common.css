@@ -123,6 +123,31 @@ body::-webkit-scrollbar-track {
     }
 }
 
+/****************************** GOOGLE ANALYTICS ******************************/
+.analytics-display {
+    position: fixed;
+    margin: 5px;
+    padding: 5px;
+    width: 50px;
+    bottom: 5px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+    border: 2px solid #4ecca265; /* Matches your particles.js line color */
+    border-radius: 5px;
+    text-align: left;
+    color: #fff;
+    box-shadow: 0 0 5px #8B00FF, 0 0 5px #4D008E;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.analytics-display p {
+    font-size: 0.7rem;
+    margin: 2px 0;
+    opacity: 0.9;
+    color: #b794d3;
+}
+
 /****************************** GENERAL BUTTON ******************************/
 button {
     padding: 10px 20px;
@@ -137,7 +162,7 @@ button {
 }
   
 button:hover {
-    background-color: #8B00FF;;
+    background-color: #8B00FF;
 }
 
 /****************************** TOOLBAR ******************************/
