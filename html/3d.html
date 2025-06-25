@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-height, initial-scale=1.0">
+    <title>SR-71 Dynamic Background</title>
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, #1a1a1a 0%, #2c2c2c 100%);
+            height: 2000px; /* Extended height to allow scrolling */
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            z-index: 1;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h1>WELCOME</h1>
+        <p>What are you looking for? Websites, Installations, XR / VR / AI, Multplayer Game...</p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        // Load SR-71 model
+        let sr71;
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            'sr71.glb', // Temporary path assuming file is in the same directory
+            (gltf) => {
+                sr71 = gltf.scene;
+                // Rotate the model to align its longitudinal axis with the y-axis (vertical)
+                sr71.rotation.x = Math.PI / 2;
+                // Scale the model to fit nicely in the scene
+                sr71.scale.set(0.05, 0.05, 0.05); // Adjust scale as needed
+                // Apply crystalline material
+                sr71.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material = new THREE.MeshPhysicalMaterial({
+                            color: 0x88ccff, // Light blue tint
+                            transparent: true,
+                            opacity: 0.6,
+                            metalness: 0.9,
+                            roughness: 0.1,
+                            clearcoat: 1.0,
+                            clearcoatRoughness: 0.1,
+                            envMapIntensity: 1.5,
+                        });
+                    }
+                });
+                scene.add(sr71);
+            },
+            undefined,
+            (error) => {
+                console.error('Error loading SR-71 model:', error);
+            }
+        );
+
+        // Camera position
+        camera.position.z = 20;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Scroll-based rotation
+        window.addEventListener('scroll', () => {
+            if (sr71) {
+                // Rotate around y-axis (longitudinal axis) based on scroll position
+                sr71.rotation.y = window.scrollY * 0.005; // Adjust rotation speed by changing the multiplier
+            }
+        });
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>

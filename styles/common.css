@@ -6,7 +6,7 @@ body, html {
     width: 100%;
     height: 100%;
     background-color: #0c0c0c; /* Pure black with subtle hints of gray */
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Space Mono', monospace; /* Switch to Space Mono */
     color: #e0e0e0; /* Soft white for text */
     scroll-behavior: smooth;
     position: relative;

@@ -17,10 +17,19 @@
 
 /****************************** WELCOME ANIMATIONS ******************************/
 /* Hero Title with Galactic Flow Effect */
+@font-face {
+  font-family: 'Krvx';
+  src: url('../fonts/Karvx.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .hero-title {
-    font-size: 4rem;
+    font-size: 3.5rem;
     font-weight: 700;
+    font-family: 'Krvx', sans-serif;
     background: linear-gradient(90deg, #e3b1ff, #94dfff, #f5e6b3, #e3b1ff);
+    background-clip: inherit;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: gradientShift 6s infinite ease-in-out;
@@ -123,7 +132,7 @@
   margin-top: 20px;
 }
 
-#nameInput, button {
+#nameInput, #jobInput, button {
     display: none;
     margin-top: 20px;
     padding: 10px;
@@ -181,5 +190,13 @@ button:hover {
 
 /****************************** Mobile vertical mode adjustments ******************************/
 @media (max-width: 600px) and (orientation: portrait) {
-
+    .hero-subtitle, .message {
+        font-size: 1.3rem;
+        color: white;
+        margin: 0 auto;
+        text-align: center;
+        padding: 10px;
+        z-index: 1;
+        width: 80%;
+    }
 }

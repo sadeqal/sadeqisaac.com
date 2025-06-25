@@ -111,7 +111,7 @@ async function startConversation() {
     const jobInput = document.getElementById("jobInput");
     const jobSubmitBtn = document.getElementById("jobSubmitBtn");
 
-    typeSentence(animatedTextId, "Hey stranger, seems you are not here by accident...", 50, async function () {
+    typeSentence(animatedTextId, "Hey friend, seems you are not here by accident...", 50, async function () {
         const doubleEyes = document.querySelector(".double-eyes");
         const nameRequest = document.getElementById("nameRequest");
         const nameInput = document.getElementById("nameInput");
@@ -131,11 +131,44 @@ async function startConversation() {
                 nameRequest.style.display = "none";
                 const location = await fetchUserLocation();
                 const country = location.country || "Mystery Land";
-                const language = country === "Spain" ? "Spanish" : "English"; // Simplified for the example
+                // Language mapping based on country
+                const languageMap = {
+                    "Spain": "Spanish",
+                    "Mexico": "Spanish",
+                    "Argentina": "Spanish",
+                    "Colombia": "Spanish",
+                    "France": "French",
+                    "Belgium": "French",
+                    "Canada": "French", // Québec region
+                    "Germany": "German",
+                    "Austria": "German",
+                    "Switzerland": "German", // German-speaking regions
+                    "Italy": "Italian",
+                    "Brazil": "Portuguese",
+                    "Portugal": "Portuguese",
+                    "Russia": "Russian",
+                    "Poland": "Polish",
+                    "Japan": "Japanese",
+                    "China": "Chinese",
+                    "India": "Hindi", // One of many languages, simplified
+                    "United States": "English",
+                    "United Kingdom": "English",
+                    "Australia": "English",
+                    "Ireland": "English",
+                    "South Africa": "English", // One of many languages
+                    "Netherlands": "Dutch",
+                    "Sweden": "Swedish",
+                    "Norway": "Norwegian",
+                    "Denmark": "Danish",
+                    "default": "Galactic" // Fallback for unknown countries
+                };
+
+                // Determine language based on country, with a fun fallback
+                const language = languageMap[country] || languageMap["default"];
 
                 typeSentence(
                     animatedTextId,
-                    `Ahh, I knew your name was ${name}, and seems you live in ${country}.<br>So you wish I could talk in ${language}!`,
+                    `Ahh, I knew your name was ${name}, and seems you live in ${country}.<br>So you wish I could talk in ${language}! But no, bro :)`,
                     50,
                     function () {
                         typeSentence(
