@@ -34,9 +34,9 @@
         document.body.appendChild(renderer.domElement);
 
         // Add stronger lighting
-        const ambientLight = new THREE.AmbientLight(0xff007f, 0.8); // Increased intensity
+        const ambientLight = new THREE.AmbientLight(0x050a30, 0.8); // Increased intensity
         scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0x05445e, 1.5, 1000); // Brighter light, larger range
+        const pointLight = new THREE.PointLight(0x000c66, 1.5, 1000); // Brighter light, larger range
         pointLight.position.set(10, 10, 10);
         scene.add(pointLight);
         const directionalLight = new THREE.DirectionalLight(0x75e6da, 1.0); // Stronger directional light
