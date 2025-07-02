@@ -1,4 +1,24 @@
 /****************************** BACKGROUND ******************************/
+/* Ensure html and body take full height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+}
+
+/* Update the .background div to cover the full scrollable area */
+.background {
+    position: fixed; /* Use fixed to cover the entire viewport and stay in place */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    min-height: 100%; /* Ensure it covers content beyond viewport */
+    z-index: 0;
+    background: radial-gradient(circle, rgba(220, 224, 224, 0.123) 40%, #4ceb9b69 100%);
+}
+
 #particles-js {
     position: absolute;
     top: 0;
@@ -125,6 +145,21 @@
 #messageContainer {
     text-align: left;
     z-index: 1;
+    max-height: 300px; /* Adjust based on desired visible area */
+    overflow-y: auto; /* Enable vertical scrolling within the container */
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+#messageContainer::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari */
+}
+
+/* Ensure child divs don't cause layout issues */
+#messageContainer > div {
+    word-wrap: break-word; /* Prevent text from overflowing */
 }
 
 #nameRequest,
@@ -198,5 +233,11 @@ button:hover {
         padding: 10px;
         z-index: 1;
         width: 80%;
+    }
+
+    #messageContainer {
+        max-height: 200px; /* Smaller height for mobile */
+        font-size: 1rem;
+        padding: 5px;
     }
 }

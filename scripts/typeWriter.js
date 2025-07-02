@@ -12,7 +12,7 @@ function typeSentence(targetId, sentence, speed, callback) {
             i++;
             setTimeout(type, speed);
         } else if (callback) {
-            setTimeout(callback, 500); // Optional callback after typing
+            setTimeout(callback, 300); // Optional callback after typing
         }
     }
 
