@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ardupilot BARO Altitude Plot</title>
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script> <!-- Updated to v2.30.0 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #upload-section, #plot-container, #debug-info {
+            margin: 20px;
+        }
+        #plot-container {
+            width: 80%;
+        }
+        #debug-info {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="upload-section">
+        <h2>Upload Ardupilot .bin Log File</h2>
+        <input type="file" id="logFileInput" accept=".bin">
+    </div>
+    <div id="plot-container"></div>
+    <div id="debug-info"></div>
+
+    <script>
+        document.getElementById('logFileInput').addEventListener('change', handleFileUpload);
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const arrayBuffer = e.target.result;
+                processBinLog(arrayBuffer);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processBinLog(arrayBuffer) {
+            const data = {
+                time: [],
+                baroAlt: []
+            };
+
+            const bytes = new Uint8Array(arrayBuffer);
+            let offset = 0;
+            let firstTime = null;
+            let baroCount = 0;
+            const messageIds = new Set();
+
+            while (offset < bytes.length - 10) {
+                if (bytes[offset] === 0xFE || bytes[offset] === 0xFD) {
+                    const isV2 = bytes[offset] === 0xFD;
+                    const len = bytes[offset + 1];
+                    if (offset + (isV2 ? 12 : 8) + len > bytes.length) break;
+                    const msgId = isV2 ? 
+                        (bytes[offset + 5] | (bytes[offset + 6] << 8) | (bytes[offset + 7] << 16)) :
+                        bytes[offset + 5];
+                    messageIds.add(msgId);
+                    const payloadStart = isV2 ? offset + 10 : offset + 6;
+                    const payload = bytes.subarray(payloadStart, payloadStart + len);
+
+                    // Try multiple potential BARO message IDs (137 is standard, 140 for some versions)
+                    if (msgId === 137 || msgId === 140) {
+                        const timeBootMs = (payload[0] | (payload[1] << 8) | (payload[2] << 16) | (payload[3] << 24));
+                        const altBytes = payload.subarray(4, 8);
+                        const altView = new DataView(altBytes.buffer, altBytes.byteOffset, altBytes.byteLength);
+                        const alt = altView.getFloat32(0, true);
+
+                        if (!isNaN(timeBootMs) && !isNaN(alt)) {
+                            if (firstTime === null) firstTime = timeBootMs;
+                            const time = (timeBootMs - firstTime) / 1000;
+                            data.time.push(time);
+                            data.baroAlt.push(alt);
+                            baroCount++;
+                        }
+                    }
+
+                    offset += isV2 ? (len + 12) : (len + 8); // Move to next message
+                } else {
+                    offset++;
+                }
+            }
+
+            document.getElementById('debug-info').textContent = 
+                `Parsed ${baroCount} BARO messages. Detected Message IDs: ${Array.from(messageIds).join(', ')}`;
+            generatePlot(data);
+        }
+
+        function generatePlot(data) {
+            const plotContainer = document.getElementById('plot-container');
+            plotContainer.innerHTML = '';
+
+            Plotly.newPlot(plotContainer, [{
+                x: data.time,
+                y: data.baroAlt,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'BARO[0].Alt',
+                line: { color: 'blue' }
+            }], {
+                title: 'Barometric Altitude Over Time',
+                xaxis: { title: 'Time (s)' },
+                yaxis: { title: 'Altitude (m)', range: [-5, 120] },
+                margin: { t: 50 }
+            });
+        }
+    </script>
+</body>
+</html>
