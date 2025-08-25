@@ -5,6 +5,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* Prevent horizontal scrollbar */
+    background: radial-gradient(circle, rgba(220, 224, 224, 0.123) 40%, #4ceb9b69 100%);
 }
 
 /* Update the .background div to cover the full scrollable area */
@@ -16,7 +17,6 @@ html, body {
     height: 100vh; /* Full viewport height */
     min-height: 100%; /* Ensure it covers content beyond viewport */
     z-index: 0;
-    background: radial-gradient(circle, rgba(220, 224, 224, 0.123) 40%, #4ceb9b69 100%);
 }
 
 #particles-js {
@@ -231,7 +231,6 @@ footer {
     width: 100%;
     text-align: center;
     padding: 10px;
-    background: #f9f9f9; /* optional, helps it stand out */
     color: #555;
     font-size: 14px;
 }
