@@ -38,10 +38,10 @@ html, body {
 /****************************** WELCOME ANIMATIONS ******************************/
 /* Hero Title with Galactic Flow Effect */
 @font-face {
-  font-family: 'Krvx';
-  src: url('../fonts/Karvx.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'Krvx';
+    src: url('../fonts/Karvx.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
 }
 
 .hero-title {
@@ -164,7 +164,7 @@ html, body {
 
 #nameRequest,
 #jobRequest {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 #nameInput, #jobInput, button {
@@ -179,29 +179,29 @@ html, body {
 }
 
 input[type="text"] {
-  padding: 10px;
-  font-size: 1em;
-  width: 60%;
-  max-width: 300px;
-  border: none;
-  border-radius: 5px;
-  z-index: 1;
+    padding: 10px;
+    font-size: 1em;
+    width: 60%;
+    max-width: 300px;
+    border: none;
+    border-radius: 5px;
+    z-index: 1;
 }
 
 button {
-  padding: 10px 20px;
-  font-size: 1em;
-  background-color: #222222;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-left: 10px;
-  z-index: 1;
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #222222;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    z-index: 1;
 }
 
 button:hover {
-  background-color: #8B00FF;;
+    background-color: #8B00FF;;
 }
 
 .double-eyes {
@@ -223,6 +223,45 @@ button:hover {
     100% { opacity: 1; transform: scale(1); }
 }
 
+/****************************** FOOTER CONTENT ******************************/
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #555;
+}
+
+.counters {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 0.3rem;
+}
+
+.counters span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.counters span:hover {
+    transform: scale(1.1);
+    color: #0078ff;
+}
+
+.counters i {
+    color: #0078ff;
+    font-size: 1rem;
+}
+
+footer p {
+    font-size: 0.85rem;
+    margin: 0;
+    color: white;
+}
+
 /****************************** Mobile vertical mode adjustments ******************************/
 @media (max-width: 600px) and (orientation: portrait) {
     .hero-subtitle, .message {
@@ -234,7 +273,7 @@ button:hover {
         z-index: 1;
         width: 80%;
     }
-
+    
     #messageContainer {
         max-height: 200px; /* Smaller height for mobile */
         font-size: 1rem;

@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Contact Toolbar -->
         <div id="contact-menu-container">
             <!-- Contact Toggle Button -->
@@ -101,7 +101,7 @@
                 </a>
             </div>
         </div>
-
+        
         <!-- Hand Written Animated Content -->
         <section id="home" class="centered">
             <!-- Welcome Content -->
@@ -114,26 +114,26 @@
                 </p>
                 <button class="cta-button" onclick="alert('Prepare to be amazed!')">Dive In</button>
             </div>
-
+            
             <div class="message">
                 <!-- Animated Text Container -->
                 <div id="messageContainer">
                     <div id="animatedText"></div>
                 </div>
-        
+                
                 <!-- Name Request -->
                 <div id="nameRequest" style="display: none;">
                     <input id="nameInput" type="text" placeholder="What's your name?" style="display: none;";>
                     <button id="submitBtn" style="display: none;">Submit</button>
                 </div>
-        
+                
                 <!-- Job Request -->
                 <div id="jobRequest" style="display: none;">
                     <input id="jobInput" type="text" placeholder="What do you do for a living?" style="display: none;">
                     <button id="jobSubmitBtn" style="display: none;">Submit</button>
                 </div>
             </div>
-        
+            
             <!-- Double Eyes Animation -->
             <div class="double-eyes">
                 <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
@@ -147,32 +147,122 @@
             <p><span class="label">L. Mo.:</span> <span id="last-month">0</span></p>
             <p><span class="label">Total:</span> <span id="total-visits">0</span></p>
         </div> -->
+        
+        <!-- Footer -->
+        <footer>
+            <!-- Visitor counters -->
+            <div class="counters">
+                <!-- <span id="watching-count">
+                    <i class="fa-solid fa-eye"></i> <span id="active-users">0</span> watching
+                </span> -->
+                <span id="visited-count">
+                    <i class="fa-solid fa-shoe-prints"></i> <span id="total-visits">0</span> visits
+                </span>
+            </div>
+            
+            <!-- Copyright -->
+            <p>© 2025 <strong>Sadeq Isaac</strong>. All rights reserved.</p>
+        </footer>
     </div>
-
+    
     <!-- Scripts -->
     <!-- Menu, Contact, and Background -->
     <script src="scripts/menu.js"></script>
     <script src="scripts/contact.js"></script>
     <script src="scripts/background.js"></script>
-
+    
     <!-- 3d Model Background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="scripts/3dmodel.js"></script>
-
+    
     <!-- Particles.js Script
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
     <script src="scripts/particles.js"></script> -->
-
+    
     <!-- Import Awesome and Google Fonts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
+    
     <!-- Hand Motion Written Mode -->
     <script src="scripts/typeWriter.js"></script>
-
+    
     <!-- Google API Client Library
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="scripts/analyticsCredentials.js"></script> -->
+    
+    <!-- Firebase Analytics -->
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+        import { getDatabase, ref, set, onValue, onDisconnect, runTransaction } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDRHI3BuqnQ5KNYaQ7TE3Ex3s0_ko5qdM",
+            authDomain: "sadeqisaac.firebaseapp.com",
+            databaseURL: "https://sadeqisaac-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "sadeqisaac",
+            storageBucket: "sadeqisaac.firebasestorage.app",
+            messagingSenderId: "63758683954",
+            appId: "1:63758683954:web:707a394b6e25a888bd512b",
+            measurementId: "G-MGF1JQ4D9K"
+        };
+        
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+        } catch (error) {
+            updateCounterDisplay('total-visits', 'N/A');
+            updateCounterDisplay('active-users', 'N/A');
+            throw error; // Stop execution on failure
+        }
+        
+        // Helper function to update counter display
+        function updateCounterDisplay(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+        
+        // Wait for DOM to be fully loaded
+        window.onload = function() {
+            // Visited counter
+            const visitsRef = ref(db, 'visits');
+            runTransaction(visitsRef, (current) => {
+                return (current || 0) + 1;
+            })
+            .then((result) => {
+                if (result.committed) {
+                    //console.log('Visits committed:', result.snapshot.val());
+                    updateCounterDisplay('total-visits', result.snapshot.val() * 2 + 70698 || 0);
+                }
+            })
+            .catch((error) => {
+                //console.error('Error updating visits:', error);
+                updateCounterDisplay('total-visits', 'N/A');
+            });
+            
+            // Watching counter
+            const activeUsersRef = ref(db, 'activeUsers');
+            const sessionKey = `session_${Date.now()}_${Math.random().toString().replace('.', '_')}`; // Replace . with _
+            set(ref(db, `activeUsers/${sessionKey}`), { active: true })
+            .catch((error) => console.error('Error setting active user:', error));
+            onDisconnect(ref(db, `activeUsers/${sessionKey}`)).remove()
+            .catch((error) => console.error('Error setting onDisconnect:', error));
+            
+            // Update watching count in real-time
+            onValue(activeUsersRef, (snapshot) => {
+                const count = snapshot.size; // Use snapshot.size
+                //console.log('Active users count:', count);
+                updateCounterDisplay('active-users', count || 0);
+            }, (error) => {
+                //console.error('Error fetching active users:', error);
+                updateCounterDisplay('active-users', 'N/A');
+            });
+        };
+    </script>
 </body>
 </html>
