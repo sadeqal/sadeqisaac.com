@@ -233,6 +233,7 @@ footer {
     padding: 10px;
     color: #555;
     font-size: 14px;
+    background: radial-gradient(circle, rgba(220, 224, 224, 0.123) 40%, #4ceb9b69 100%);
 }
 
 .counters {
