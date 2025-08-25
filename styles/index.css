@@ -225,10 +225,15 @@ button:hover {
 
 /****************************** FOOTER CONTENT ******************************/
 footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     text-align: center;
-    margin: 5px;
-    bottom: 5px;
+    padding: 10px;
+    background: #f9f9f9; /* optional, helps it stand out */
     color: #555;
+    font-size: 14px;
 }
 
 .counters {
