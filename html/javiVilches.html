@@ -108,5 +108,15 @@
     </footer>
 
     <script src="../scripts/javiVilches.js"></script>
+
+    <script>
+        (function() {
+            var pass = prompt("Introduce la contraseña:");
+            if (pass !== "585858") {
+                alert("Contraseña incorrecta. Acceso denegado.");
+                window.location.href = "about:blank"; // kicks them out
+            }
+        })();
+    </script>
 </body>
 </html>
