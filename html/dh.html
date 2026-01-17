@@ -1,0 +1,370 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Hopper - Servicios de Asesoría en I+D | Automatización de Drones</title>
+    <meta name="description" content="Servicios de Asesoría en I+D para automatización de drones. Soluciones BVLOS, captura inteligente de datos y misiones autónomas. Líderes en innovación drone.">
+    <link rel="icon" href="../images/DH/logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/dh.css">
+</head>
+
+<body>
+    <!-- Cookie Consent -->
+    <div id="cookie-prompt" class="cookie-prompt">
+        <div class="cookie-content">
+            <div class="cookie-header">
+                <i class="fas fa-cookie-bite"></i>
+                <h3>Política de Cookies</h3>
+            </div>
+            <p>Utilizamos cookies para mejorar tu experiencia y analizar el uso de nuestra web. Puedes configurar tus preferencias:</p>
+            
+            <div class="cookie-options">
+                <label class="cookie-option">
+                    <input type="radio" name="cookies" value="essential" checked>
+                    <span class="checkmark"></span>
+                    <span class="label-text">Esenciales</span>
+                </label>
+                <label class="cookie-option">
+                    <input type="radio" name="cookies" value="analytics">
+                    <span class="checkmark"></span>
+                    <span class="label-text">Analíticas</span>
+                </label>
+                <label class="cookie-option">
+                    <input type="radio" name="cookies" value="all">
+                    <span class="checkmark"></span>
+                    <span class="label-text">Todas las cookies</span>
+                </label>
+            </div>
+            
+            <div class="cookie-actions">
+                <button id="accept-cookies" class="btn btn-primary">Aceptar</button>
+                <button id="reject-cookies" class="btn btn-secondary">Rechazar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Background Canvas -->
+    <div class="background-canvas">
+        <div class="debris-field" aria-hidden="true"></div>
+    </div>
+    
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo-container">
+                <img src="../images/DH/logo.png" alt="Drone Hopper Logo" class="logo">
+                <span class="company-name">DRONE HOPPER</span>
+            </div>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="#home" class="nav-link active"><i class="fas fa-home"></i><span>Inicio</span></a></li>
+                    <li><a href="#services" class="nav-link"><i class="fas fa-cogs"></i><span>Servicios</span></a></li>
+                    <li><a href="#platforms" class="nav-link"><i class="fas fa-tablet-alt"></i><span>Plataformas</span></a></li>
+                    <li><a href="#contact" class="nav-link"><i class="fas fa-envelope"></i><span>Contacto</span></a></li>
+                </ul>
+            </nav>
+            
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Abrir menú">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            <span class="gradient-text">Revolucionando</span><br>
+                            la Automatización de Drones
+                        </h1>
+                        <h2 class="hero-subtitle">Servicios de Asesoría en I+D</h2>
+                        <p class="hero-description">
+                            Tu socio estratégico en innovación tecnológica para misiones autónomas de drones.
+                            Líderes en soluciones BVLOS y automatización inteligente.
+                        </p>
+                        <div class="hero-cta">
+                            <a href="#services" class="btn btn-primary btn-large">Descubre Nuestras Soluciones</a>
+                            <a href="#contact" class="btn btn-secondary btn-large">Contactar Especialistas</a>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-visual">
+                        <div class="command-center">
+                            <div class="monitor-left">
+                                <img src="../images/DH/agro.jpg" alt="Helicóptero UAV" class="monitor-image">
+                            </div>
+                            <div class="monitor-right">
+                                <img src="../images/DH/quad.jpg" alt="Quadcóptero" class="monitor-image">
+                            </div>
+                            <div class="monitor-down">
+                                <img src="../images/DH/heli.webp" alt="Centro de Control Móvil" class="van-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Services Section -->
+        <section id="services" class="services-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Nuestros Servicios I+D</h2>
+                    <p class="section-subtitle">Solucionamos problemas reales de la industria con tecnología de vanguardia</p>
+                </div>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <img src="../images/DH/bvlos.png" alt="BVLOS">
+                        </div>
+                        <h3>Vuelos BVLOS</h3>
+                        <p>Cumplimiento normativo europeo para operaciones más allá de la línea de visión. Vuela sin límites geográficos con máxima seguridad.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <img src="../images/DH/underControl.png" alt="Captura Inteligente">
+                        </div>
+                        <h3>Captura Inteligente de Datos</h3>
+                        <p>Sensores avanzados y algoritmos de IA para obtener datos de máxima calidad. Transforma información en valor empresarial.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <img src="../images/DH/automation.png" alt="Automatización">
+                        </div>
+                        <h3>Vuelos 100% Autónomos</h3>
+                        <p>Algoritmos propietarios que eliminan la necesidad de pilotos expertos. Enfócate en análisis, no en control manual.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <img src="../images/DH/services.png" alt="Optimización Económica">
+                        </div>
+                        <h3>Optimización de Costes</h3>
+                        <p>Soluciones especializadas que reducen CAPEX y OPEX. ROI inmediato sin personal altamente especializado.</p>
+                    </div>
+                </div>
+                
+                <div class="section-video">
+                    <video controls class="demo-video">
+                        <source src="videos/uas-solution-demo.mp4" type="video/mp4">
+                        Tu navegador no soporta video HTML5.
+                    </video>
+                </div>
+            </div>
+        </section>
+        
+        <!-- R&D Programs + Publications Section -->
+        <section id="platforms" class="rnd-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Programas I+D y Capacidades BVLOS</h2>
+                    <p class="section-subtitle">
+                        Ingeniería aplicada a UAS de gran tamaño y UAV de ala rotatoria: autonomía, certificación, seguridad y explotación operativa.
+                    </p>
+                </div>
+                
+                <!-- Big platforms / programs -->
+                <div class="rnd-grid">
+                    <article class="rnd-card">
+                        <div class="rnd-badge">UAS Gran Tamaño</div>
+                        <h3>UAS de Media y Gran Carga</h3>
+                        <p>
+                            Arquitecturas de misión, planificación BVLOS, gestión de energía y performance. Integración de payloads EO/IR, LiDAR,
+                            multispectral e ISR con canalización de datos industrial.
+                        </p>
+                        <ul class="rnd-list">
+                            <li>Diseño de concepto y requisitos (CONOPS / OPS)</li>
+                            <li>Autonomía asistida y supervisión remota</li>
+                            <li>Telemetría resiliente + redundancia</li>
+                            <li>Planificación de misión y geocercas</li>
+                        </ul>
+                    </article>
+                    
+                    <article class="rnd-card">
+                        <div class="rnd-badge">Ala Rotatoria</div>
+                        <h3>Helicópteros UAV para Operación Crítica</h3>
+                        <p>
+                            Automatización de despegue/aterrizaje, control de trayectoria robusto y degradación segura. Enfoque en estabilidad,
+                            tolerancia a fallos y operación en condiciones variables.
+                        </p>
+                        <ul class="rnd-list">
+                            <li>Autopiloto + lógica de seguridad (failsafe)</li>
+                            <li>Fusión sensorial y navegación robusta</li>
+                            <li>Procedimientos automáticos y emergencias</li>
+                            <li>Validación por escenarios y vuelos de prueba</li>
+                        </ul>
+                    </article>
+                    
+                    <article class="rnd-card">
+                        <div class="rnd-badge">Autonomía</div>
+                        <h3>Vuelos 100% Autónomos y Misión Inteligente</h3>
+                        <p>
+                            Automatización completa del ciclo de misión: preparación, ejecución, detección de incidencias y retorno seguro.
+                            Inteligencia a bordo + analítica en tierra.
+                        </p>
+                        <ul class="rnd-list">
+                            <li>Detección de anomalías y diagnóstico</li>
+                            <li>Gestión de contingencias (RTL / loiter / reroute)</li>
+                            <li>Optimización de rutas y tiempos</li>
+                            <li>Integración con operaciones (SOP)</li>
+                        </ul>
+                    </article>
+                    
+                    <article class="rnd-card">
+                        <div class="rnd-badge">Cumplimiento</div>
+                        <h3>BVLOS y Marco Normativo</h3>
+                        <p>
+                            Acompañamiento técnico para operación BVLOS: evaluación de riesgos, mitigaciones, documentación y trazabilidad de requisitos.
+                            Orientado a proyectos reales y auditorables.
+                        </p>
+                        <ul class="rnd-list">
+                            <li>Análisis de riesgos y mitigaciones</li>
+                            <li>Planes de prueba y evidencias</li>
+                            <li>Procedimientos operativos y formación</li>
+                            <li>Seguridad de comunicaciones y datos</li>
+                        </ul>
+                    </article>
+                </div>
+                
+                <!-- Publications / articles -->
+                <div class="pubs">
+                    <div class="pubs-head">
+                        <h3 class="pubs-title">Publicaciones Técnicas y Artículos</h3>
+                        <p class="pubs-subtitle">
+                            Material técnico para clientes, partners e inversión: notas de ingeniería, resúmenes ejecutivos y resultados de validación.
+                        </p>
+                    </div>
+                    
+                    <div class="pubs-grid">
+                        <a class="pub-card" href="#" aria-label="Abrir publicación: Seguridad en misiones BVLOS">
+                            <div class="pub-meta">
+                                <span class="pub-type">Whitepaper</span>
+                                <span class="pub-date">2026</span>
+                            </div>
+                            <h4>Seguridad en Misiones BVLOS</h4>
+                            <p>Metodologías de mitigación, redundancia, procedimientos y criterios de degradación segura en operación real.</p>
+                        </a>
+                        
+                        <a class="pub-card" href="#" aria-label="Abrir publicación: Autonomía y supervisión remota">
+                            <div class="pub-meta">
+                                <span class="pub-type">Technical Note</span>
+                                <span class="pub-date">2026</span>
+                            </div>
+                            <h4>Autonomía y Supervisión Remota</h4>
+                            <p>Diseño de arquitectura: control de misión, telemetría, supervisión humana y eventos críticos.</p>
+                        </a>
+                        
+                        <a class="pub-card" href="#" aria-label="Abrir publicación: Captura inteligente de datos">
+                            <div class="pub-meta">
+                                <span class="pub-type">Article</span>
+                                <span class="pub-date">2026</span>
+                            </div>
+                            <h4>Captura Inteligente de Datos</h4>
+                            <p>Buenas prácticas en calidad de datos (EO/IR/LiDAR), calibración y pipeline de procesado para resultados consistentes.</p>
+                        </a>
+                        
+                        <a class="pub-card" href="#" aria-label="Abrir publicación: Validación y ensayos de vuelo">
+                            <div class="pub-meta">
+                                <span class="pub-type">Report</span>
+                                <span class="pub-date">2026</span>
+                            </div>
+                            <h4>Validación y Ensayos de Vuelo</h4>
+                            <p>Estrategia de validación por escenarios, pruebas incrementales y evidencias reproducibles para stakeholders.</p>
+                        </a>
+                    </div>
+                    
+                    <div class="pubs-cta">
+                        <a href="#contact" class="btn btn-secondary">Solicitar dossier técnico</a>
+                        <a href="#contact" class="btn btn-primary">Hablar con un ingeniero</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Contacta con Nuestros Expertos</h2>
+                    <p class="section-subtitle">Asesoría personalizada en I+D para tu proyecto drone</p>
+                </div>
+                
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h3>Servicios de Asesoría en I+D</h3>
+                        <p>
+                            Drone Hopper SL<br>
+                            Madrid, España<br>
+                            <a href="mailto:info@dronehopper.com">info@dronehopper.com</a><br>
+                            +34 910 000 000
+                        </p>
+                        
+                        <div class="social-links">
+                            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    
+                    <form class="contact-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="Nombre *" required>
+                            <input type="email" placeholder="Email *" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" placeholder="Empresa">
+                            <input type="tel" placeholder="Teléfono">
+                        </div>
+                        
+                        <textarea placeholder="Describe tu proyecto I+D *" rows="5" required></textarea>
+                        
+                        <button type="submit" class="btn btn-primary btn-large">Solicitar Asesoría</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="../images/DH/logo.png" alt="Drone Hopper" class="footer-logo">
+                    <p>Servicios de Asesoría en I+D | Automatización de drones BVLOS</p>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#services">Servicios</a>
+                    <a href="#platforms">Plataformas</a>
+                    <a href="#contact">Contacto</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Drone Hopper SL. Todos los derechos reservados. |
+                    <a href="#">Aviso Legal</a> |
+                    <a href="#">Política de Privacidad</a> |
+                    <a href="#">Cookies</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="../scripts/dh.js"></script> 
+</body>
+</html>
