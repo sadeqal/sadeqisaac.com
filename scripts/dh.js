@@ -2,8 +2,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     initHeader();
     initNavScroll();
-    initCarousel();
-    initScrollAnimations();
     initContactForm();
     initCookies();
     initMobileMenu();
@@ -114,99 +112,22 @@ function initNavScroll() {
 
 // === MOBILE MENU ===
 function initMobileMenu() {
-    const toggle = document.getElementById('mobile-menu-toggle');
-    const navList = document.querySelector('.nav-list');
-    
-    toggle.addEventListener('click', () => {
-        navList.classList.toggle('active');
-        toggle.querySelector('i').classList.toggle('fa-bars');
-        toggle.querySelector('i').classList.toggle('fa-times');
-    });
-    
-    // Close menu on outside click
-    document.addEventListener('click', (e) => {
-        if (!toggle.contains(e.target) && !navList.contains(e.target)) {
-            navList.classList.remove('active');
-        }
-    });
-}
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const navList = document.querySelector('.nav-list');
 
-// === CAROUSEL ===
-function initCarousel() {
-    const track = document.getElementById('carousel-track');
-    const cards = track.querySelectorAll('.platform-card');
-    const prevBtn = document.getElementById('prev-slide');
-    const nextBtn = document.getElementById('next-slide');
-    let currentIndex = 1;
-    const totalCards = cards.length;
-    
-    function updateCarousel() {
-        const translateX = -currentIndex * (380 + 40); // card width + gap
-        track.style.transform = `translateX(${translateX}px)`;
-        
-        // Update active card
-        cards.forEach((card, index) => {
-            card.classList.toggle('active', index === currentIndex);
-        });
+  toggle.addEventListener('click', () => {
+    navList.classList.toggle('active');
+    toggle.querySelector('i').classList.toggle('fa-bars');
+    toggle.querySelector('i').classList.toggle('fa-times');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!toggle.contains(e.target) && !navList.contains(e.target)) {
+      navList.classList.remove('active');
     }
-    
-    prevBtn.addEventListener('click', () => {
-        currentIndex = Math.max(0, currentIndex - 1);
-        updateCarousel();
-    });
-    
-    nextBtn.addEventListener('click', () => {
-        currentIndex = Math.min(totalCards - 1, currentIndex + 1);
-        updateCarousel();
-    });
-    
-    // Touch/swipe support
-    let startX = 0;
-    track.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-    });
-    
-    track.addEventListener('touchend', (e) => {
-        const endX = e.changedTouches[0].clientX;
-        const diff = startX - endX;
-        
-        if (Math.abs(diff) > 50) {
-            if (diff > 0) {
-                currentIndex = Math.min(totalCards - 1, currentIndex + 1);
-            } else {
-                currentIndex = Math.max(0, currentIndex - 1);
-            }
-            updateCarousel();
-        }
-    });
-    
-    // Auto-advance
-    setInterval(() => {
-        currentIndex = (currentIndex + 1) % totalCards;
-        updateCarousel();
-    }, 5000);
+  });
 }
 
-// === SCROLL ANIMATIONS ===
-function initScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, observerOptions);
-    
-    document.querySelectorAll('.service-card, .platform-card, .section-header').forEach(el => {
-        el.classList.add('reveal');
-        observer.observe(el);
-    });
-}
 
 // === CONTACT FORM ===
 function initContactForm() {
