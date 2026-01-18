@@ -187,3 +187,130 @@ function initCookies() {
 window.addEventListener('resize', () => {
     // Reinitialize carousel on resize if needed
 });
+
+// NEWSSSSS
+// =========================
+// NEW: Gallery Lightbox
+// =========================
+(function initGalleryLightbox(){
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+
+  const imgEl = document.getElementById('lb-img');
+  const capEl = document.getElementById('lb-cap');
+
+  let currentGroup = [];
+  let currentIndex = 0;
+
+  function openLB(group, index){
+    currentGroup = group;
+    currentIndex = index;
+    const item = currentGroup[currentIndex];
+
+    imgEl.src = item.full;
+    imgEl.alt = item.caption || 'Imagen ampliada';
+    capEl.textContent = item.caption || '';
+
+    lb.classList.add('active');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLB(){
+    lb.classList.remove('active');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    // Avoid showing previous image flash
+    imgEl.src = '';
+    capEl.textContent = '';
+  }
+
+  function prev(){
+    if (!currentGroup.length) return;
+    currentIndex = (currentIndex - 1 + currentGroup.length) % currentGroup.length;
+    openLB(currentGroup, currentIndex);
+  }
+
+  function next(){
+    if (!currentGroup.length) return;
+    currentIndex = (currentIndex + 1) % currentGroup.length;
+    openLB(currentGroup, currentIndex);
+  }
+
+  // Build groups from each .gallery
+  document.querySelectorAll('.gallery').forEach(gallery => {
+    const items = Array.from(gallery.querySelectorAll('.g-item')).map(btn => ({
+      full: btn.getAttribute('data-full'),
+      caption: btn.getAttribute('data-caption') || '',
+    }));
+
+    gallery.querySelectorAll('.g-item').forEach((btn, idx) => {
+      btn.addEventListener('click', () => openLB(items, idx));
+    });
+  });
+
+  // Close handlers
+  lb.addEventListener('click', (e) => {
+    if (e.target && e.target.getAttribute('data-close') === '1') closeLB();
+  });
+
+  const closeBtn = lb.querySelector('.lb-close');
+  closeBtn?.addEventListener('click', closeLB);
+
+  const prevBtn = lb.querySelector('.lb-prev');
+  const nextBtn = lb.querySelector('.lb-next');
+  prevBtn?.addEventListener('click', prev);
+  nextBtn?.addEventListener('click', next);
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLB();
+    if (e.key === 'ArrowLeft') prev();
+    if (e.key === 'ArrowRight') next();
+  });
+})();
+
+
+// =========================
+// STARTER LOADER — MINIMAL (% only)
+// =========================
+function initStarterLoader(){
+  const starter = document.getElementById('starter');
+  const pctEl = document.getElementById('starterPct');
+  if (!starter || !pctEl) return;
+
+  // Lock scroll while starter is visible
+  document.body.classList.add('is-loading');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DURATION = prefersReduced ? 200 : 1600; // ms
+
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+  const start = performance.now();
+
+  function frame(now){
+    const raw = Math.min(1, (now - start) / DURATION);
+    const eased = prefersReduced ? raw : easeOutCubic(raw);
+
+    pctEl.textContent = Math.round(eased * 100);
+
+    if (raw < 1){
+      requestAnimationFrame(frame);
+    } else {
+      setTimeout(() => {
+        starter.classList.add('is-done');      // your existing fade-out class
+        starter.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('is-loading');
+      }, prefersReduced ? 0 : 220);
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// call on DOM ready (keep if you already have it)
+document.addEventListener('DOMContentLoaded', function() {
+  initStarterLoader();
+});
+
