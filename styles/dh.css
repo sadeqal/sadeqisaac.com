@@ -304,7 +304,7 @@ img,video{max-width:100%;height:auto;display:block;}
 .monitor-down{
     position: relative; /* KEY: not absolute */
     width: 100%;
-    max-width: 420px;
+    max-width: 500px;
     aspect-ratio: 16 / 10;
     
     background: #1a1a2e;
