@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title>Drone Nadir Frame Analyzer</title>
+
+  <link
+    href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="../styles/ai.css" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__content">
+        <div class="brand">
+          <div class="brand__badge">DF</div>
+          <div>
+            <p class="eyebrow">Aerial Mapping Workspace</p>
+            <h1>Drone Nadir Frame Analyzer</h1>
+            <p class="subtitle">
+              Extract frames, georeference them on the map, compare overlays,
+              and export all mapped imagery in a workflow.
+            </p>
+          </div>
+        </div>
+
+        <div class="upload-panel">
+          <label for="video-upload" class="btn btn-primary btn-upload">
+            <span class="btn-icon">⬆</span>
+            <span>Upload Video</span>
+            <input type="file" id="video-upload" accept="video/*" hidden />
+          </label>
+
+          <div class="upload-meta">
+            <span class="pill">MP4 / MOV</span>
+            <span class="pill">Best with nadir footage</span>
+            <span class="pill">Stabilized video recommended</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="map-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-kicker">Map canvas</p>
+            <h2>Geospatial Preview</h2>
+          </div>
+          <div class="panel-head__right">
+            <span class="panel-chip">Mapbox</span>
+            <span class="panel-chip">4-point rectification</span>
+          </div>
+        </div>
+
+        <div class="map-frame">
+          <div id="map"></div>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <div class="sidebar-scroll">
+          <section class="card control-card">
+            <div class="card-head">
+              <div>
+                <p class="panel-kicker">Workflow</p>
+                <h3>Georeference Helper</h3>
+              </div>
+              <div class="live-dot-wrap">
+                <span class="live-dot"></span>
+                <span>Ready</span>
+              </div>
+            </div>
+
+            <div class="button-stack">
+              <button id="start-geo-btn" class="btn btn-success" disabled>
+                Start Geotagging
+              </button>
+            </div>
+
+            <p id="geo-status" class="status status-neutral">Upload a video to begin.</p>
+
+            <div id="four-points-info" class="info-box hidden">
+              Click the 4 frame corners on the map in this order:
+              <strong>top-left → top-right → bottom-right → bottom-left</strong>
+            </div>
+          </section>
+
+          <section id="overlay-controls" class="card hidden">
+            <div class="card-head">
+              <div>
+                <p class="panel-kicker">Overlay tools</p>
+                <h3>Comparison Controls</h3>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label-row">
+                <label for="opacity-slider">Overlay Opacity</label>
+                <span id="opacity-value" class="value-badge">75%</span>
+              </div>
+              <input
+                type="range"
+                id="opacity-slider"
+                min="0"
+                max="100"
+                value="75"
+                step="1"
+              />
+            </div>
+
+            <div class="button-grid two">
+              <button id="toggle-compare" class="btn btn-secondary">
+                Toggle Compare Mode
+              </button>
+              <button id="clear-markers-btn" class="btn btn-ghost">
+                Clear Corner Markers
+              </button>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <div>
+                <p class="panel-kicker">Export</p>
+                <h3>Deliverables</h3>
+              </div>
+            </div>
+
+            <div class="button-grid">
+              <button id="download-coords-btn" class="btn btn-indigo">
+                Download All Coordinates (JSON)
+              </button>
+              <button id="download-geotagged-btn" class="btn btn-outline">
+                Download All Images + JSON (ZIP)
+              </button>
+            </div>
+
+            <p class="small-note">
+              Exports include <strong>all successfully georeferenced frames</strong>, not only the latest one.
+            </p>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <div>
+                <p class="panel-kicker">Frames</p>
+                <h3>Extracted Thumbnails</h3>
+              </div>
+              <span id="frame-count" class="panel-chip">0 frames</span>
+            </div>
+
+            <div id="frames-grid" class="frames-grid"></div>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <div>
+                <p class="panel-kicker">Mapped results</p>
+                <h3>Georeferenced Frames</h3>
+              </div>
+              <span id="mapped-count" class="panel-chip">0 mapped</span>
+            </div>
+
+            <div id="mapped-list" class="mapped-list empty-state">
+              No georeferenced frames yet.
+            </div>
+          </section>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="../scripts/ai.js"></script>
+</body>
+</html>
