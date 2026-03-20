@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flight Overlay Studio • BARO[0].Alt</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="../styles/sync.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div>
+                <h1>Flight Overlay Studio</h1>
+                <p>BARO[0].Alt only • full log timeline • manual sync • polished preview • browser export</p>
+            </div>
+            <div class="pill">HTML + CSS + JS</div>
+        </div>
+        
+        <div class="top-grid">
+            <aside class="panel sidebar">
+                <div class="section">
+                    <h3>1. Upload</h3>
+                    <div class="field">
+                        <label>Flight video</label>
+                        <input type="file" id="videoFile" accept="video/*">
+                    </div>
+                    <div class="field">
+                        <label>ArduPilot .bin</label>
+                        <input type="file" id="binFile" accept=".bin,.BIN">
+                    </div>
+                    <button class="btn-primary" onclick="loadFiles()">Load Files & Parse</button>
+                </div>
+                
+                <div class="section">
+                    <h3>2. Manual sync</h3>
+                    <div class="sync-box">
+                        <div class="field">
+                            <label>Selected log time</label>
+                            <input type="number" id="selectedLogTimeBox" step="0.001" value="0">
+                        </div>
+                        <div class="field">
+                            <label>Current video time</label>
+                            <input type="number" id="currentVideoTimeBox" step="0.001" value="0" readonly>
+                        </div>
+                    </div>
+                    <button class="btn-secondary" onclick="setSyncPoint()">Set Sync Point</button>
+                    <button class="btn-secondary" onclick="resetSync()">Reset Sync</button>
+                </div>
+                
+                <div class="section">
+                    <h3>3. Export</h3>
+                    <button class="btn-green" onclick="startExport()" id="exportBtn">Export Overlaid Video</button>
+                    <div class="status">
+                        Export uses the original video size if available and forces 30 fps. For browser compatibility, MediaRecorder often outputs WebM even if MP4 is requested.
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Flight stats</h3>
+                    <div class="stats">
+                        <div class="stat">
+                            <small>Samples</small>
+                            <strong id="samplesStat">0</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Log duration</small>
+                            <strong id="durationStat">0.00 s</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Start time</small>
+                            <strong id="startStat">0.00 s</strong>
+                        </div>
+                        <div class="stat">
+                            <small>End time</small>
+                            <strong id="endStat">0.00 s</strong>
+                        </div>
+                    </div>
+                    <div class="status" id="statusBox">
+                        Load a video and a real BIN log. Click the plot to choose the matching point in the telemetry.
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Telemetry overlay fields</h3>
+                    
+                    <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
+                        <input type="checkbox" id="fieldAlt" checked>
+                        BARO[0].Alt (m)
+                    </label>
+                    
+                    <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
+                        <input type="checkbox" id="fieldAirspeed">
+                        ARSP[0].Airspeed (m/s)
+                    </label>
+                    
+                    <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
+                        <input type="checkbox" id="fieldLat">
+                        GPS[0].Lat
+                    </label>
+                    
+                    <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px;">
+                        <input type="checkbox" id="fieldLng">
+                        GPS[0].Lng
+                    </label>
+                </div>
+            </aside>
+            
+            <main class="panel workspace">
+                <div class="toolbar">
+                    <div class="chips">
+                        <div class="chip" id="videoInfo">No video loaded</div>
+                        <div class="chip" id="offsetInfo">Offset: 0.000 s</div>
+                        <div class="chip" id="logInfo">Log time: 0.000 s</div>
+                    </div>
+                    <div class="muted">Shortcut: press <strong>S</strong> while paused to set sync</div>
+                </div>
+                
+                <div class="main">
+                    <div>
+                        <div class="video-container" id="videoWrapper">
+                            <video id="video" controls muted></video>
+                            <div id="liveOverlay" class="overlay-text"></div>
+                        </div>
+                        <div class="bottom-bar">
+                            <input type="range" id="scrubber" min="0" max="0" step="0.001" value="0">
+                            <div class="muted" id="timeReadout" style="margin-top:8px;">
+                                Video 0.000 s • Log 0.000 s
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="plot-container">
+                        <div class="plot-head">
+                            <strong>BARO[0].Alt over full log duration</strong>
+                            <span>Click anywhere on the line to choose the real telemetry sync point.</span>
+                        </div>
+                        <div class="plot-wrap">
+                            <canvas id="plot"></canvas>
+                        </div>
+                        <div class="help-line">
+                            The X axis uses real log seconds, formatted like normal time.
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script src="../scripts/syncParser.js"></script>
+    <script src="../scripts/sync.js"></script>
+</body>
+</html>
