@@ -5,14 +5,25 @@ let telemetry = {
     alt: [],
     airspeed: [],
     lat: [],
-    lng: []
+    lng: [],
+    groundSpeed: [],
+    heading: [],
+    climb: [],
+    sats: [],
+    hdop: []
 };
 
 let overlayFields = {
     alt: true,
-    airspeed: false,
-    lat: false,
-    lng: false
+    airspeed: true,
+    lat: true,
+    lng: true,
+    groundSpeed: true,
+    heading: true,
+    climb: true,
+    sats: true,
+    hdop: true,
+    time: true
 };
 let syncOffset = 0;            // video_time - log_time
 let selectedLogTime = null;
@@ -27,6 +38,12 @@ const els = {
     fieldAirspeed: document.getElementById('fieldAirspeed'),
     fieldLat: document.getElementById('fieldLat'),
     fieldLng: document.getElementById('fieldLng'),
+    fieldGroundSpeed: document.getElementById('fieldGroundSpeed'),
+    fieldHeading: document.getElementById('fieldHeading'),
+    fieldClimb: document.getElementById('fieldClimb'),
+    fieldSats: document.getElementById('fieldSats'),
+    fieldHdop: document.getElementById('fieldHdop'),
+    fieldTime: document.getElementById('fieldTime'),
     statusBox: document.getElementById('statusBox'),
     samplesStat: document.getElementById('samplesStat'),
     durationStat: document.getElementById('durationStat'),
@@ -59,6 +76,36 @@ els.fieldLat.addEventListener('change', () => {
 
 els.fieldLng.addEventListener('change', () => {
     overlayFields.lng = els.fieldLng.checked;
+    updateLiveOverlay();
+});
+
+els.fieldLng.addEventListener('change', () => {
+    overlayFields.groundSpeed = els.fieldGroundSpeed.checked;
+    updateLiveOverlay();
+});
+
+els.fieldLng.addEventListener('change', () => {
+    overlayFields.heading = els.fieldHeading.checked;
+    updateLiveOverlay();
+});
+
+els.fieldLng.addEventListener('change', () => {
+    overlayFields.climb = els.fieldClimb.checked;
+    updateLiveOverlay();
+});
+
+els.fieldLng.addEventListener('change', () => {
+    overlayFields.sats = els.fieldSats.checked;
+    updateLiveOverlay();
+});
+
+els.fieldLng.addEventListener('change', () => {
+    overlayFields.hdop = els.fieldHdop.checked;
+    updateLiveOverlay();
+});
+
+els.fieldLng.addEventListener('change', () => {
+    overlayFields.time = els.fieldTime.checked;
     updateLiveOverlay();
 });
 
@@ -133,7 +180,11 @@ function updateLiveOverlay() {
     telemetry.lat.length ||
     telemetry.lng.length;
     
-    if (!hasAnyData) return;
+    if (!hasAnyData) {
+        liveOverlay.innerHTML = '';
+        updateTimeReadout();
+        return;
+    }
     
     const videoTime = video.currentTime || 0;
     const logTime = videoTime - syncOffset;
@@ -141,14 +192,155 @@ function updateLiveOverlay() {
     const lines = [];
     
     if (overlayFields.alt) { const alt = getInterpolatedValue(telemetry.alt, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Alt</span><span class="overlay-value">${alt == null ? '—' : alt.toFixed(1) + ' m'}</span></div>`);}
+        
+    if (overlayFields.lat) { const lat = getInterpolatedValue(telemetry.lat, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Lat</span><span class="overlay-value">${lat == null ? '—' : lat.toFixed(6)}</span></div>`);}
+    
+    if (overlayFields.lng) { const lng = getInterpolatedValue(telemetry.lng, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Lng</span><span class="overlay-value">${lng == null ? '—' : lng.toFixed(6)}</span></div>`);}
     
     if (overlayFields.airspeed) { const airspeed = getInterpolatedValue(telemetry.airspeed, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Arspd</span><span class="overlay-value">${airspeed == null ? '—' : airspeed.toFixed(1) + ' m/s'}</span></div>`);}
     
-    if (overlayFields.lat) { const lat = getInterpolatedValue(telemetry.lat, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Lat</span><span class="overlay-value">${lat == null ? '—' : lat.toFixed(6)}</span></div>`);}
+    if (overlayFields.groundSpeed) { const groundSpeed = getInterpolatedValue(telemetry.groundSpeed, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Gndspd</span><span class="overlay-value">${groundSpeed == null ? '—' : groundSpeed.toFixed(1) + ' m/s'}</span></div>`);}
+        
+    if (overlayFields.climb) { const climb = getInterpolatedValue(telemetry.climb, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">ROC</span><span class="overlay-value">${climb == null ? '—' : climb.toFixed(1) + ' m/s'}</span></div>`);}
     
-    if (overlayFields.lng) { const lng = getInterpolatedValue(telemetry.lng, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Lng</span><span class="overlay-value">${lng == null ? '—' : lng.toFixed(6)}</span></div>`);} liveOverlay.innerHTML = lines.map(line => `<div>${line}</div>`).join('');
+    if (overlayFields.heading) { const heading = getInterpolatedValue(telemetry.heading, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Hdg</span><span class="overlay-value">${heading == null ? '—' : heading.toFixed(1) + ' '}</span></div>`);}
+
+    if (overlayFields.sats) { const sats = getInterpolatedValue(telemetry.sats, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">Sats</span><span class="overlay-value">${sats == null ? '—' : sats.toFixed(0) + ''}</span></div>`);}
     
+    if (overlayFields.hdop) { const hdop = getInterpolatedValue(telemetry.hdop, logTime); lines.push(`<div class="overlay-row"><span class="overlay-label">HDOP</span><span class="overlay-value">${hdop == null ? '—' : hdop.toFixed(1) + ''}</span></div>`);}
+        
+    liveOverlay.innerHTML = lines.join('');
     updateTimeReadout();
+}
+
+function getOverlayLines(logTime) {
+    const lines = [];
+    const flightTime = logTime;
+    
+    // Flight time
+    lines.push({
+        label: 'Time',
+        value: `${logTime.toFixed(1)} s`
+    });
+    
+    // Altitude
+    if (overlayFields.alt) {
+        const alt = getInterpolatedValue(telemetry.alt, logTime);
+        lines.push({
+            label: 'Alt',
+            value: alt == null ? '—' : `${alt.toFixed(1)} m`
+        });
+    }
+    
+    // Latitude
+    if (overlayFields.lat) {
+        const lat = getInterpolatedValue(telemetry.lat, logTime);
+        lines.push({
+            label: 'Lat',
+            value: lat == null ? '—' : lat.toFixed(6)
+        });
+    }
+    
+    // Longitude
+    if (overlayFields.lng) {
+        const lng = getInterpolatedValue(telemetry.lng, logTime);
+        lines.push({
+            label: 'Lng',
+            value: lng == null ? '—' : lng.toFixed(6)
+        });
+    }
+    
+    // Airspeed
+    if (overlayFields.airspeed) {
+        const airspeed = getInterpolatedValue(telemetry.airspeed, logTime);
+        lines.push({
+            label: 'Arspd',
+            value: airspeed == null ? '—' : `${airspeed.toFixed(1)} m/s`
+        });
+    }
+    
+    // Ground speed
+    if (overlayFields.groundSpeed) {
+        const v = getInterpolatedValue(telemetry.groundSpeed, logTime);
+        lines.push({
+            label: 'GSpd',
+            value: v == null ? '—' : `${v.toFixed(1)} m/s`
+        });
+    }
+    
+    // Heading
+    if (overlayFields.heading) {
+        const v = getInterpolatedValue(telemetry.heading, logTime);
+        lines.push({
+            label: 'Head',
+            value: v == null ? '—' : `${v.toFixed(0)}°`
+        });
+    }
+    
+    // Climb rate
+    if (overlayFields.climb) {
+        const v = getInterpolatedValue(telemetry.climb, logTime);
+        lines.push({
+            label: 'Climb',
+            value: v == null ? '—' : `${v.toFixed(1)} m/s`
+        });
+    }
+    
+    // Sats
+    if (overlayFields.sats) {
+        const v = getInterpolatedValue(telemetry.sats, logTime);
+        lines.push({
+            label: 'Sats',
+            value: v == null ? '—' : `${v}`
+        });
+    }
+    
+    // HDOP
+    if (overlayFields.hdop) {
+        const v = getInterpolatedValue(telemetry.hdop, logTime);
+        lines.push({
+            label: 'HDOP',
+            value: v == null ? '—' : v.toFixed(1)
+        });
+    }
+    
+    return lines;
+}
+
+function drawStrokeText(ctx, text, x, y, fontSize) {
+    ctx.lineJoin = 'round';
+    ctx.miterLimit = 2;
+    ctx.strokeStyle = 'rgba(0,0,0,0.92)';
+    ctx.lineWidth = Math.max(2, fontSize * 0.09);
+    ctx.strokeText(text, x, y);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(text, x, y);
+}
+
+function drawExportOverlay(ctx, canvas, logTime) {
+    const lines = getOverlayLines(logTime);
+    if (!lines.length) return;
+    
+    const fontSize = Math.max(20, Math.round(canvas.width * 0.0105));
+    const left = Math.round(canvas.width * 0.02);
+    const bottom = Math.round(canvas.height * 0.035);
+    const rowGap = Math.round(fontSize * 1.35);
+    const labelWidth = Math.round(fontSize * 3.4);
+    
+    ctx.save();
+    ctx.font = `600 ${fontSize}px Arial`;
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    
+    const startY = canvas.height - bottom - ((lines.length - 1) * rowGap);
+    
+    lines.forEach((line, i) => {
+        const y = startY + i * rowGap;
+        drawStrokeText(ctx, line.label, left, y, fontSize);
+        drawStrokeText(ctx, line.value, left + labelWidth, y, fontSize);
+    });
+    
+    ctx.restore();
 }
 
 function formatTimeAxis(sec) {
@@ -188,10 +380,12 @@ function renderPlot() {
             const c = chart.ctx;
             
             c.save();
+            
             c.beginPath();
             c.arc(x, y, 6, 0, Math.PI * 2);
             c.fillStyle = '#22d3ee';
             c.fill();
+            
             c.lineWidth = 3;
             c.strokeStyle = '#ffffff';
             c.stroke();
@@ -202,6 +396,7 @@ function renderPlot() {
             c.strokeStyle = 'rgba(34,211,238,0.8)';
             c.lineWidth = 2;
             c.stroke();
+            
             c.restore();
         }
     };
@@ -356,22 +551,22 @@ async function parseBinFile(file) {
         }
     }
     
-    if (gpsMsg?.time_boot_ms && gpsMsg?.Lat && gpsMsg?.Lng) {
-        const rawLat = Array.from(gpsMsg.Lat)
-        .map((v, i) => ({
+    if (gpsMsg?.time_boot_ms) {
+        
+        const makeSeries = (arr, scale = 1) =>
+            Array.from(arr || []).map((v, i) => ({
             timeAbs: Number(gpsMsg.time_boot_ms[i]) / 1000,
-            value: Number(v) / 1e7
+            value: Number(v) * scale
         }))
         .filter(p => Number.isFinite(p.timeAbs) && Number.isFinite(p.value))
         .sort((a, b) => a.timeAbs - b.timeAbs);
         
-        const rawLng = Array.from(gpsMsg.Lng)
-        .map((v, i) => ({
-            timeAbs: Number(gpsMsg.time_boot_ms[i]) / 1000,
-            value: Number(v) / 1e7
-        }))
-        .filter(p => Number.isFinite(p.timeAbs) && Number.isFinite(p.value))
-        .sort((a, b) => a.timeAbs - b.timeAbs);
+        const rawLat  = makeSeries(gpsMsg.Lat, 1 / 1e7);
+        const rawLng  = makeSeries(gpsMsg.Lng, 1 / 1e7);
+        const rawGSpd = makeSeries(gpsMsg.Spd);     // m/s
+        const rawHead = makeSeries(gpsMsg.GCrs);    // degrees
+        const rawSats = makeSeries(gpsMsg.NSats);
+        const rawHdop = makeSeries(gpsMsg.HDop);
         
         if (rawLat.length) {
             if (baseTime == null) baseTime = rawLat[0].timeAbs;
@@ -382,6 +577,11 @@ async function parseBinFile(file) {
             if (baseTime == null) baseTime = rawLng[0].timeAbs;
             telemetry.lng = rawLng;
         }
+        
+        if (rawGSpd.length) telemetry.groundSpeed = rawGSpd;
+        if (rawHead.length) telemetry.heading = rawHead;
+        if (rawSats.length) telemetry.sats = rawSats;
+        if (rawHdop.length) telemetry.hdop = rawHdop;
     }
     
     if (baseTime == null) {
@@ -394,6 +594,29 @@ async function parseBinFile(file) {
             time: p.timeAbs - baseTime,
             value: p.value
         }));
+    }
+    
+    // Compute climb rate (m/s) from altitude
+    if (telemetry.alt.length > 1) {
+        telemetry.climb = telemetry.alt.map((p, i, arr) => {
+            if (i === 0) {
+                return {
+                    timeAbs: p.timeAbs,
+                    time: p.time,
+                    value: 0
+                };
+            }
+            
+            const prev = arr[i - 1];
+            const dt = p.time - prev.time;
+            const dv = p.value - prev.value;
+            
+            return {
+                timeAbs: p.timeAbs,
+                time: p.time,
+                value: dt > 0 ? dv / dt : 0
+            };
+        });
     }
     
     if (!telemetry.alt.length) {
@@ -513,37 +736,8 @@ function exportFrameLoop() {
     
     const videoTime = video.currentTime || 0;
     const logTime = videoTime - syncOffset;
-    const alt = getInterpolatedAlt(logTime);
     
-    const text = alt == null ? 'BARO[0].Alt: — m' : `BARO[0].Alt: ${alt.toFixed(1)} m`;
-    
-    const fontSize = Math.max(42, Math.round(exportCanvas.width * 0.022));
-    exportCtx.font = `800 ${fontSize}px Arial`;
-    exportCtx.textBaseline = 'top';
-    
-    const padX = 22;
-    const padY = 14;
-    const x = exportCanvas.width / 2;
-    const y = 24;
-    
-    const metrics = exportCtx.measureText(text);
-    const boxW = metrics.width + padX * 2;
-    const boxH = fontSize + padY * 2;
-    
-    exportCtx.save();
-    exportCtx.fillStyle = 'rgba(3,9,20,0.46)';
-    exportCtx.strokeStyle = 'rgba(255,255,255,0.16)';
-    exportCtx.lineWidth = 2;
-    
-    roundRect(exportCtx, x - boxW / 2, y, boxW, boxH, 18);
-    exportCtx.fill();
-    exportCtx.stroke();
-    
-    exportCtx.shadowColor = 'rgba(0,0,0,0.65)';
-    exportCtx.shadowBlur = 12;
-    exportCtx.fillStyle = 'white';
-    exportCtx.fillText(text, x - metrics.width / 2, y + padY * 0.8);
-    exportCtx.restore();
+    drawExportOverlay(exportCtx, exportCanvas, logTime);
     
     if (video.currentTime < video.duration - 0.05) {
         requestAnimationFrame(exportFrameLoop);

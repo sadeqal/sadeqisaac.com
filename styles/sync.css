@@ -248,42 +248,67 @@ video {
 
 .overlay-text {
     position: absolute;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(22px, 1.8vw, 34px);
-    font-weight: 400;
-    color: white;
+    left: 18px;
+    right: 18px;
+    bottom: 16px;
+    top: auto;
+    transform: none;
+
+    font-size: clamp(12px, 0.95vw, 18px);
+    font-weight: 600;
+    color: #fff;
     pointer-events: none;
-    background: rgba(3, 9, 20, 0.055);
-    border: 1px solid rgba(255,255,255,.16);
-    padding: 14px 20px;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    backdrop-filter: blur(10px);
-    text-shadow: 0 2px 10px rgba(0,0,0,.65);
-    letter-spacing: -0.02em;
-    min-width: 280px;
+
+    background: none;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+
+    letter-spacing: 0.01em;
+    line-height: 1.25;
     text-align: left;
-    line-height: 1.35;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
 }
 
 .overlay-row {
-    display: grid;
-    grid-template-columns: 80px auto;
-    gap: 12px;
+    display: flex;
+    gap: 8px;
     align-items: baseline;
+    margin-top: 2px;
 }
 
 .overlay-label {
-    text-align: right;
-    font-weight: 400;
-    opacity: 0.85;
+    font-weight: 700;
+    opacity: 1;
+    color: #fff;
+    min-width: 56px;
+    text-align: left;
+
+    text-shadow:
+        0 0 2px rgba(0,0,0,1),
+        0 0 4px rgba(0,0,0,1),
+        1px 1px 0 rgba(0,0,0,0.95),
+        -1px -1px 0 rgba(0,0,0,0.95),
+        -1px 1px 0 rgba(0,0,0,0.95),
+        1px -1px 0 rgba(0,0,0,0.95);
 }
 
 .overlay-value {
-    text-align: left;
-    font-weight: 400;
+    font-weight: 600;
+    color: #fff;
+
+    text-shadow:
+        0 0 2px rgba(0,0,0,1),
+        0 0 4px rgba(0,0,0,1),
+        1px 1px 0 rgba(0,0,0,0.95),
+        -1px -1px 0 rgba(0,0,0,0.95),
+        -1px 1px 0 rgba(0,0,0,0.95),
+        1px -1px 0 rgba(0,0,0,0.95);
 }
 
 .bottom-bar {
