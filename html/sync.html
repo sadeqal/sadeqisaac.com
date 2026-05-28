@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flight Overlay Studio • BARO[0].Alt</title>
+    <title>Flight Overlay Studio • BARO[0].Alt + GPS Drift</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <link rel="stylesheet" href="../styles/sync.css" />
 </head>
 <body>
@@ -12,7 +14,7 @@
         <div class="hero">
             <div>
                 <h1>Flight Overlay Studio</h1>
-                <p>BARO[0].Alt only • full log timeline • manual sync • polished preview • browser export</p>
+                <p>BARO[0].Alt • GPS trajectory • drift analysis • manual sync • browser export</p>
             </div>
             <div class="pill">HTML + CSS + JS</div>
         </div>
@@ -52,7 +54,7 @@
                     <h3>3. Export</h3>
                     <button class="btn-green" onclick="startExport()" id="exportBtn">Export Overlaid Video</button>
                     <div class="status">
-                        Export uses the original video size if available and forces 30 fps. For browser compatibility, MediaRecorder often outputs WebM even if MP4 is requested.
+                        Export uses the original video size if available and forces 30 fps.
                     </div>
                 </div>
                 
@@ -76,37 +78,57 @@
                             <strong id="endStat">0.00 s</strong>
                         </div>
                     </div>
+
+                    <div class="stats" style="margin-top:10px;" id="driftStatsRow">
+                        <div class="stat">
+                            <small>Max drift</small>
+                            <strong id="maxDriftStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Avg drift</small>
+                            <strong id="avgDriftStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>GPS points</small>
+                            <strong id="gpsFixStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Outages</small>
+                            <strong id="noGpsSpansStat">—</strong>
+                        </div>
+                    </div>
+
                     <div class="status" id="statusBox">
                         Load a video and a real BIN log. Click the plot to choose the matching point in the telemetry.
                     </div>
                 </div>
                 
                 <div class="section">
-                    <h3>Telemetry overlay fields</h3>
+                    <h3>Overlay fields</h3>
                     
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldAlt" checked>
-                        BARO[0].Alt (m)
+                        Altitude
                     </label>
                     
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldAirspeed" checked>
-                        ARSP[0].Airspeed (m/s)
+                        Airspeed
                     </label>
                     
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldLat" checked>
-                        GPS[0].Lat
+                        Latitude
                     </label>
                     
-                    <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px;">
+                    <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldLng" checked>
-                        GPS[0].Lng
+                        Longitude
                     </label>
 
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldGroundSpeed" checked>
-                        GPS[0].GroundSpeed (m/s)
+                        Ground Speed
                     </label>
 
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
@@ -133,6 +155,58 @@
                         <input type="checkbox" id="fieldTime" checked>
                         Flight Time
                     </label>
+                </div>
+
+                <div class="section">
+                    <h3>Drift reference</h3>
+                    <div class="field">
+                        <label>Compare POS against</label>
+                        <select id="driftRefSource" onchange="recomputeDrift()">
+                            <option value="pos">GPS interpolation (default)</option>
+                            <option value="mission">Mission waypoints</option>
+                            <option value="secondary">Secondary GPS log</option>
+                        </select>
+                    </div>
+                    
+                    <div class="field">
+                        <label>Mission plan (.plan)</label>
+                        <input type="file" id="missionFile" accept=".plan,.json">
+                        <button class="btn-secondary" onclick="loadMissionPlan()">Load Mission</button>
+                    </div>
+                    
+                    <div class="field">
+                        <label>Secondary log (.bin)</label>
+                        <input type="file" id="secondBinFile" accept=".bin,.BIN">
+                    </div>
+                    
+                    <div class="field">
+                        <label>Time offset (s)</label>
+                        <input type="number" id="secondLogOffset" step="0.1" value="0" placeholder="Sync offset">
+                        <button class="btn-secondary" onclick="loadSecondaryLog()">Load & Sync</button>
+                    </div>
+                    
+                    <div class="status" style="margin-top:8px; font-size:12px;">
+                        POS = EKF estimated position during GPS outage. Select reference to compute drift against.
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Map controls</h3>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn-secondary" style="flex:1;" onclick="setMapPitch(75)">3D view</button>
+                        <button class="btn-secondary" style="flex:1;" onclick="setMapPitch(0)">Top-down</button>
+                    </div>
+                    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn-secondary" style="flex:1;" onclick="fitMapToFlight()">Fit flight</button>
+                    </div>
+                    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn-secondary" style="flex:1;" onclick="setMapOriginal()">Original</button>
+                        <button class="btn-secondary" style="flex:1;" onclick="setMapSatellite()">Satellite</button>
+                    </div>
+                    <div class="status" style="margin-top:10px; font-size:12px;">
+                        <span style="display:inline-block;width:10px;height:4px;background:#60a5fa;border-radius:2px;margin-right:4px;"></span>GPS track &nbsp;
+                        <span style="display:inline-block;width:10px;height:4px;background:#f59e0b;border-radius:2px;margin-right:4px;"></span>EKF/POS (no-GPS)
+                    </div>
                 </div>
             </aside>
             
@@ -172,12 +246,37 @@
                             The X axis uses real log seconds, formatted like normal time.
                         </div>
                     </div>
+
+                    <div class="plot-container map-panel" id="mapPanel">
+                        <div class="plot-head">
+                            <strong>Flight trajectory map</strong>
+                            <span id="mapStatus">Load a .bin file with GPS data to see the flight path.</span>
+                        </div>
+                        <div id="map" class="map-wrap"></div>
+                        <div class="help-line" id="mapHelpLine">
+                            Blue = GPS track • Orange = EKF/POS estimated (no GPS fix) • Markers = GPS cut/restore events
+                        </div>
+                    </div>
+
+                    <div class="plot-container" id="driftPanel" style="display:none;">
+                        <div class="plot-head">
+                            <strong>Positional drift during GPS outage</strong>
+                            <span>Distance between EKF-estimated position and interpolated GPS baseline, in metres.</span>
+                        </div>
+                        <div class="plot-wrap">
+                            <canvas id="driftPlot"></canvas>
+                        </div>
+                        <div class="help-line">
+                            Drift is computed as Haversine distance from the interpolated GPS baseline to the EKF/POS position during no-GPS spans.
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>
     </div>
     
-    <script src="../scripts/syncParser.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dataflash-parser@1.0.0/dist/dataflash-parser.min.js"></script>
+    <script src="../scripts/ardupilotParser.js"></script>
     <script src="../scripts/sync.js"></script>
 </body>
 </html>

@@ -39,6 +39,8 @@ body {
     align-items: center;
     gap: 20px;
     margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
 .hero h1 {
@@ -112,6 +114,7 @@ label {
 input[type="file"],
 input[type="number"],
 select,
+textarea,
 button {
     width: 100%;
     border-radius: 14px;
@@ -123,8 +126,14 @@ button {
 
 input[type="file"],
 input[type="number"],
-select {
+select,
+textarea {
     padding: 12px 14px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
 }
 
 button {
@@ -134,7 +143,7 @@ button {
     font-weight: 700;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     transform: translateY(-1px);
     filter: brightness(1.06);
 }
@@ -231,95 +240,6 @@ button:disabled {
     gap: 18px;
 }
 
-.video-container {
-    position: relative;
-    background: #000;
-    border-radius: 22px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    min-height: 420px;
-    aspect-ratio: 16/9;
-}
-
-video {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: contain;
-    background: #000;
-}
-
-.overlay-text {
-    position: absolute;
-    left: 18px;
-    right: 18px;
-    bottom: 16px;
-    top: auto;
-    transform: none;
-    font-size: clamp(12px, 0.95vw, 18px);
-    font-weight: 600;
-    color: #fff;
-    pointer-events: none;
-    background: none;
-    border: none;
-    padding: 0;
-    border-radius: 0;
-    box-shadow: none;
-    backdrop-filter: none;
-    letter-spacing: 0.01em;
-    line-height: 1.25;
-    text-align: left;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: geometricPrecision;
-}
-
-.overlay-row {
-    display: flex;
-    gap: 8px;
-    align-items: baseline;
-    margin-top: 2px;
-}
-
-.overlay-label {
-    font-weight: 700;
-    opacity: 1;
-    color: #fff;
-    min-width: 56px;
-    text-align: left;
-    text-shadow:
-        0 0 2px rgba(0,0,0,1),
-        0 0 4px rgba(0,0,0,1),
-        1px 1px 0 rgba(0,0,0,0.95),
-        -1px -1px 0 rgba(0,0,0,0.95),
-        -1px 1px 0 rgba(0,0,0,0.95),
-        1px -1px 0 rgba(0,0,0,0.95);
-}
-
-.overlay-value {
-    font-weight: 600;
-    color: #fff;
-    text-shadow:
-        0 0 2px rgba(0,0,0,1),
-        0 0 4px rgba(0,0,0,1),
-        1px 1px 0 rgba(0,0,0,0.95),
-        -1px -1px 0 rgba(0,0,0,0.95),
-        -1px 1px 0 rgba(0,0,0,0.95),
-        1px -1px 0 rgba(0,0,0,0.95);
-}
-
-.bottom-bar {
-    margin-top: 12px;
-    padding: 12px 14px;
-    border-radius: 16px;
-    border: 1px solid var(--line);
-    background: rgba(255,255,255,.03);
-}
-
-.bottom-bar input[type="range"] {
-    width: 100%;
-}
-
 .plot-container {
     background: rgba(255,255,255,.03);
     border: 1px solid var(--line);
@@ -347,41 +267,36 @@ video {
 .plot-wrap {
     position: relative;
     width: 100%;
-    height: 260px;
-    min-height: 260px;
+    height: 340px;
+    min-height: 320px;
+    margin-bottom: 12px;
 }
 
-#plot {
+.map-view {
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #0b1729;
+}
+
+canvas {
     width: 100% !important;
     height: 100% !important;
+    image-rendering: optimizeQuality;
 }
 
-#driftPlot {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-.help-line {
-    margin-top: 10px;
+.comment-box {
+    margin-top: 12px;
+    min-height: 60px;
     font-size: 13px;
-    color: var(--muted);
-    text-align: center;
-}
-
-.sync-box {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-    gap: 10px;
-}
-
-.muted {
-    color: var(--muted);
 }
 
 /* ─── Map panel ─────────────────────────────────────────────── */
 
 .map-panel {
-    min-height: 480px;
+    min-height: 520px;
 }
 
 .map-wrap {
@@ -391,10 +306,29 @@ video {
     border: 1px solid var(--line);
     min-height: 400px;
     position: relative;
+    margin-bottom: 12px;
 }
 
-.map-wrap .mapboxgl-canvas {
-    border-radius: 16px;
+.map-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.map-controls button {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.map-controls button:hover {
+    background: rgba(255,255,255,.08);
 }
 
 .mapboxgl-ctrl-attrib {
@@ -407,46 +341,6 @@ video {
     color: var(--accent) !important;
 }
 
-.mapboxgl-popup-content {
-    background: var(--panel2) !important;
-    color: var(--text) !important;
-    border: 1px solid var(--line) !important;
-    border-radius: 12px !important;
-    padding: 10px 14px !important;
-    font-family: Inter, Arial, sans-serif !important;
-    font-size: 13px !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,.5) !important;
-}
-
-.mapboxgl-popup-tip {
-    border-top-color: var(--panel2) !important;
-    border-bottom-color: var(--panel2) !important;
-}
-
-.mapboxgl-popup-close-button {
-    color: var(--muted) !important;
-    font-size: 16px !important;
-}
-
-.map-marker-cut,
-.map-marker-restore {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 2.5px solid white;
-    cursor: pointer;
-}
-
-.map-marker-cut {
-    background: #ef4444;
-    box-shadow: 0 0 0 3px rgba(239,68,68,.35);
-}
-
-.map-marker-restore {
-    background: #22d3ee;
-    box-shadow: 0 0 0 3px rgba(34,211,238,.35);
-}
-
 /* ─── Responsive ─────────────────────────────────────────────── */
 
 @media (max-width: 1180px) {
@@ -457,4 +351,32 @@ video {
     .sidebar {
         position: static;
     }
+}
+
+/* ─── Objectives Styling ─────────────────────────────────────── */
+
+#objectivesList {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+#objectivesList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#objectivesList::-webkit-scrollbar-track {
+    background: rgba(255,255,255,.02);
+    border-radius: 10px;
+}
+
+#objectivesList::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.12);
+    border-radius: 10px;
+}
+
+#objectivesList input[type="checkbox"] {
+    width: auto;
+    height: 16px;
+    accent-color: var(--accent);
 }

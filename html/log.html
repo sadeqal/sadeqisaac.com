@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generador de Informes de Vuelo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dataflash-parser@1.0.0/dist/dataflash-parser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="stylesheet" href="../styles/log.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div>
+                <h1>📊 Generador de Informes de Vuelo</h1>
+                <p>Análisis completo de telemetría ArduPilot • GPS • IMU • Altímetro • Velocidad + TPRO</p>
+            </div>
+            <div class="pill">Informe PDF</div>
+        </div>
+        
+        <div class="top-grid">
+            <aside class="panel sidebar">
+                <div class="section">
+                    <h3>1. Cargar archivos de vuelo</h3>
+                    <div class="field">
+                        <label>Archivo .bin de ArduPilot</label>
+                        <input type="file" id="binFile" accept=".bin,.BIN">
+                    </div>
+                    
+                    <h3>2. Cargar archivos de pre-vuelo</h3>
+                    <div class="field">
+                        <div class="tpro-upload-box" id="drop-zone">
+                            <label>Archivo TPRO (PDF)</label>
+                            <input type="file" id="file-input" accept=".pdf">
+                            <p class="text-sm text-slate-600" id="file-status"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="field" style="display:none;">
+                        <input type="file" id="tproFile" accept=".pdf,.PDF">
+                    </div>
+                    
+                    <div id="loading-container" class="hidden flex items-center justify-center gap-2 mt-2 text-xs text-blue-600 font-medium">
+                        <div class="loader"></div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="stats">
+                        <div class="stat">
+                            <small>Duración</small>
+                            <strong id="durationStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Distancia</small>
+                            <strong id="distanceStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Alt. máx</small>
+                            <strong id="maxAltStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Vel. máx</small>
+                            <strong id="maxSpeedStat">—</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="stats" style="margin-top:10px;">
+                        <div class="stat">
+                            <small>Versión FW</small>
+                            <strong id="fwVersionStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Tipo vehículo</small>
+                            <strong id="vehicleTypeStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Puntos GPS</small>
+                            <strong id="gpsPointsStat">—</strong>
+                        </div>
+                        <div class="stat">
+                            <small>Muestras IMU</small>
+                            <strong id="imuSamplesStat">—</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="status" id="statusBox">
+                        Carga un archivo .bin para generar el informe de vuelo.
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Comentarios</h3>
+                    <textarea id="commentsGlobal" placeholder="Comentarios generales del vuelo..." rows="4"></textarea>
+                </div>
+                
+                <div class="section">
+                    <h3>Generar PDF</h3>
+                    <button class="btn-green" onclick="generatePDF()" id="generateBtn" disabled>
+                        📄 Generar Informe PDF
+                    </button>
+                    <div class="status" style="margin-top:10px; font-size:12px;">
+                        El informe incluirá todos los gráficos, mapas, comentarios y datos TPRO.
+                    </div>
+                </div>
+            </aside>
+            
+            <main class="panel workspace">
+                <div class="toolbar">
+                    <div class="chips">
+                        <div class="chip" id="fileInfo">No hay archivo cargado</div>
+                        <div class="chip" id="parseInfo">Esperando análisis</div>
+                    </div>
+                </div>
+                
+                <div style="width: 100%; margin-bottom: 25px; box-sizing: border-box;">
+                    <div id="workspace" class="hidden" style="display: flex; flex-direction: column; gap: 20px;">
+                        
+                        <div style="background: #1e293b; border-radius: 8px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                            <div style="background: #0f172a; padding: 12px 16px; border-bottom: 1px solid #334155;">
+                                <h2 style="margin: 0; font-size: 14px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                                    📊 TEST OBJECTIVES CONFIGURATION
+                                </h2>
+                            </div>
+                            <div style="padding: 16px; overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; color: #e2e8f0;">
+                                    <thead>
+                                        <tr style="border-b: 2px solid #334155; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                            <th style="padding: 10px; width: 80px; text-align: center;">Include</th>
+                                            <th style="padding: 10px; width: 60px; text-align: center;">#</th>
+                                            <th style="padding: 10px;">Objective Description</th>
+                                            <th style="padding: 10px; width: 200px;">Select Priority</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-2-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: row; gap: 20px; flex-wrap: wrap; width: 100%;">
+                            
+                            <div style="flex: 1; min-width: 300px; background: #1e293b; border-radius: 8px; border: 1px solid #334155; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                                <div style="background: #0f172a; padding: 10px 16px; color: #f8fafc; font-weight: 600; font-size: 13px; border-bottom: 1px solid #334155;">
+                                    🛠️ Aircraft & Systems Config
+                                </div>
+                                <div style="padding: 16px; overflow-y: auto; max-height: 350px; font-size: 13px;" id="table-4-preview">
+                                </div>
+                            </div>
+                            
+                            <div style="flex: 2; min-width: 450px; background: #1e293b; border-radius: 8px; border: 1px solid #334155; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                                <div style="background: #0f172a; padding: 10px 16px; color: #f8fafc; font-weight: 600; font-size: 13px; border-bottom: 1px solid #334155;">
+                                    ✈️ Planned Flight Profiles Mode Customizer
+                                </div>
+                                <div style="padding: 16px; overflow-y: auto; max-height: 350px; display: flex; flex-direction: column; gap: 12px;" id="table-5-preview">
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="main" id="chartsContainer">
+                    <div class="plot-container map-panel" id="mapPanel" style="display:none;">
+                        <div class="plot-head">
+                            <strong>Aircraft Flight Trajectory (GNSS vs EKF POS)</strong>
+                            <span id="mapStatus">GNSS Position Track • EKF Fused Navigation Estimate</span>
+                        </div>
+                        <div class="map-controls">
+                            <button onclick="setMapPitch(75)">Vista 3D</button>
+                            <button onclick="setMapPitch(0)">Vista 2D</button>
+                            <button onclick="fitMapToFlight()">Ajustar</button>
+                        </div>
+                        <div id="map" class="map-wrap"></div>
+                        <textarea class="comment-box" id="commentMap" placeholder="Comentarios sobre la trayectoria..."></textarea>
+                    </div>
+                    
+                    <div class="plot-container" id="altCompPanel" style="display:none;">
+                        <div class="plot-head">
+                            <strong>Comparación de altímetros</strong>
+                            <span>BARO vs RANGEFINDER</span>
+                        </div>
+                        <div class="plot-wrap">
+                            <canvas id="altCompChart"></canvas>
+                        </div>
+                        <textarea class="comment-box" id="commentAltComp" placeholder="Comentarios sobre altímetros..."></textarea>
+                    </div>
+                    
+                    <div class="plot-container" id="imuPanel" style="display:none;">
+                        <div class="plot-head">
+                            <strong>Aceleración vertical (IMU Z)</strong>
+                            <span>IMU[0].AccZ en m/s²</span>
+                        </div>
+                        <div class="plot-wrap">
+                            <canvas id="imuChart"></canvas>
+                        </div>
+                        <textarea class="comment-box" id="commentImu" placeholder="Comentarios sobre IMU..."></textarea>
+                    </div>
+                    
+                    <div class="plot-container" id="airspeedPanel" style="display:none;">
+                        <div class="plot-head">
+                            <strong>Velocidad del aire</strong>
+                            <span>ARSP[0].Airspeed en m/s</span>
+                        </div>
+                        <div class="plot-wrap">
+                            <canvas id="airspeedChart"></canvas>
+                        </div>
+                        <textarea class="comment-box" id="commentAirspeed" placeholder="Comentarios sobre velocidad..."></textarea>
+                    </div>
+                    
+                    <div class="plot-container" id="vibrationsPanel" style="display:none;">
+                        <div class="plot-head">
+                            <strong>Vibraciones</strong>
+                            <span>VIBE.VibeX, VibeY, VibeZ</span>
+                        </div>
+                        <div class="plot-wrap">
+                            <canvas id="vibrationsChart"></canvas>
+                        </div>
+                        <textarea class="comment-box" id="commentVibrations" placeholder="Comentarios sobre vibraciones..."></textarea>
+                    </div>
+                    
+                    <div class="plot-container" id="batteryPanel" style="display:none;">
+                        <div class="plot-head">
+                            <strong>Batería</strong>
+                            <span>Voltaje y corriente</span>
+                        </div>
+                        <div class="plot-wrap">
+                            <canvas id="batteryChart"></canvas>
+                        </div>
+                        <textarea class="comment-box" id="commentBattery" placeholder="Comentarios sobre batería..."></textarea>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script src="../scripts/ardupilotParser.js"></script>
+    <script src="../scripts/log.js"></script>
+</body>
+</html>
