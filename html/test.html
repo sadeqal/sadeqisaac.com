@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EdelVet – Veterinaria Natural a Domicilio · Madrid</title>
+<meta name="description" content="Servicio a domicilio especializado en acupuntura veterinaria, medicina natural integrativa y nutrición para perros y gatos en Madrid."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../styles/test.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="logo-edel">Edel</span><span class="logo-vet">Vet</span>
+      <span class="logo-sub">Veterinaria Natural</span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#sobre-mi">Presentación</a></li>
+      <li class="has-dropdown">
+        <a href="#servicios">Servicios</a>
+        <ul class="dropdown">
+          <li><a href="#acupuntura">Acupuntura Veterinaria</a></li>
+          <li><a href="#flores">Flores de Bach</a></li>
+          <li><a href="#nutricion">Nutrición</a></li>
+        </ul>
+      </li>
+      <li><a href="#citas-frases">Citas</a></li>
+      <li><a href="#reservar" class="nav-cta">Reservar Cita</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="inicio" class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Zona Norte de Madrid · Servicio a Domicilio</p>
+    <h1 class="hero-title">
+      Veterinaria<br/>
+      <em>Natural</em><br/>
+      a Domicilio
+    </h1>
+    <p class="hero-desc">Acupuntura, Flores de Bach y Nutrición integrativa para perros y gatos. Consulta personalizada en la comodidad de tu hogar.</p>
+    <div class="hero-actions">
+      <a href="#reservar" class="btn btn-primary">Reservar Cita →</a>
+      <a href="#servicios" class="btn btn-ghost">Ver Servicios</a>
+    </div>
+    <div class="hero-contact-strip">
+      <a href="tel:+34619693272">📞 619 693 272</a>
+      <a href="mailto:info@edelvet.com">✉ info@edelvet.com</a>
+      <a href="https://wa.me/34619693272" target="_blank">💬 WhatsApp</a>
+    </div>
+  </div>
+  <div class="hero-image-frame">
+    <div class="hero-img-placeholder">
+      <img src="https://www.edelvet.com/wp-content/uploads/2014/11/MG_2567DE-1200x460.jpg" alt="Veterinaria natural con mascota" onerror="this.parentElement.innerHTML='<div class=hero-img-fallback>🐾</div>'"/>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- INTRO BLOCKS -->
+<section class="intro-blocks">
+  <div class="intro-block">
+    <div class="intro-icon">🩺</div>
+    <h3>Veterinaria</h3>
+    <p>Licenciada en Veterinaria por la UCM, especialista en acupuntura animal, diplomada IVAS, con formación en Nutriterapia y Flores de Bach.</p>
+  </div>
+  <div class="intro-block intro-block--accent">
+    <div class="intro-icon">🌿</div>
+    <h3>Natural</h3>
+    <p>Terapias que ayudan al organismo a restablecer su equilibrio energético, recuperar la salud y prevenir recaídas. Compatibles con tratamientos convencionales.</p>
+  </div>
+  <div class="intro-block">
+    <div class="intro-icon">🏠</div>
+    <h3>A Domicilio</h3>
+    <p>Mayor comodidad para ti y tu mascota. Terapia individualizada y trato personalizado en el entorno familiar de cada paciente.</p>
+  </div>
+</section>
+
+<!-- SOBRE MÍ -->
+<section id="sobre-mi" class="about">
+  <div class="about-img">
+    <img src="https://www.edelvet.com/wp-content/uploads/2014/11/Alba-edelvet-team.jpg" alt="Alba Sánchez – EdelVet" onerror="this.src=''"/>
+    <div class="about-img-deco"></div>
+  </div>
+  <div class="about-content">
+    <p class="section-eyebrow">Sobre mí</p>
+    <h2 class="section-title">Alba Sánchez</h2>
+    <div class="about-credentials">
+      <span>UCM · Veterinaria</span>
+      <span>IVAS · Acupuntura</span>
+      <span>EMVI · Nutriterapia</span>
+      <span>Flores de Bach</span>
+    </div>
+    <p>Licenciada en Veterinaria por la Universidad Complutense de Madrid y diplomada por la IVAS (International Veterinary Acupuncture Society). Mi filosofía es tratar al animal de forma integral, teniendo en cuenta tanto lo físico como lo emocional.</p>
+    <p>El objetivo de estas terapias es ayudar al organismo a restablecer su equilibrio energético y, de esta forma, recuperar la salud y prevenir recaídas. Terapias efectivas y compatibles con tratamientos convencionales.</p>
+    <a href="#reservar" class="btn btn-primary">Pedir Cita</a>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section id="servicios" class="services">
+  <div class="services-header">
+    <p class="section-eyebrow">Lo que ofrezco</p>
+    <h2 class="section-title">Servicios para<br/><em>Perros y Gatos</em></h2>
+  </div>
+
+  <div class="services-grid">
+    <article id="acupuntura" class="service-card">
+      <div class="service-img">
+        <img src="https://www.edelvet.com/wp-content/uploads/2014/11/MG_2625D-1200x460.jpg" alt="Acupuntura veterinaria" onerror="this.parentElement.innerHTML='<div class=service-img-fallback>🪡</div>'"/>
+      </div>
+      <div class="service-body">
+        <span class="service-tag">Terapia física</span>
+        <h3>Acupuntura Veterinaria</h3>
+        <p>Técnica de medicina tradicional china que utiliza la inserción de agujas en puntos clave del cuerpo (acupuntos) para eliminar el dolor y restablecer el bienestar. Eficaz para problemas gastrointestinales, respiratorios, renales, dermatológicos, musculoesqueléticos y recuperación posquirúrgica.</p>
+        <ul class="service-list">
+          <li>Dolor articular y muscular</li>
+          <li>Problemas gastrointestinales</li>
+          <li>Recuperación postquirúrgica</li>
+          <li>Calidad de vida en animales mayores</li>
+        </ul>
+      </div>
+    </article>
+
+    <article id="flores" class="service-card service-card--alt">
+      <div class="service-img">
+        <img src="https://www.edelvet.com/wp-content/uploads/2014/11/flores-de-bach-para-adelgazar-esencias-1200x460.jpg" alt="Flores de Bach" onerror="this.parentElement.innerHTML='<div class=service-img-fallback>🌸</div>'"/>
+      </div>
+      <div class="service-body">
+        <span class="service-tag">Terapia emocional</span>
+        <h3>Flores de Bach</h3>
+        <p>El sistema floral del Dr. Bach, constituido por 38 remedios vibracionales, es un método simple y eficaz que ayuda a aliviar el sufrimiento emocional de cualquier ser vivo. Descubierto por el Dr. Edward Bach, médico inglés experto en inmunología y bacteriología.</p>
+        <ul class="service-list">
+          <li>Miedos y fobias</li>
+          <li>Ansiedad por separación</li>
+          <li>Comportamientos compulsivos</li>
+          <li>Estrés y cambios de entorno</li>
+        </ul>
+      </div>
+    </article>
+
+    <article id="nutricion" class="service-card">
+      <div class="service-img">
+        <img src="https://www.edelvet.com/wp-content/uploads/2014/11/StockSnap_LRKO3WG3BF-1200x460.jpg" alt="Nutrición natural" onerror="this.parentElement.innerHTML='<div class=service-img-fallback>🥗</div>'"/>
+      </div>
+      <div class="service-body">
+        <span class="service-tag">Nutrición</span>
+        <h3>Nutrición y Alimentación Natural</h3>
+        <p>La demanda de alimentos naturales, ecológicos y bajos en cereales está creciendo. Los piensos libres de granos ofrecen mejores respuestas metabólicas, mejores curvas de insulina y mayor bienestar general en perros y gatos.</p>
+        <ul class="service-list">
+          <li>Dietas BARF y cocinadas</li>
+          <li>Alergias e intolerancias alimentarias</li>
+          <li>Control de peso</li>
+          <li>Nutrición preventiva</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- SABÍAS QUE -->
+<section class="did-you-know">
+  <div class="dyk-content">
+    <p class="section-eyebrow">¿Sabías que…?</p>
+    <h2 class="section-title">La acupuntura <em>también</em><br/>es para animales</h2>
+    <p>La acupuntura ha pasado de ser una terapia alternativa exclusiva en humanos a aplicarse en los animales para ayudar en su tratamiento y curación. Se puede utilizar para tratar problemas gastrointestinales, respiratorios, renales, hepáticos, dermatológicos, musculoesqueléticos, mejorar la recuperación tras una cirugía, aliviar los dolores de huesos en animales mayores… en definitiva, para darles una mejor calidad de vida.</p>
+    <a href="#reservar" class="btn btn-primary">Consultar sin compromiso →</a>
+  </div>
+  <div class="dyk-image">
+    <img src="https://www.edelvet.com/wp-content/uploads/2014/11/acupuntura.jpg" alt="Acupuntura veterinaria" onerror="this.parentElement.innerHTML='<div class=dyk-img-fallback>🐕</div>'"/>
+  </div>
+</section>
+
+<!-- FRASES / CITAS -->
+<section id="citas-frases" class="quotes">
+  <p class="section-eyebrow">Sabiduría animal</p>
+  <h2 class="section-title">Citas</h2>
+  <div class="quotes-carousel" id="quotesCarousel">
+    <div class="quote-slide active">
+      <blockquote>"Todos los hombres son dioses para su perro. Por eso hay gente que ama más a sus perros que a los hombres."</blockquote>
+      <cite>— Aldous Huxley <span>(1894–1963) Novelista y poeta inglés</span></cite>
+    </div>
+    <div class="quote-slide">
+      <blockquote>"Los animales son buenos amigos, no hacen preguntas y tampoco critican."</blockquote>
+      <cite>— George Eliot <span>(1819–1880) Novelista británica</span></cite>
+    </div>
+    <div class="quote-slide">
+      <blockquote>"El gato no nos acaricia, se acaricia contra nosotros."</blockquote>
+      <cite>— Conde de Rivarol <span>(1753–1801) Escritor francés</span></cite>
+    </div>
+    <div class="quote-slide">
+      <blockquote>"Creo que los animales ven en el hombre un ser igual a ellos que ha perdido de forma extraordinariamente peligrosa el sano intelecto animal."</blockquote>
+      <cite>— Friedrich Nietzsche <span>(1844–1900) Filósofo alemán</span></cite>
+    </div>
+    <div class="quote-slide">
+      <blockquote>"El hombre se diferencia del animal en que bebe sin sed y ama sin tiempo."</blockquote>
+      <cite>— José Ortega y Gasset <span>(1883–1955) Filósofo y ensayista español</span></cite>
+    </div>
+  </div>
+  <div class="quotes-dots" id="quotesDots"></div>
+</section>
+
+<!-- ===== BOOKING SECTION ===== -->
+<section id="reservar" class="booking">
+  <div class="booking-intro">
+    <p class="section-eyebrow">Reserva online</p>
+    <h2 class="section-title">Pedir Cita<br/><em>Inteligente</em></h2>
+    <p>Rellena el formulario. Nuestro sistema agrupa citas por zonas geográficas para minimizar los desplazamientos y ofrecerte la fecha más conveniente. Recibirás confirmación por email.</p>
+    <div class="booking-how">
+      <div class="booking-step"><span>1</span><p>Descríbenos el problema de tu mascota</p></div>
+      <div class="booking-step"><span>2</span><p>Añade tu dirección en Madrid</p></div>
+      <div class="booking-step"><span>3</span><p>El sistema calcula la mejor fecha</p></div>
+      <div class="booking-step"><span>4</span><p>Recibes confirmación por email</p></div>
+    </div>
+  </div>
+
+  <div class="booking-form-wrap">
+    <!-- STEP 1: Pet info -->
+    <div class="booking-step-panel active" id="step1">
+      <h3>Tu mascota <span class="step-badge">1/3</span></h3>
+      <div class="form-group">
+        <label>Tu nombre *</label>
+        <input type="text" id="ownerName" placeholder="Nombre completo"/>
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="ownerEmail" placeholder="tu@email.com"/>
+      </div>
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="tel" id="ownerPhone" placeholder="+34 600 000 000"/>
+      </div>
+      <div class="form-group">
+        <label>Nombre de la mascota *</label>
+        <input type="text" id="petName" placeholder="Nombre de tu perro o gato"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Especie</label>
+          <select id="petSpecies">
+            <option value="">Seleccionar</option>
+            <option value="perro">Perro</option>
+            <option value="gato">Gato</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Servicio</label>
+          <select id="serviceType">
+            <option value="">Seleccionar</option>
+            <option value="acupuntura">Acupuntura Veterinaria</option>
+            <option value="flores">Flores de Bach</option>
+            <option value="nutricion">Nutrición Natural</option>
+            <option value="consulta">Consulta General</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Describe el problema o motivo de la consulta *</label>
+        <textarea id="petProblem" rows="4" placeholder="Ej: Mi perro lleva dos semanas cojiendo de la pata trasera derecha, le cuesta levantarse por las mañanas…"></textarea>
+      </div>
+      <button class="btn btn-primary full-btn" onclick="goStep(2)">Siguiente →</button>
+    </div>
+
+    <!-- STEP 2: Address -->
+    <div class="booking-step-panel" id="step2">
+      <h3>Tu dirección <span class="step-badge">2/3</span></h3>
+      <p class="step-hint">Usamos tu dirección para agrupar citas por zonas y minimizar desplazamientos.</p>
+      <div class="form-group">
+        <label>Calle y número *</label>
+        <input type="text" id="addrStreet" placeholder="Ej: Calle de Serrano, 41"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Barrio / Distrito *</label>
+          <input type="text" id="addrDistrict" placeholder="Ej: Salamanca"/>
+        </div>
+        <div class="form-group">
+          <label>Código Postal *</label>
+          <input type="text" id="addrZip" placeholder="28001" maxlength="5"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Municipio *</label>
+        <input type="text" id="addrCity" placeholder="Ej: Madrid, Alcobendas, Pozuelo…" value="Madrid"/>
+      </div>
+      <div class="form-group">
+        <label>Indicaciones adicionales</label>
+        <input type="text" id="addrNotes" placeholder="Ej: Piso 3B, puerta de madera verde"/>
+      </div>
+
+      <div class="zone-preview" id="zonePreview" style="display:none">
+        <span class="zone-badge" id="zoneBadge">🗺 Zona detectada</span>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="goStep(1)">← Atrás</button>
+        <button class="btn btn-primary" onclick="goStep(3)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Confirm -->
+    <div class="booking-step-panel" id="step3">
+      <h3>Confirmar solicitud <span class="step-badge">3/3</span></h3>
+      <div class="summary-box" id="summaryBox"></div>
+      <div class="scheduling-notice">
+        <div class="scheduling-icon">🗓</div>
+        <div>
+          <strong>Cita calculada automáticamente</strong>
+          <p>El sistema analizará tu zona y asignará la fecha más óptima. Recibirás un email de confirmación con la fecha y hora exactas en un plazo de 24h.</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="privacyCheck"/>
+          <span>Acepto la política de privacidad y el uso de mis datos para gestionar la cita</span>
+        </label>
+      </div>
+      <div id="bookingError" class="error-msg" style="display:none"></div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="goStep(2)">← Atrás</button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitBooking()">Solicitar Cita ✓</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="booking-success" id="bookingSuccess" style="display:none">
+      <div class="success-icon">✓</div>
+      <h3>¡Solicitud enviada!</h3>
+      <p>Hemos recibido tu solicitud. El sistema está calculando la mejor fecha según tu zona. Recibirás un email de confirmación en <strong id="successEmail"></strong> en las próximas 24 horas.</p>
+      <p class="success-note">Si tienes urgencia, puedes contactarnos por WhatsApp: <a href="https://wa.me/34619693272">619 693 272</a></p>
+      <button class="btn btn-ghost" onclick="resetBooking()">Nueva solicitud</button>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT STRIP -->
+<section class="contact-strip">
+  <div class="contact-strip-inner">
+    <div class="contact-item">
+      <span class="contact-icon">📞</span>
+      <div>
+        <strong>Teléfono / WhatsApp</strong>
+        <a href="tel:+34619693272">619 693 272</a>
+      </div>
+    </div>
+    <div class="contact-item">
+      <span class="contact-icon">✉</span>
+      <div>
+        <strong>Email</strong>
+        <a href="mailto:info@edelvet.com">info@edelvet.com</a>
+      </div>
+    </div>
+    <div class="contact-item">
+      <span class="contact-icon">📍</span>
+      <div>
+        <strong>Zona de servicio</strong>
+        <span>Zona Norte de Madrid</span>
+      </div>
+    </div>
+    <a href="https://wa.me/34619693272?text=Hola%20Edelvet!%20Tengo%20una%20consulta." target="_blank" class="btn btn-primary">Escribir por WhatsApp</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-edel">Edel</span><span class="logo-vet">Vet</span>
+      <p>Veterinaria Natural a Domicilio<br/>Zona Norte de Madrid</p>
+    </div>
+    <div class="footer-links">
+      <strong>Servicios</strong>
+      <a href="#acupuntura">Acupuntura Veterinaria</a>
+      <a href="#flores">Flores de Bach</a>
+      <a href="#nutricion">Nutrición Natural</a>
+    </div>
+    <div class="footer-links">
+      <strong>Contacto</strong>
+      <a href="tel:+34619693272">619 693 272</a>
+      <a href="mailto:info@edelvet.com">info@edelvet.com</a>
+      <a href="https://www.facebook.com/Edelvet-537864299715545" target="_blank">Facebook</a>
+      <a href="https://www.instagram.com/edelvetnatural/" target="_blank">Instagram</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 EdelVet · Todos los derechos reservados</span>
+    <a href="#">Política de Privacidad</a>
+  </div>
+</footer>
+
+<!-- ADMIN PANEL (hidden, access via ?admin=1) -->
+<div id="adminPanel" class="admin-panel" style="display:none">
+  <div class="admin-header">
+    <h2>Panel de Administración — EdelVet</h2>
+    <button onclick="closeAdmin()" class="admin-close">✕</button>
+  </div>
+  <div class="admin-body">
+    <div class="admin-controls">
+      <button class="btn btn-primary" onclick="loadAppointments()">🔄 Recargar citas</button>
+      <button class="btn btn-ghost" onclick="recalculateAll()">🧠 Recalcular agenda</button>
+      <button class="btn btn-ghost" onclick="exportCSV()">⬇ Exportar CSV</button>
+    </div>
+    <div id="adminCalendar" class="admin-calendar"></div>
+    <div id="pendingList" class="pending-list"></div>
+  </div>
+</div>
+
+</body>
+</html>

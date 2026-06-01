@@ -41,7 +41,6 @@ if (typeof Chart !== 'undefined') {
 }
 
 // ─── Utility Functions ─────────────────────────────────────────────────────────
-
 function setStatus(msg) {
     document.getElementById('statusBox').textContent = msg;
 }
@@ -66,7 +65,6 @@ function haversineMetres(lat1, lon1, lat2, lon2) {
 }
 
 // ─── TPRO PDF Parser ───────────────────────────────────────────────────────────
-
 async function parseTPROPDF(file) {
     try {
         const arrayBuffer = await file.arrayBuffer();
@@ -182,7 +180,6 @@ function parseFlightProfiles(fullText) {
 }
 
 // ─── BIN File Parser ───────────────────────────────────────────────────────────
-
 async function parseBinFile(file) {
     const buffer = await file.arrayBuffer();
     
@@ -240,22 +237,21 @@ async function parseBinFile(file) {
         if (telemetry.gps.lat.length) baseTime = telemetry.gps.lat[0].timeAbs;
     }
     
-    // ─── POS (EKF) ─────────────────────────────────────────────
-    // ─── POS (EKF) ─────────────────────────────────────────────
+    // ─── POS (EKF) CON FALLBACK AUTOMÁTICO ─────────────────────────────────────
     let posMsg = parsed?.messages?.['POS'];
     let isStandardPos = true;
     
-    // Si no existe 'POS', intentamos extraer de 'NKF1' (Filtro de Kalman primario de ArduPilot)
-    if (!posMsg && parsed?.messages?.['NKF1']) {
-        posMsg = parsed.messages['NKF1'];
-        isStandardPos = false;
+    // Fallback inteligente: Si POS no existe, revisamos AHR2 (que SÍ suele estar presente en ArduPilot)
+    if ((!posMsg || !posMsg.Lat || posMsg.Lat.length === 0) && parsed?.messages?.['AHR2']) {
+        posMsg = parsed.messages['AHR2'];
+        isStandardPos = false; // Indica que viene del sistema AHR2 y necesita escalado 1e7
     }
     
     if (posMsg && posMsg.time_boot_ms && posMsg.Lat && posMsg.Lng) {
-        // Determinamos el factor de escala: los mensajes NKF1 o logs antiguos vienen multiplicados por 1e7
-        // Mientras que los mensajes POS estándar modernos vienen en grados flotantes directos.
+        // Si viene de AHR2 o logs viejos el factor de escala es 1/1e7. Si es POS nativo es 1.
         const firstLat = Number(posMsg.Lat[0] || 0);
-        const posScale = (Math.abs(firstLat) > 180) ? 1/1e7 : 1;
+        const posScale = (Math.abs(firstLat) > 180 || !isStandardPos) ? 1/10000000 : 1;
+        const altScale = !isStandardPos ? 1 : 1; // AHR2 Alt suele venir en metros directos o cm (si es cm cambiar a 1/100)
         
         const mk = (arr, scale = 1) =>
             Array.from(arr || [])
@@ -268,7 +264,7 @@ async function parseBinFile(file) {
         
         const rawLat = mk(posMsg.Lat, posScale);
         const rawLng = mk(posMsg.Lng, posScale);
-        const rawAlt = mk(posMsg.Alt, isStandardPos ? 1 : 1); // Mantener metros
+        const rawAlt = mk(posMsg.Alt || posMsg.AltTop, altScale); 
         
         const validIndices = rawLat.map((p, i) => {
             const lat = p.value;
@@ -669,59 +665,67 @@ function renderTables() {
     
     // ─── Map Functions ─────────────────────────────────────────────────────────────
     function initMap() {
-    if (map || !telemetry.gps.lat.length) return;
-    
-    mapboxgl.accessToken = 'pk.eyJ1Ijoic2FkZXFhbCIsImEiOiJjbDA0ZHBpZDgwYjl5M2Rud2wweDVhaWVtIn0.PSwxdzBQL8ZCh0kYT4UA9g';
-    
-    const midIdx = Math.floor(telemetry.gps.lat.length / 2);
-    const centerLat = telemetry.gps.lat[midIdx].value;
-    const centerLng = telemetry.gps.lng[midIdx].value;
-    
-    // 1. Inicializamos el mapa primero para que monte el contenedor correctamente
-    map = new mapboxgl.Map({
-        container: 'map',
-        style: mapStyle,
-        center: [centerLng, centerLat],
-        zoom: 15,
-        pitch: 60,
-        bearing: 0,
-        preserveDrawingBuffer: true,
-        antialias: true
-    });
-    
-    // 2. Toda la lógica visual y de capas se ejecuta al cargar el mapa
-    map.on('load', () => {
-        renderFlightPath();
-        fitMapToFlight();
+        if (map || !telemetry.gps.lat.length) return;
         
-        // ─── CREACIÓN DE LA LEYENDA CUANDO EL MAPA YA EXISTE ───
-        const mapElement = document.getElementById('map');
-        if (mapElement) {
-            const mapContainer = mapElement.parentElement;
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2FkZXFhbCIsImEiOiJjbDA0ZHBpZDgwYjl5M2Rud2wweDVhaWVtIn0.PSwxdzBQL8ZCh0kYT4UA9g';
+        
+        const midIdx = Math.floor(telemetry.gps.lat.length / 2);
+        const centerLat = telemetry.gps.lat[midIdx].value;
+        const centerLng = telemetry.gps.lng[midIdx].value;
+        
+        // 1. Inicializamos el mapa primero para que monte el contenedor correctamente
+        map = new mapboxgl.Map({
+            container: 'map',
+            style: mapStyle,
+            center: [centerLng, centerLat],
+            zoom: 15,
+            pitch: 60,
+            bearing: 0,
+            preserveDrawingBuffer: true,
+            antialias: true
+        });
+        
+        // 2. Toda la lógica visual y de capas se ejecuta al cargar el mapa
+        map.on('load', () => {
+            renderFlightPath();
+            fitMapToFlight();
             
-            if (mapContainer) {
-                mapContainer.style.position = 'relative';
+            map.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                'tileSize': 512
+            });
+            // Introduce el terreno tridimensional con relieve real de montañas
+            map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+            
+            // ─── CREACIÓN DE LA LEYENDA CUANDO EL MAPA YA EXISTE ───
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                const mapContainer = mapElement.parentElement;
                 
-                // Buscamos si ya existe para no duplicarla al recargar logs
-                if (!mapContainer.querySelector('#mapbox-custom-legend')) {
-                    const legend = document.createElement('div');
-                    legend.id = 'mapbox-custom-legend';
-                    legend.style.position = 'absolute';
-                    legend.style.top = '20%';       // Separación desde el borde superior del mapa
-                    legend.style.right = '2%';     // Separación desde el borde derecho del mapa
-                    legend.style.backgroundColor = '#0f172a'; 
-                    legend.style.border = '1px solid #334155';
-                    legend.style.borderRadius = '6px';
-                    legend.style.padding = '10px 16px'; // Corregido un poco el padding horizontal para que no quede gigante
-                    legend.style.zIndex = '10';       // Flota sobre el canvas perfectamente
-                    legend.style.fontFamily = 'Inter, Arial, sans-serif';
-                    legend.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.3)';
-                    legend.style.display = 'flex';
-                    legend.style.flexDirection = 'column';
-                    legend.style.gap = '8px';
-                    legend.style.pointerEvents = 'none'; // No interrumpe los arrastres del ratón por debajo
+                if (mapContainer) {
+                    mapContainer.style.position = 'relative';
                     
-                    legend.innerHTML = `
+                    // Buscamos si ya existe para no duplicarla al recargar logs
+                    if (!mapContainer.querySelector('#mapbox-custom-legend')) {
+                        const legend = document.createElement('div');
+                        legend.id = 'mapbox-custom-legend';
+                        legend.style.position = 'absolute';
+                        legend.style.top = '20%';       // Separación desde el borde superior del mapa
+                        legend.style.right = '2%';     // Separación desde el borde derecho del mapa
+                        legend.style.backgroundColor = '#0f172a'; 
+                        legend.style.border = '1px solid #334155';
+                        legend.style.borderRadius = '6px';
+                        legend.style.padding = '10px 16px'; // Corregido un poco el padding horizontal para que no quede gigante
+                        legend.style.zIndex = '10';       // Flota sobre el canvas perfectamente
+                        legend.style.fontFamily = 'Inter, Arial, sans-serif';
+                        legend.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.3)';
+                        legend.style.display = 'flex';
+                        legend.style.flexDirection = 'column';
+                        legend.style.gap = '8px';
+                        legend.style.pointerEvents = 'none'; // No interrumpe los arrastres del ratón por debajo
+                        
+                        legend.innerHTML = `
                         <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Trayectorias</div>
                         <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #f1f5f9;">
                             <span style="display: inline-block; width: 14px; height: 5px; background-color: #0066ff; border-radius: 2px;"></span>
@@ -732,13 +736,13 @@ function renderTables() {
                             <span style="font-weight: 500;">EKF POS (Estimado)</span>
                         </div>
                     `;
-                    
-                    mapContainer.appendChild(legend);
+                        
+                        mapContainer.appendChild(legend);
+                    }
                 }
             }
-        }
-    });
-}
+        });
+    }
     
     function initComparisonMap() {
         if (comparisonMap || !telemetry.gps.lat.length || !telemetry.pos.lat.length) return;
@@ -777,35 +781,59 @@ function renderTables() {
         ], { padding: 40, duration: 1200 });
     }
     
-    function buildGeoCoords(latSeries, lngSeries, altSeries) {
+    function buildGeoCoords(latArr, lngArr, altArr) {
         const coords = [];
-        const length = Math.min(latSeries.length, lngSeries.length);
-        for (let i = 0; i < length; i++) {
-            const lat = latSeries[i]?.value;
-            const lng = lngSeries[i]?.value;
-            if (Number.isFinite(lat) && Number.isFinite(lng)) {
-                coords.push([lng, lat, altSeries?.[i]?.value || 0]);
+        const len = Math.min(latArr.length, lngArr.length);
+        const baroData = telemetry.baro || [];
+        
+        for (let i = 0; i < len; i++) {
+            const lat = latArr[i].value;
+            const lng = lngArr[i].value;
+            const gpsTime = latArr[i].timeAbs;
+            
+            let altRelativa = 0;
+            
+            // Sincronizamos con la altura del barómetro
+            if (baroData.length > 0) {
+                let closestBaro = baroData.reduce((prev, curr) => {
+                    return (Math.abs(curr.timeAbs - gpsTime) < Math.abs(prev.timeAbs - gpsTime)) ? curr : prev;
+                });
+                altRelativa = closestBaro.value || 0;
+            } else if (altArr[i]) {
+                altRelativa = altArr[i].value;
+            }
+            
+            if (Math.abs(lat) > 0.01 && Math.abs(lng) > 0.01) {
+                // [Longitud, Latitud, Altitud] -> Mapbox exige este orden exacto
+                coords.push([lng, lat, altRelativa]); 
             }
         }
         return coords;
     }
     
-    function addLineLayer(mapObj, sourceId, layerId, coords, color, width, dashArray) {
-        if (!coords.length || !mapObj) return;
-        
-        const feature = {
-            type: 'Feature',
-            geometry: { type: 'LineString', coordinates: coords }
-        };
-        
+    function addLineLayer(mapObj, sourceId, layerId, coordinates, color, width, dashArray = null) {
         if (mapObj.getSource(sourceId)) {
-            mapObj.getSource(sourceId).setData(feature);
+            mapObj.getSource(sourceId).setData({
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: coordinates
+                }
+            });
             return;
         }
         
         mapObj.addSource(sourceId, {
             type: 'geojson',
-            data: feature
+            data: {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: coordinates
+                }
+            }
         });
         
         mapObj.addLayer({
@@ -819,9 +847,7 @@ function renderTables() {
             paint: {
                 'line-color': color,
                 'line-width': width,
-                'line-opacity': 0.92,
-                // REEMPLAZA ÚNICAMENTE ESTA LÍNEA DE ABAJO PARA EVITAR ERRORES DE RENDERIZADO:
-                'line-dasharray': dashArray ? dashArray : [1, 0]
+                'line-opacity': 0.95
             }
         });
     }
