@@ -1,4 +1,8 @@
 /****************************** WORKS PAGE CONTENT ******************************/
+body, html {
+    background-color: #0c0c0c; /* Pure black with subtle hints of gray */
+}
+
 /* General Styling */
 .centered {
     display: flex;

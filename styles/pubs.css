@@ -1,3 +1,8 @@
+/****************************** PUBLICATIONS PAGE CONTENT ******************************/
+body, html {
+    background-color: #0c0c0c; /* Pure black with subtle hints of gray */
+}
+
 /* pubs.css */
 .pubsTyping-content {
     max-width: 1000px;

@@ -1,31 +1,199 @@
+/* ==========================================================================
+   EXPORT DROPDOWN BUTTON 
+   ========================================================================== */
+.export-dropdown {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: 'Inter', sans-serif;
+}
+
+.export-btn {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #111;
+    border: none;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background-color: #1a1a1a;
+    min-width: 220px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: #e0e0e0;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 13px;
+    transition: background 0.2s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: rgba(255, 215, 0, 0.1);
+    color: #FFD700;
+}
+
+.show-dropdown {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   SPECIAL SPANINGLISH TWO-COLUMN TEMPLATE STYLE FOR EXPORT
+   ========================================================================== */
+.spaninglish-print-mode {
+    background: #ffffff !important;
+    color: #333333 !important;
+    font-family: "Inter", sans-serif !important;
+    display: flex !important;
+    flex-direction: row !important;
+    width: 210mm; /* A4 width size dimensions */
+    min-height: 297mm;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Sidebar (Left column styling based on the reference photo) */
+.spaninglish-print-mode .spaninglish-sidebar {
+    width: 32%;
+    background-color: #0b2545 !important; /* Elegant deep blue */
+    color: #ffffff !important;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Main Body Content (Right column styling based on the reference photo) */
+.spaninglish-print-mode .spaninglish-main {
+    width: 68%;
+    background: #ffffff !important;
+    padding: 40px 30px;
+    color: #333333 !important;
+}
+
+/* Clean UI utility resets to clean background elements out of your export output */
+.spaninglish-print-mode .toolbar, 
+.spaninglish-print-mode #contact-menu-container, 
+.spaninglish-print-mode #bg-canvas, 
+.spaninglish-print-mode .export-dropdown {
+    display: none !important;
+}
+
 /****************************** CV CONTENT ******************************/
 /* CV Page General Styling */
 #cv-content {
     max-width: 1100px;
     margin: auto;
     padding: 40px;
-    background: rgba(20, 20, 20, 0.85);
+    background: transparent;
+    backdrop-filter: blur(0px);
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-    font-family: 'Poppins', sans-serif;
     color: #e0e0e0;
     backdrop-filter: blur(10px);
+    font-family: "IBM Plex Sans", sans-serif;
+    line-height: 1.6;
+    
+    /*background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/graphy-dark.png");*/
 }
 
-/* Header */
+/* Keeps the canvas locked as a fullscreen background */
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    display: block;
+}
+
+/* HEADER WRAPPER */
 .cv-header {
-    text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
-.cv-header h1 {
-    font-size: 32px;
+/* FLEX LAYOUT */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,204,0,0.15);
+    border-radius: 14px;
+}
+
+/* PROFILE IMAGE */
+.profile-image img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    
+    border: 3px solid #FFD700;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.25);
+}
+
+/* TEXT BLOCK */
+.header-text {
+    text-align: left;
+}
+
+/* NAME */
+.header-text h1 {
+    font-size: 30px;
     color: #FFD700;
+    margin: 0;
+    letter-spacing: 0.5px;
 }
 
-.cv-header p {
+/* ROLE */
+.role {
     font-size: 18px;
     color: #ccc;
+    margin: 4px 0;
+}
+
+/* STATUS LINE */
+.status {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00D084;
+    margin-top: 6px;
 }
 
 /* Section Titles */
@@ -38,58 +206,137 @@
 
 /* Skills section container (row display) */
 .cv-skills-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: 20px;
-    justify-content: space-between;
+    margin-top: 20px;
 }
 
-/* Each skill box */
 .cv-skill {
-    background: rgba(0, 0, 0, 0.6);
-    padding: 15px;
-    border-radius: 10px;
-    width: 29%; /* Ensures three boxes in a row */
-    min-width: 250px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,204,0,0.15);
+    border-radius: 12px;
+    padding: 18px;
+    transition: all 0.25s ease;
 }
 
-/* Skill section title */
-.skill-title {
-    font-size: 18px;
-    color: #ffcc00; /* Yellow Color */
-    margin-bottom: 10px;
-    display: inline-block;
+.cv-skill:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255,204,0,0.4);
+    box-shadow: 0 5px 20px rgba(255,204,0,0.12);
 }
 
-/* Skill icons next to section titles */
+.skill-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
 .skill-icon {
-    font-size: 20px;
-    color: #ffcc00; /* Yellow */
-    margin-right: 8px;
+    color: #FFD700;
+    font-size: 22px;
+    margin-right: 10px;
 }
 
-/* List of skills */
+.skill-title {
+    color: #FFD700;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
 .skill-list {
     list-style: none;
     padding: 0;
-    margin-top: 10px;
+    margin: 0;
 }
 
-/* Individual skill item */
 .skill-list li {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px; /* Adds space between icon and text */
-    font-size: 16px;
-    color: white;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 14px;
+    color: #fff;
 }
 
-/* FontAwesome icons */
-.skill-list li i {
-    font-size: 18px;
-    color: #ffcc00; /* Yellow */
+.skill-list li:last-child {
+    border-bottom: none;
+}
+
+.skill-level {
+    padding: 4px 12px;
+    border-radius: 25px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.sub-skill {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    padding: 2px 0 8px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.08);
+}
+
+.sub-skill-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    font-style: italic;
+    margin-bottom: 6px;
+}
+
+.expert {
+    background: rgba(0,255,120,0.15);
+    color: #00ff88;
+}
+
+.advanced {
+    background: rgba(77,166,255,0.15);
+    color: #4da6ff;
+}
+
+.intermediate{
+    background: rgba(255,204,0,0.15);
+    color: #FFD700;
+}
+
+.skill-note {
+    padding: 4px 12px;
+    border-radius: 25px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(0,255,120,0.15);
+    color: #00ff88;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===== HIGHLIGHTS ===== */
+.highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.highlights span {
+    background: #FFD700;
+    color: #111;
+    padding: 8px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* ===== SECTION TITLE ===== */
+.cv-section h2 {
+    font-size: 24px;
+    border-bottom: 2px solid #FFD700;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
 }
 
 /* Custom icons for software & languages */
@@ -172,53 +419,84 @@
     margin: 10px 0;
 }
 
-/* Education List */
+/* Education List Wrapper */
 .education-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
 
 .education-item {
     display: flex;
 }
 
+/* Accent highlight specifically targeting your premier UPM PhD card */
+.education-item.execution-focus .content {
+    border-left: 3px solid #0ae25d;
+    background: rgba(10, 226, 93, 0.05);
+}
+
 .education-item .date {
     width: 150px;
-    font-weight: bold;
+    min-width: 120px;
+    font-weight: 600;
+    font-size: 16px;
     color: #FFD700;
+    padding-top: 15px;
 }
 
 .education-item .content {
     flex: 1;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 18px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* education details list */
-.education-details {
-    padding: 0;
-    margin: 0;
+.education-item .content h3 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
 }
 
-/* list item in education details */
-.education-details li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 16px;
-    color: #e0e0e0;
+/* Section Header Icons Spacing fix */
+.cv-section h2 i {
+    margin-right: 15px !important;
 }
 
-/* Ensure links are consistent and professional */
+/* Row structure using clear inline spacing guidelines */
+.edu-row {
+    display: block; /* changed from flex to handle plain-text spacing flawlessly */
+    margin: 10px 0 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #cccccc;
+}
+
+/* Fixed spacing bug: Provides clean, forced breathing room between entry icons and text strings */
+.edu-row i {
+    display: inline-block;
+    width: 20px;
+    margin-right: 15px; /* Forced distance before content text */
+    font-size: 14px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.edu-row span, .edu-row a {
+    vertical-align: middle;
+}
+
+/* Anchor Link Styles */
 .content a {
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
 }
 
 .content a:hover {
-    color: #ffcc00;
+    color: #ffcc00 !important;
+    text-decoration: underline;
 }
 
 /****************************** MOBILE VIEW ******************************/
@@ -227,18 +505,18 @@
         flex-direction: column;
         align-items: center;
     }
-
+    
     .cv-skill {
         width: 90%;
     }
-
+    
     .timeline-item,
     .education-item {
         position: relative; /* Allow absolute positioning of date */
         display: flex;
         align-items: flex-start; /* Align items to the top */
     }
-
+    
     .date {
         width: 150px;
         height: 10px;
@@ -248,7 +526,7 @@
         left: 0;
         top: 0;
     }
-
+    
     .content {
         margin-left: 20px;
         width: calc(100% - 10px);

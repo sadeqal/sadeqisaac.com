@@ -40,6 +40,15 @@ if (typeof Chart !== 'undefined') {
     Chart.defaults.animation = false;
 }
 
+let simMap = null;
+let simCanvasElement = null;
+let isSimulatingFlight = false;
+let simFrameIndex = 0;
+let simAnimationId = null;
+let simStartTimeReal = 0;
+let simStartTimeLog = 0;
+let lastFrameTimeReal = 0; // Tracking variable for smooth fallback rendering
+
 // ─── Utility Functions ─────────────────────────────────────────────────────────
 function setStatus(msg) {
     document.getElementById('statusBox').textContent = msg;
@@ -411,14 +420,28 @@ async function parseBinFile(file) {
         }
     }
     
-    // Calculate duration
+    // Calculate duration across all available telemetry data arrays safely
     const allTimes = [
         ...telemetry.gps.lat, 
-        ...telemetry.baro
-    ].map(p => p.time);
+        ...telemetry.pos.lat,
+        ...telemetry.baro,
+        ...telemetry.rangefinder,
+        ...telemetry.imu.z,
+        ...telemetry.airspeed,
+        ...telemetry.vibrations.x,
+        ...telemetry.battery.volt
+    ];
     
-    if (allTimes.length) {
-        flightInfo.duration = Math.max(...allTimes);
+    if (allTimes.length > 0) {
+        let maxTime = -Infinity;
+        for (let i = 0; i < allTimes.length; i++) {
+            if (allTimes[i].time > maxTime) {
+                maxTime = allTimes[i].time;
+            }
+        }
+        flightInfo.duration = maxTime;
+    } else {
+        flightInfo.duration = 0;
     }
     
     // Calculate distance
@@ -435,8 +458,8 @@ async function parseBinFile(file) {
     }
     
     // Max altitude
-    if (telemetry.gps.alt.length) {
-        flightInfo.maxAlt = Math.max(...telemetry.gps.alt.map(p => p.value));
+    if (telemetry.baro.length) {
+        flightInfo.maxAlt = Math.max(...telemetry.baro.map(p => p.value));
     }
     
     // Max speed
@@ -580,6 +603,9 @@ function renderTables() {
             return;
         }
         
+        // Show the panel container shell early so it's ready in the DOM layout
+        document.getElementById('simPanel').style.display = 'block';
+        
         try {
             setStatus('⏳ Analizando archivos...');
             document.getElementById('generateBtn').disabled = true;
@@ -647,11 +673,72 @@ function renderTables() {
                 renderBatteryChart();
             }
             
-            // Init map
+            
+            
+            // 3. NOW DATA EXISTS: Safe to initialize the Synthetic Vision Simulation Map!
             if (telemetry.gps.lat.length) {
+                if (!simMap) {
+                    
+                    // CRITICAL FIX: Explicitly assign your token right before building the map
+                    mapboxgl.accessToken = 'pk.eyJ1Ijoic2FkZXFhbCIsImEiOiJjbDA0ZHBpZDgwYjl5M2Rud2wweDVhaWVtIn0.PSwxdzBQL8ZCh0kYT4UA9g';
+                    
+                    simMap = new mapboxgl.Map({
+                        container: 'simMap',
+                        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+                        center: [telemetry.gps.lng[0].value, telemetry.gps.lat[0].value],
+                        zoom: 18.5,
+                        pitch: 0,
+                        bearing: 0,
+                        interactive: false,
+                        pixelRatio: 2 
+                    });
+                    
+                    simMap.on('load', () => {
+                        // We target the canvas specifically inside the simulation panel wrapper
+                        simCanvasElement = document.querySelector('#simPanel .mapboxgl-canvas');
+                        
+                        // Add real 3D mountain/hill terrain elevation metrics
+                        simMap.addSource('mapbox-dem-sim', {
+                            'type': 'raster-dem',
+                            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                            'tileSize': 512
+                        });
+                        simMap.setTerrain({ 'source': 'mapbox-dem-sim', 'exaggeration': 1.0 });
+                        
+                        // Add 3D Tower/Skyscraper extrusions
+                        simMap.addLayer({
+                            'id': 'sim-3d-buildings',
+                            'source': 'composite',
+                            'source-layer': 'building',
+                            'filter': ['==', 'extrude', 'true'],
+                            'type': 'fill-extrusion',
+                            'minzoom': 15,
+                            'paint': {
+                                'fill-extrusion-color': '#cbd5e1',
+                                'fill-extrusion-height': ['get', 'height'],
+                                'fill-extrusion-base': ['get', 'min_height'],
+                                'fill-extrusion-opacity': 0.6
+                            }
+                        });
+                    });
+                } else {
+                    // Reset map viewpoint position if a second file gets loaded later
+                    simMap.jumpTo({
+                        center: [telemetry.gps.lng[0].value, telemetry.gps.lat[0].value],
+                        zoom: 18.5,
+                        pitch: 0,
+                        bearing: 0
+                    });
+                    simFrameIndex = 0;
+                }
+                
+                // Standard trajectory display map initialization logic block
                 document.getElementById('mapPanel').style.display = 'flex';
                 setTimeout(() => initMap(), 300);
             }
+            
+            
+            
             
             document.getElementById('generateBtn').disabled = false;
             setStatus('✅ Análisis completado. Listo para generar PDF.');
@@ -660,6 +747,194 @@ function renderTables() {
             console.error(err);
             alert(err.message || 'Error al analizar el archivo');
             setStatus('❌ Error al analizar el archivo.');
+        }
+    }
+    
+    // ─── Flight Simulation ───────────────────────────────────────────────
+    
+    function toggleFlightSimulation() {
+        const btn = document.getElementById('simControlBtn');
+        
+        if (isSimulatingFlight) {
+            // Pausar
+            isSimulatingFlight = false;
+            cancelAnimationFrame(simAnimationId);
+            btn.textContent = "▶️ Resume Simulation";
+            btn.className = "sim-btn-play";
+        } else {
+            // Iniciar / Continuar
+            if (!telemetry.gps.lat || telemetry.gps.lat.length === 0) {
+                alert("No hay datos de telemetría válidos cargados.");
+                return;
+            }
+            isSimulatingFlight = true;
+            btn.textContent = "⏸️ Pause Simulation";
+            btn.style.background = "#dc2626";
+            simAnimationId = requestAnimationFrame(runSimulationFrame);
+        }
+    }
+    
+    function runSimulationFrame(timestamp) {
+        if (!isSimulatingFlight) return;
+        
+        const maxFrames = telemetry.gps.lat.length;
+        let exactIndex = 0;
+        
+        // 1. --- CALCULATE FRACTIONAL TIMELINE POSITION ---
+        if (telemetry.gps.time && telemetry.gps.time.length > 0) {
+            if (!simStartTimeReal) {
+                simStartTimeReal = performance.now();
+                simStartTimeLog = telemetry.gps.time[0].value; 
+            }
+            
+            const elapsedRealMs = performance.now() - simStartTimeReal;
+            
+            while (simFrameIndex < maxFrames - 1) {
+                const nextFrameLogTime = telemetry.gps.time[simFrameIndex + 1].value;
+                const elapsedLogMs = nextFrameLogTime - simStartTimeLog;
+                
+                if (elapsedLogMs > elapsedRealMs) break;
+                simFrameIndex++;
+            }
+            
+            // Calculate interpolation factor between this log frame and the next
+            if (simFrameIndex < maxFrames - 1) {
+                const currentLogTime = telemetry.gps.time[simFrameIndex].value;
+                const nextLogTime = telemetry.gps.time[simFrameIndex + 1].value;
+                const frameDuration = nextLogTime - currentLogTime;
+                const frameElapsed = elapsedRealMs - (currentLogTime - simStartTimeLog);
+                exactIndex = simFrameIndex + (frameDuration > 0 ? (frameElapsed / frameDuration) : 0);
+            } else {
+                exactIndex = simFrameIndex;
+            }
+        } else {
+            // Fallback Timeline Percentages
+            if (!simStartTimeReal) simStartTimeReal = performance.now();
+            
+            const elapsedRealSeconds = (performance.now() - simStartTimeReal) / 1000;
+            const totalFlightDurationSeconds = flightInfo.duration || (maxFrames / 10);
+            const progressPercent = elapsedRealSeconds / totalFlightDurationSeconds;
+            
+            // Maintain a continuous decimal representation of the index
+            exactIndex = progressPercent * (maxFrames - 1);
+        }
+        
+        // 2. --- ESCAPE GUARD: End of Flight Reached ---
+        if (exactIndex >= maxFrames - 1) {
+            isSimulatingFlight = false;
+            simFrameIndex = 0;
+            simStartTimeReal = 0;
+            const btn = document.getElementById('simControlBtn');
+            btn.textContent = "▶️ Start Simulation";
+            btn.style.background = "#0284c7";
+            return;
+        }
+        
+        // 3. --- LINEAR INTERPOLATION (LERP) ENGINE ---
+        // Break down the decimal index into integer bounding rows
+        const indexBase = Math.floor(exactIndex);
+        const lerpFactor = exactIndex - indexBase; // The decimal fraction (0.0 to 1.0)
+        const nextIndex = Math.min(indexBase + 1, maxFrames - 1);
+        
+        // Smoothly blend Latitude and Longitude coordinates
+        const lat1 = telemetry.gps.lat[indexBase].value;
+        const lat2 = telemetry.gps.lat[nextIndex].value;
+        const lat = lat1 + (lat2 - lat1) * lerpFactor;
+        
+        const lng1 = telemetry.gps.lng[indexBase].value;
+        const lng2 = telemetry.gps.lng[nextIndex].value;
+        const lng = lng1 + (lng2 - lng1) * lerpFactor;
+        
+        // Smoothly blend Altitude
+        let alt1 = 100, alt2 = 100;
+        if (telemetry.baro && telemetry.baro[indexBase]) {
+            alt1 = telemetry.baro[indexBase].value;
+            alt2 = telemetry.baro[nextIndex] ? telemetry.baro[nextIndex].value : alt1;
+        } else if (telemetry.gps.alt && telemetry.gps.alt[indexBase]) {
+            alt1 = telemetry.gps.alt[indexBase].value;
+            alt2 = telemetry.gps.alt[nextIndex] ? telemetry.gps.alt[nextIndex].value : alt1;
+        }
+        const alt = alt1 + (alt2 - alt1) * lerpFactor;
+        
+        // Smoothly blend Attitude Angles (Roll, Pitch, Yaw)
+        let yaw = 0, pitch = 0, roll = 0;
+        if (telemetry.att && telemetry.att.Roll && telemetry.att.Roll[indexBase]) {
+            const roll1  = telemetry.att.Roll[indexBase].value || 0;
+            const roll2  = telemetry.att.Roll[nextIndex]?.value || roll1;
+            roll = roll1 + (roll2 - roll1) * lerpFactor;
+            
+            const pitch1 = telemetry.att.Pitch[indexBase].value || 0;
+            const pitch2 = telemetry.att.Pitch[nextIndex]?.value || pitch1;
+            pitch = pitch1 + (pitch2 - pitch1) * lerpFactor;
+            
+            let yaw1   = telemetry.att.Yaw[indexBase].value || 0;
+            let yaw2   = telemetry.att.Yaw[nextIndex]?.value || yaw1;
+            
+            // Handle compass wrap-around handling (e.g., smoothly transition from 359° to 1°)
+            let diff = yaw2 - yaw1;
+            if (diff < -180) diff += 360;
+            if (diff > 180) diff -= 360;
+            yaw = yaw1 + diff * lerpFactor;
+        } else {
+            // Math vector heading calculation fallback
+            const nextLat = telemetry.gps.lat[nextIndex].value;
+            const nextLng = telemetry.gps.lng[nextIndex].value;
+            yaw = Math.atan2(nextLng - lng, nextLat - lat) * (180 / Math.PI);
+            pitch = Math.sin(exactIndex * 0.02) * 4;
+            roll  = Math.cos(exactIndex * 0.02) * 6;
+        }
+        
+        // 4. --- UPDATE 3D MAP WINDOW VIEWPORT ---
+        const zoomCalculado = 18.5 - Math.log2(Math.max(alt, 10) / 100);
+        const mapboxPitch = Math.abs(pitch);
+        let adjustedBearing = yaw;
+        if (pitch < 0) {
+            adjustedBearing = (yaw + 180) % 360;
+        }
+        
+        simMap.jumpTo({
+            center: [lng, lat],
+            zoom: zoomCalculado,
+            bearing: adjustedBearing,
+            pitch: mapboxPitch
+        });
+        
+        if (simCanvasElement) {
+            simCanvasElement.style.transform = `scale(1.4) rotate(${-roll}deg)`;
+        }
+        
+        // 5. --- UPDATE HUD UI METRICS ---
+        document.getElementById('sim-hud-lat').textContent = lat.toFixed(6);
+        document.getElementById('sim-hud-lng').textContent = lng.toFixed(6);
+        document.getElementById('sim-hud-alt').textContent = alt.toFixed(1) + ' m';
+        document.getElementById('sim-hud-yaw').textContent = ((yaw % 360 + 360) % 360).toFixed(1) + '°';
+        document.getElementById('sim-hud-pitch').textContent = pitch.toFixed(1) + '°';
+        document.getElementById('sim-hud-roll').textContent = roll.toFixed(1) + '°';
+        
+        // Store integer progress step for base evaluations
+        simFrameIndex = Math.floor(exactIndex);
+        
+        simAnimationId = requestAnimationFrame(runSimulationFrame);
+    }
+    
+    function toggleFlightSimulation() {
+        const btn = document.getElementById('simControlBtn');
+        if (isSimulatingFlight) {
+            isSimulatingFlight = false;
+            cancelAnimationFrame(simAnimationId);
+            simStartTimeReal = 0;
+            lastFrameTimeReal = 0;
+            btn.textContent = "▶️ Resume Simulation";
+            btn.style.background = "#0284c7";
+        } else {
+            if (!telemetry.gps || !telemetry.gps.lat || telemetry.gps.lat.length === 0) {
+                alert("No hay datos de telemetría válidos cargados en memoria.");
+                return;
+            }
+            isSimulatingFlight = true;
+            btn.textContent = "⏸️ Pause Simulation";
+            btn.style.background = "#dc2626";
+            simAnimationId = requestAnimationFrame(runSimulationFrame);
         }
     }
     

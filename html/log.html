@@ -166,6 +166,34 @@
                 </div>
                 
                 <div class="main" id="chartsContainer">
+
+                    <!-- Simulation Panel -->
+                    <div class="plot-container map-panel" id="simPanel" style="display:none; margin-bottom: 25px;">
+                        <div class="plot-head">
+                            <strong>Synthetic Vision System (SVS) & FPV Telemetry Simulator</strong>
+                            <span>Real-Time 3D Attitude Dynamics (Roll, Pitch, Yaw) • Satellite Hybrid Track</span>
+                        </div>
+                        <div class="sim-dashboard-layout">
+                            <div class="sim-hud-panel">
+                                <div class="sim-hud-row"><span class="sim-label">Altitude (MSL):</span><span class="sim-value" id="sim-hud-alt">0.0 m</span></div>
+                                <div class="sim-hud-row"><span class="sim-label">Heading (Yaw):</span><span class="sim-value" id="sim-hud-yaw">0.0°</span></div>
+                                <div class="sim-hud-row"><span class="sim-label">Pitch Angle:</span><span class="sim-value" id="sim-hud-pitch">0.0°</span></div>
+                                <div class="sim-hud-row"><span class="sim-label">Roll (Bank):</span><span class="sim-value" id="sim-hud-roll">0.0°</span></div>
+                                <div class="sim-hud-row"><span class="sim-label">Latitude:</span><span class="sim-value" id="sim-hud-lat">--</span></div>
+                                <div class="sim-hud-row"><span class="sim-label">Longitude:</span><span class="sim-value" id="sim-hud-lng">--</span></div>
+                                <div style="margin-top: 15px;">
+                                    <button id="simControlBtn" class="sim-btn-play" onclick="toggleFlightSimulation()">▶️ Start Simulation</button>
+                                </div>
+                            </div>
+                            
+                            <div class="sim-viewport-container">
+                                <div id="sim-crosshair"></div>
+                                <div id="simMap" style="width: 100%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aircraft Flight Trajectory Panel -->
                     <div class="plot-container map-panel" id="mapPanel" style="display:none;">
                         <div class="plot-head">
                             <strong>Aircraft Flight Trajectory (GNSS vs EKF POS)</strong>
@@ -180,6 +208,7 @@
                         <textarea class="comment-box" id="commentMap" placeholder="Comentarios sobre la trayectoria..."></textarea>
                     </div>
                     
+                    <!-- Altitude Comparison Panel -->
                     <div class="plot-container" id="altCompPanel" style="display:none;">
                         <div class="plot-head">
                             <strong>Comparación de altímetros</strong>
@@ -191,6 +220,7 @@
                         <textarea class="comment-box" id="commentAltComp" placeholder="Comentarios sobre altímetros..."></textarea>
                     </div>
                     
+                    <!-- IMU Acceleration Panel -->
                     <div class="plot-container" id="imuPanel" style="display:none;">
                         <div class="plot-head">
                             <strong>Aceleración vertical (IMU Z)</strong>
@@ -202,6 +232,7 @@
                         <textarea class="comment-box" id="commentImu" placeholder="Comentarios sobre IMU..."></textarea>
                     </div>
                     
+                    <!-- Airspeed Panel -->
                     <div class="plot-container" id="airspeedPanel" style="display:none;">
                         <div class="plot-head">
                             <strong>Velocidad del aire</strong>
@@ -213,6 +244,7 @@
                         <textarea class="comment-box" id="commentAirspeed" placeholder="Comentarios sobre velocidad..."></textarea>
                     </div>
                     
+                    <!-- Vibrations Panel -->
                     <div class="plot-container" id="vibrationsPanel" style="display:none;">
                         <div class="plot-head">
                             <strong>Vibraciones</strong>
@@ -224,6 +256,7 @@
                         <textarea class="comment-box" id="commentVibrations" placeholder="Comentarios sobre vibraciones..."></textarea>
                     </div>
                     
+                    <!-- Battery Panel -->
                     <div class="plot-container" id="batteryPanel" style="display:none;">
                         <div class="plot-head">
                             <strong>Batería</strong>
