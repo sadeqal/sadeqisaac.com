@@ -18,8 +18,6 @@ let telemetry = {
     groundSpeed: [],
     heading: [],
     climb: [],
-    sats: [],
-    hdop: [],
     pos: { lat: [], lng: [] }
 };
 
@@ -31,8 +29,6 @@ let overlayFields = {
     groundSpeed: true,
     heading: true,
     climb: true,
-    sats: true,
-    hdop: true,
     time: true
 };
 
@@ -95,8 +91,6 @@ els.fieldLng.addEventListener('change', () => { overlayFields.lng = els.fieldLng
 els.fieldGroundSpeed.addEventListener('change', () => { overlayFields.groundSpeed = els.fieldGroundSpeed.checked; updateLiveOverlay(); });
 els.fieldHeading.addEventListener('change', () => { overlayFields.heading = els.fieldHeading.checked; updateLiveOverlay(); });
 els.fieldClimb.addEventListener('change', () => { overlayFields.climb = els.fieldClimb.checked; updateLiveOverlay(); });
-els.fieldSats.addEventListener('change', () => { overlayFields.sats = els.fieldSats.checked; updateLiveOverlay(); });
-els.fieldHdop.addEventListener('change', () => { overlayFields.hdop = els.fieldHdop.checked; updateLiveOverlay(); });
 els.fieldTime.addEventListener('change', () => { overlayFields.time = els.fieldTime.checked; updateLiveOverlay(); });
 
 els.scrubber.addEventListener('input', () => {
@@ -287,14 +281,6 @@ function getOverlayLines(logTime) {
     if (overlayFields.climb) {
         const v = getInterpolatedValue(telemetry.climb, logTime);
         lines.push({ label: 'Climb', value: v == null ? '—' : `${v.toFixed(1)} m/s` });
-    }
-    if (overlayFields.sats) {
-        const v = getInterpolatedValue(telemetry.sats, logTime);
-        lines.push({ label: 'Sats', value: v == null ? '—' : `${Math.round(v)}` });
-    }
-    if (overlayFields.hdop) {
-        const v = getInterpolatedValue(telemetry.hdop, logTime);
-        lines.push({ label: 'HDOP', value: v == null ? '—' : v.toFixed(1) });
     }
     
     return lines;
@@ -998,15 +984,11 @@ async function parseBinFile(file) {
         
         const rawGSpd = mk(gpsMsg.Spd);
         const rawHead = mk(gpsMsg.GCrs);
-        const rawSats = mk(gpsMsg.NSats);
-        const rawHdop = mk(gpsMsg.HDop);
         
         if (filteredLat.length) { if (baseTime == null) baseTime = filteredLat[0].timeAbs; telemetry.lat = filteredLat; }
         if (filteredLng.length) { if (baseTime == null) baseTime = filteredLng[0].timeAbs; telemetry.lng = filteredLng; }
         if (rawGSpd.length) telemetry.groundSpeed = rawGSpd;
         if (rawHead.length) telemetry.heading = rawHead;
-        if (rawSats.length) telemetry.sats = rawSats;
-        if (rawHdop.length) telemetry.hdop = rawHdop;
     }
     
     if (posMsg?.time_boot_ms && posMsg?.Lat && posMsg?.Lng) {
@@ -1108,8 +1090,6 @@ async function parseBinFile(file) {
     telemetry.lng = normalise(telemetry.lng);
     telemetry.groundSpeed = normalise(telemetry.groundSpeed);
     telemetry.heading = normalise(telemetry.heading);
-    telemetry.sats = normalise(telemetry.sats);
-    telemetry.hdop = normalise(telemetry.hdop);
     telemetry.pos.lat = normalise(telemetry.pos.lat);
     telemetry.pos.lng = normalise(telemetry.pos.lng);
     
@@ -1361,3 +1341,63 @@ function exportFrameLoop() {
 // ─── Ready ─────────────────────────────────────────────────────────────────────
 
 console.log('Flight Overlay Studio ready. Load video + BIN file to begin.');
+
+// ─── Export Checked Data to CSV using Precise BARO[0].Alt coordinates ─────────
+function exportCSV() {
+    if (!telemetry.alt || telemetry.alt.length === 0) {
+        alert("No telemetry data to export.");
+        return;
+    }
+
+    let headers = ["Time", "Altitude (m)"];
+    let activeFields = [];
+
+    if (overlayFields.airspeed) { headers.push("Airspeed (m/s)"); activeFields.push({name:"airspeed", series:telemetry.airspeed}); }
+    if (overlayFields.lat)      { headers.push("Latitude"); activeFields.push({name:"lat", series:telemetry.lat}); }
+    if (overlayFields.lng)      { headers.push("Longitude"); activeFields.push({name:"lng", series:telemetry.lng}); }
+    if (overlayFields.groundSpeed){ headers.push("Ground Speed (m/s)"); activeFields.push({name:"groundSpeed", series:telemetry.groundSpeed}); }
+    if (overlayFields.heading)  { headers.push("Heading (deg)"); activeFields.push({name:"heading", series:telemetry.heading}); }
+    if (overlayFields.climb)    { headers.push("Climb Rate (m/s)"); activeFields.push({name:"climb", series:telemetry.climb}); }
+
+    let csvRows = [headers.join(";")];
+
+    // Get the first item's time to use as the zero baseline
+    const firstLogTime = telemetry.alt[0].time;
+
+    telemetry.alt.forEach(item => {
+        // Calculate total seconds elapsed since the start of the log
+        let elapsedSeconds = item.time - firstLogTime;
+        if (elapsedSeconds < 0) elapsedSeconds = 0; // Guard against rounding edge cases
+
+        // Format into HH:MM:SS.mmm
+        const hours = Math.floor(elapsedSeconds / 3600);
+        const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+        const seconds = Math.floor(elapsedSeconds % 60);
+        const milliseconds = Math.floor((elapsedSeconds % 1) * 1000);
+
+        const timeStr = 
+            String(hours).padStart(2, '0') + ':' +
+            String(minutes).padStart(2, '0') + ':' +
+            String(seconds).padStart(2, '0') + '.' +
+            String(milliseconds).padStart(3, '0');
+
+        let row = [timeStr, item.value.toFixed(2)];
+
+        activeFields.forEach(f => {
+            const val = getInterpolatedValue(f.series, item.time);
+            row.push(val == null ? "" : val.toFixed(f.name === "lat" || f.name === "lng" ? 6 : 2));
+        });
+
+        csvRows.push(row.join(";"));
+    });
+
+    const csvContent = "\uFEFF" + csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "telemetry_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}

@@ -7,7 +7,7 @@ document.getElementById('toggle-contact').addEventListener('click', () => {
     if (!isActive) {
         // SHOW menu
         menu.classList.add('show');
-        footer.classList.add('hidden'); // hide footer
+        if (footer) footer.classList.add('hidden'); // Only run if footer exists
         
         // Animate items on mobile
         if (window.innerWidth <= 768) {
@@ -21,7 +21,7 @@ document.getElementById('toggle-contact').addEventListener('click', () => {
     } else {
         // HIDE menu
         menu.classList.remove('show');
-        footer.classList.remove('hidden'); // show footer
+        if (footer) footer.classList.remove('hidden'); // Only run if footer exists
         
         if (window.innerWidth <= 768) {
             menu.querySelectorAll('.contact-item').forEach(item => {
@@ -36,7 +36,7 @@ document.getElementById('close-contact').addEventListener('click', () => {
     const menu = document.getElementById('contact-menu');
     const footer = document.querySelector('footer'); // footer reference
     menu.classList.remove('show');
-    footer.classList.remove('hidden'); // show footer again
+    if (footer) footer.classList.remove('hidden'); // Only run if footer exists
 
     if (window.innerWidth <= 768) {
         menu.querySelectorAll('.contact-item').forEach(item => {

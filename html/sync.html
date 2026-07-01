@@ -78,7 +78,7 @@
                             <strong id="endStat">0.00 s</strong>
                         </div>
                     </div>
-
+                    
                     <div class="stats" style="margin-top:10px;" id="driftStatsRow">
                         <div class="stat">
                             <small>Max drift</small>
@@ -97,7 +97,7 @@
                             <strong id="noGpsSpansStat">—</strong>
                         </div>
                     </div>
-
+                    
                     <div class="status" id="statusBox">
                         Load a video and a real BIN log. Click the plot to choose the matching point in the telemetry.
                     </div>
@@ -125,38 +125,40 @@
                         <input type="checkbox" id="fieldLng" checked>
                         Longitude
                     </label>
-
+                    
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldGroundSpeed" checked>
                         Ground Speed
                     </label>
-
+                    
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldHeading" checked>
                         Heading
                     </label>
-
+                    
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldClimb" checked>
                         Climb Rate
                     </label>
-
-                    <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
+                    
+                    <!-- <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldSats" checked>
                         Satellites
                     </label>
-
+                    
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldHdop" checked>
                         HDOP
-                    </label>
-
+                    </label> -->
+                    
                     <label style="display:flex; align-items:center; gap:10px; text-transform:none; letter-spacing:0; font-size:14px; margin-bottom:10px;">
                         <input type="checkbox" id="fieldTime" checked>
                         Flight Time
                     </label>
+                    
+                    <button class="btn-primary" style="margin-top: 15px; width: 100%;" onclick="exportCSV()">Export Checked Data to CSV</button>
                 </div>
-
+                
                 <div class="section">
                     <h3>Drift reference</h3>
                     <div class="field">
@@ -189,7 +191,7 @@
                         POS = EKF estimated position during GPS outage. Select reference to compute drift against.
                     </div>
                 </div>
-
+                
                 <div class="section">
                     <h3>Map controls</h3>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -246,7 +248,7 @@
                             The X axis uses real log seconds, formatted like normal time.
                         </div>
                     </div>
-
+                    
                     <div class="plot-container map-panel" id="mapPanel">
                         <div class="plot-head">
                             <strong>Flight trajectory map</strong>
@@ -257,7 +259,7 @@
                             Blue = GPS track • Orange = EKF/POS estimated (no GPS fix) • Markers = GPS cut/restore events
                         </div>
                     </div>
-
+                    
                     <div class="plot-container" id="driftPanel" style="display:none;">
                         <div class="plot-head">
                             <strong>Positional drift during GPS outage</strong>
