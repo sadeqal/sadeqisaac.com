@@ -533,3 +533,7 @@
         box-sizing: border-box;
     }
 }
+
+.export-dropdown {
+    display: none !important;
+}

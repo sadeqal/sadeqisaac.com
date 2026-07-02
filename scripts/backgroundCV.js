@@ -127,75 +127,145 @@ window.addEventListener('click', function() {
 });
 
 function exportCV(variant) {
-    const element = document.body;
+    // 1. Create a hidden isolated canvas container to build a true print asset
+    const printContainer = document.createElement('div');
+    printContainer.style.width = '210mm';
+    printContainer.style.background = '#ffffff';
+    printContainer.style.color = '#111111';
+    printContainer.style.fontFamily = '"Inter", "Arial", sans-serif';
+    printContainer.style.padding = '20mm';
+    printContainer.style.boxSizing = 'border-box';
 
-    if (variant === 'spaninglish') {
-        // Step 1: Temporarily restructure container to match the two-column image template layout
-        const originalHTML = element.innerHTML;
-        
-        // Grab values directly out of your existing document elements
-        const name = "Sadeq Isaac, PhD";
-        const role = "Senior Aerospace & Robotics Engineer";
-        const summary = document.querySelector('.cv-section p').innerHTML;
-        const profileImgSrc = document.querySelector('.profile-image img').src;
+    // Extract core data from screen metrics
+    const name = "Sadeq Isaac, PhD"; //[cite: 2]
+    const role = "Senior Aerospace & Robotics Engineer"; //[cite: 2]
+    const summaryText = "PhD Robotics Engineer with 10+ years of experience in UAVs, Flight Dynamics, and Autonomous Systems. Technical lead in the development of military VTOL and fixed-wing UAV platforms."; //[cite: 2]
+    const profileImgSrc = document.querySelector('.profile-image img')?.src || ''; //[cite: 2]
 
-        // Build the layout matching your reference picture structure natively
-        const templateHTML = `
-            <div class="spaninglish-print-mode">
-                <div class="spaninglish-sidebar">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <img src="${profileImgSrc}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid white;">
-                    </div>
-                    <div>
-                        <h3 style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; color: #fff;">SOBRE MÍ</h3>
-                        <p style="font-size: 12px; opacity: 0.9; line-height: 1.4;">${summary}</p>
-                    </div>
-                    <div>
-                        <h3 style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; color: #fff;">CONTACTO</h3>
-                        <p style="font-size: 12px; margin: 5px 0;">📍 Madrid, Spain</p>
-                        <p style="font-size: 12px; margin: 5px 0;">✉️ sadeqalisaac@gmail.com</p>
-                    </div>
-                </div>
-                
-                <div class="spaninglish-main">
-                    <h1 style="font-size: 32px; color: #0b2545; margin: 0;">${name}</h1>
-                    <p style="font-size: 16px; color: #666; margin: 5px 0 20px 0;">${role}</p>
-                    <hr style="border: 0; border-top: 1px solid #ccc; margin-bottom: 20px;">
-                    
-                    <h3 style="color: #0b2545; letter-spacing: 1px;">EXPERIENCIA LABORAL</h3>
-                    ${document.querySelector('.timeline').innerHTML}
-                </div>
+    // Determine configuration rules based on language variants
+    const isSpanish = variant === 'spanish';
+    const isSpaninglish = variant === 'spaninglish';
+    const includeImage = isSpanish || isSpaninglish;
+
+    // Localized Headers
+    const labels = {
+        summary: isSpanish ? "RESUMEN PROFESIONAL" : "PROFESSIONAL SUMMARY",
+        experience: isSpanish ? "EXPERIENCIA LABORAL" : "PROFESSIONAL EXPERIENCE",
+        education: isSpanish ? "EDUCACIÓN" : "EDUCATION"
+    };
+
+    // Clone the dynamic Timeline content and strip interactive/web specific nodes safely
+    const originalTimeline = document.querySelector('.timeline').cloneNode(true); //[cite: 2]
+    const originalEducation = document.querySelector('.education-list').cloneNode(true); //[cite: 2]
+    
+    // Clean up inline anchor styles for printable typography
+    originalTimeline.querySelectorAll('a').forEach(a => a.style.color = '#111111'); //[cite: 2, 3]
+
+    // 2. Synthesize High-End Industrial Header Structure
+    let headerHTML = '';
+    if (includeImage && profileImgSrc) {
+        headerHTML = `
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8mm;">
+                <tr>
+                    <td style="width: 35mm; vertical-align: middle;">
+                        <img src="${profileImgSrc}" style="width: 30mm; height: 30mm; border-radius: 50%; object-fit: cover; border: 2px solid #111;">
+                    </td>
+                    <td style="vertical-align: middle; padding-left: 5mm;">
+                        <h1 style="font-size: 26pt; margin: 0; color: #0b2545; font-weight: 800; letter-spacing: -0.5px;">${name}</h1>
+                        <p style="font-size: 13pt; margin: 2mm 0 0 0; color: #444; font-weight: 500;">${role}</p>
+                        <p style="font-size: 9.5pt; margin: 1mm 0 0 0; color: #666;">Madrid, Spain | sadeqalisaac@gmail.com | Full Working Rights</p>
+                    </td>
+                </tr>
+            </table>
+        `;
+    } else {
+        headerHTML = `
+            <div style="text-align: center; border-bottom: 2px solid #0b2545; padding-bottom: 5mm; margin-bottom: 8mm;">
+                <h1 style="font-size: 28pt; margin: 0; color: #0b2545; font-weight: 800; letter-spacing: -0.5px;">${name}</h1>
+                <p style="font-size: 14pt; margin: 2mm 0; color: #444; font-weight: 500;">${role}</p>
+                <p style="font-size: 10pt; margin: 0; color: #666;">Madrid, Spain &bull; sadeqalisaac@gmail.com &bull; Full Working Rights</p>
             </div>
         `;
-
-        // Switch window content to template view temporary to intercept PDF render window
-        document.body.innerHTML = templateHTML;
-
-        const opt = {
-            margin:       0,
-            filename:     'Sadeq_Isaac_CV_Spaninglish.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        // Generate the PDF artifact document smoothly
-        html2pdf().set(opt).from(document.body).save().then(() => {
-            // Restore original website look and interactive controls instantly
-            document.body.innerHTML = originalHTML;
-            // Rebind action event listener tracking safely
-            location.reload(); 
-        });
-
-    } else {
-        // Default standard download setups for Standard layouts
-        const opt = {
-            margin:       10,
-            filename:     `Sadeq_Isaac_CV_${variant}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(document.getElementById('cv-content')).save();
     }
+
+    // 3. Assemble Executive Blueprint Component Layout
+    printContainer.innerHTML = `
+        ${headerHTML}
+        
+        <div style="margin-bottom: 6mm;">
+            <h2 style="font-size: 12pt; color: #0b2545; border-bottom: 1px solid #ddd; padding-bottom: 1mm; margin-bottom: 2mm; letter-spacing: 0.5px;">${labels.summary}</h2>
+            <p style="font-size: 10pt; line-height: 1.5; color: #333; margin: 0; text-align: justify;">${summaryText}</p>
+        </div>
+
+        <div style="margin-bottom: 6mm;">
+            <h2 style="font-size: 12pt; color: #0b2545; border-bottom: 1px solid #ddd; padding-bottom: 1mm; margin-bottom: 4mm; letter-spacing: 0.5px;">${labels.experience}</h2>
+            <div class="pdf-timeline" style="font-size: 10pt; line-height: 1.4;">
+                ${originalTimeline.innerHTML}
+            </div>
+        </div>
+
+        <div>
+            <h2 style="font-size: 12pt; color: #0b2545; border-bottom: 1px solid #ddd; padding-bottom: 1mm; margin-bottom: 4mm; letter-spacing: 0.5px;">${labels.education}</h2>
+            <div class="pdf-education" style="font-size: 10pt; line-height: 1.4;">
+                ${originalEducation.innerHTML}
+            </div>
+        </div>
+    `;
+
+    // 4. Clean elements styling mapping to avoid dark-theme spilling into the presentation context
+    printContainer.querySelectorAll('.timeline-item, .education-item').forEach(item => {
+        item.style.display = 'flex';
+        item.style.marginBottom = '4mm';
+        item.style.pageBreakInside = 'avoid';
+    });
+    printContainer.querySelectorAll('.date').forEach(d => {
+        d.style.width = '30mm';
+        d.style.minWidth = '30mm';
+        d.style.fontWeight = '700';
+        d.style.color = '#0b2545';
+    });
+    printContainer.querySelectorAll('.content').forEach(c => {
+        c.style.flex = '1';
+        c.style.background = 'none';
+        c.style.padding = '0';
+        c.style.color = '#222';
+    });
+    printContainer.querySelectorAll('h3').forEach(h => {
+        h.style.margin = '0 0 1mm 0';
+        h.style.fontSize = '11pt';
+        h.style.color = '#111';
+    });
+    printContainer.querySelectorAll('h4').forEach(h => {
+        h.style.margin = '0 0 2mm 0';
+        h.style.fontSize = '10pt';
+        h.style.color = '#555';
+    });
+    printContainer.querySelectorAll('ul').forEach(ul => {
+        ul.style.paddingLeft = '5mm';
+        ul.style.margin = '1mm 0';
+    });
+    printContainer.querySelectorAll('li').forEach(li => {
+        li.style.marginBottom = '1mm';
+        li.style.color = '#333';
+    });
+    printContainer.querySelectorAll('.edu-row').forEach(row => {
+        row.style.color = '#444';
+        row.style.margin = '1mm 0';
+    });
+    printContainer.querySelectorAll('.fas, .far, .fab').forEach(icon => icon.remove()); // Strip decorative web graphics
+
+    // 5. Execute html2pdf processing injection over hidden container element
+    document.body.appendChild(printContainer);
+
+    const opt = {
+        margin:       [10, 10, 10, 10],
+        filename:     `Sadeq_Isaac_CV_${variant}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 3, useCORS: true, letterRendering: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(printContainer).save().then(() => {
+        printContainer.remove(); // Unmount gracefully from DOM
+    });
 }

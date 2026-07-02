@@ -1261,7 +1261,11 @@ function resetSync() {
     setStatus('Sync reset.');
 }
 
-// ─── Export Functions ──────────────────────────────────────────────────────────
+// ─── Frame-Accurate Export Functions ─────────────────────────────────────────
+
+let exportCurrentTime = 0;
+const EXPORT_FPS = 30;
+const FRAME_DURATION = 1 / EXPORT_FPS;
 
 async function startExport() {
     if (isExporting) return;
@@ -1270,22 +1274,48 @@ async function startExport() {
     
     isExporting = true;
     els.exportBtn.disabled = true;
-    els.exportBtn.textContent = 'Exporting… keep tab open';
+    els.exportBtn.textContent = 'Exporting… 0%';
+    
+    // Ensure video is paused during processing
+    video.pause();
     
     exportCanvas = document.createElement('canvas');
-    exportCanvas.width = video.videoWidth || 2560;
-    exportCanvas.height = video.videoHeight || 1440;
+    exportCanvas.width = video.videoWidth || 1920; // Falling back to 1080p if width is 0 to avoid crashes
+    exportCanvas.height = video.videoHeight || 1080;
     exportCtx = exportCanvas.getContext('2d', { alpha: false });
     
-    const stream = exportCanvas.captureStream(30);
+    const stream = exportCanvas.captureStream(EXPORT_FPS);
     
-    let mimeType = 'video/mp4';
-    if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp9';
-    if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+    // ─── Adaptive MimeType Check ───
+    let mimeType = '';
+    const candidateTypes = [
+        'video/mp4;codecs=hvc1',   // Standard HEVC in MP4
+        'video/mp4;codecs=hev1',   // Alternative HEVC
+        'video/webm;codecs=hevc',  // HEVC in WebM
+        'video/mp4;codecs=avc1',   // H.264 fallback
+        'video/webm;codecs=vp9',   // VP9 fallback
+        'video/webm'               // Ultimate browser fallback
+    ];
+
+    for (const type of candidateTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+            mimeType = type;
+            break;
+        }
+    }
+
+    if (!mimeType) {
+        alert("Your browser does not support any of the available recording codecs.");
+        isExporting = false;
+        els.exportBtn.disabled = false;
+        els.exportBtn.textContent = 'Export Overlaid Video';
+        return;
+    }
+    console.log(`🎥 Using video codec: ${mimeType}`);
     
     recorder = new MediaRecorder(stream, {
         mimeType,
-        videoBitsPerSecond: 50000000
+        videoBitsPerSecond: 35000000 // 35 Mbps is plenty for crisp 2K/4K HEVC
     });
     
     recordedChunks = [];
@@ -1309,31 +1339,40 @@ async function startExport() {
     };
     
     recorder.start();
-    video.currentTime = 0;
     
-    video.play().then(() => exportFrameLoop()).catch(err => {
-        console.error(err);
-        isExporting = false;
-        els.exportBtn.disabled = false;
-        els.exportBtn.textContent = 'Export Overlaid Video';
-    });
+    // Set up step-by-step frame processing pipeline
+    exportCurrentTime = 0;
+    video.currentTime = exportCurrentTime;
+    
+    // Set up a one-time event handler to process the next frame every time a seek finishes
+    video.onseeked = () => {
+        if (!isExporting) return;
+        processSingleExportFrame();
+    };
 }
 
-function exportFrameLoop() {
-    if (!recorder || recorder.state !== 'recording') return;
-    
+function processSingleExportFrame() {
+    // 1. Draw current video frame onto processing canvas
     exportCtx.clearRect(0, 0, exportCanvas.width, exportCanvas.height);
     exportCtx.drawImage(video, 0, 0, exportCanvas.width, exportCanvas.height);
     
-    const videoTime = video.currentTime || 0;
-    const logTime = videoTime - syncOffset;
+    // 2. Calculate flight log telemetry mapping coordinates
+    const logTime = exportCurrentTime - syncOffset;
     
+    // 3. Draw the user-selected telemetry dashboard strings over top
     drawExportOverlay(exportCtx, exportCanvas, logTime);
     
-    if (video.currentTime < video.duration - 0.05) {
-        requestAnimationFrame(exportFrameLoop);
+    // 4. Track export completion percentage progress text
+    const percent = Math.min(100, (exportCurrentTime / video.duration) * 100);
+    els.exportBtn.textContent = `Exporting… ${percent.toFixed(0)}%`;
+    
+    // 5. Advance timeline pointer manually or stop recording if finished
+    if (exportCurrentTime < video.duration - FRAME_DURATION) {
+        exportCurrentTime += FRAME_DURATION;
+        video.currentTime = exportCurrentTime; // Triggers the video.onseeked event again
     } else {
-        video.pause();
+        // Clean up events and finalize file construction 
+        video.onseeked = null;
         recorder.stop();
     }
 }
