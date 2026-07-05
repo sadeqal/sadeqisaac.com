@@ -7,16 +7,15 @@
     <link rel="stylesheet" href="styles/common.css">
     <link rel="stylesheet" href="styles/index.css">
     <link rel="icon" type="image/png" href="icons/pageIcon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Google Analytics Tracking Code
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QQRS3Z845D"></script>
     <script src="scripts/analyticsTracking.js"></script> -->
 </head>
 <body>
-    <div class="background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: radial-gradient(circle, rgba(220, 224, 224, 0.123) 40%, #4ceb9b69 100%)">
-        <!-- Dynamic Background -->
-        <!-- <div class="light"></div>
-        <div id="particles-js"></div> -->
-        
+    <div class="background">
         <!-- Menu Toolbar -->
         <div class="toolbar">
             <!-- Toggle Icon -->
@@ -102,60 +101,146 @@
             </div>
         </div>
         
-        <!-- Hand Written Animated Content -->
-        <section id="home" class="centered">
-            <!-- Welcome Content -->
-            <div class="centered">
-                <h1 class="hero-title">
-                    STEP INTO MY LITTLE WORLD
+        <!-- Hero -->
+        <section id="home">
+            <div class="hero-foreground">
+                <span class="eyebrow-tag">PhD &middot; Aerospace &amp; Robotics Engineer</span>
+                <h1 class="name-lockup">
+                    <span class="name-fill">SADEQ</span>
+                    <span class="name-outline">ISAAC</span>
                 </h1>
-                <p class="hero-subtitle">
-                    Join me on a fun journey where we can get to know each other through creativity.
+                <p class="hero-tagline">
+                    I design the control systems that let aircraft fly themselves — from doctoral thesis to deployed military UAVs.
                 </p>
-                <button class="cta-button" onclick="alert('Prepare to be amazed!')">Dive In</button>
-            </div>
-            
-            <div class="message">
-                <!-- Animated Text Container -->
-                <div id="messageContainer">
-                    <div id="animatedText"></div>
-                </div>
-                
-                <!-- Name Request -->
-                <div id="nameRequest" style="display: none;">
-                    <input id="nameInput" type="text" placeholder="What's your name?" style="display: none;";>
-                    <button id="submitBtn" style="display: none;">Submit</button>
-                </div>
-                
-                <!-- Job Request -->
-                <div id="jobRequest" style="display: none;">
-                    <input id="jobInput" type="text" placeholder="What do you do for a living?" style="display: none;">
-                    <button id="jobSubmitBtn" style="display: none;">Submit</button>
+                <div class="hero-ctas">
+                    <a href="#work" class="btn-hud">See Selected Work</a>
+                    <a href="html/cv.html" class="btn-hud secondary">Download CV</a>
                 </div>
             </div>
             
-            <!-- Double Eyes Animation -->
-            <div class="double-eyes">
-                <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
-                <img src="icons/eyes.gif" alt="Eyes looking around" class="eyes-gif">
+            <!-- Eye Blob Cluster -->
+            <div class="eye-cluster" aria-hidden="true">
+                <div class="eye-blob sm"><div class="sclera"><div class="pupil"></div></div></div>
+                <div class="eye-blob lg"><div class="sclera"><div class="pupil"></div></div></div>
+                <div class="eye-blob md"><div class="sclera"><div class="pupil"></div></div></div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Scrolling content, floats over the fixed hero backdrop -->
+    <main>
+        <!-- Selected Work -->
+        <section id="work" class="section-panel">
+            <div class="section-head reveal">
+                <span class="section-eyebrow">Sec. 01</span>
+                <h2 class="section-title">Selected Work</h2>
+                <p class="section-sub">A few of the flight-control and autonomy programs I've led or shipped. Full detail lives in the CV.</p>
+            </div>
+            
+            <div class="work-grid">
+                <a class="work-card reveal" href="html/works.html">
+                    <img class="work-media" src="images/work-indra.jpg" alt="Indra eVTOL flight-control work">
+                    <div class="work-body">
+                        <span class="work-dates">2022 — Present</span>
+                        <h3>Indra Sistemas — eVTOL &amp; Fixed-Wing Flight Control</h3>
+                        <p>Flight-dynamics and control lead for military VTOL and fixed-wing UAV programs — autopilot firmware, GCS architecture, and live flight-test validation.</p>
+                        <div class="work-tags">
+                            <span class="work-tag">PX4 / ArduPilot</span>
+                            <span class="work-tag">VTOL</span>
+                            <span class="work-tag">GCS</span>
+                        </div>
+                    </div>
+                </a>
+                
+                <a class="work-card reveal" href="html/works.html">
+                    <img class="work-media" src="images/work-dronehopper.jpg" alt="Wild Hopper firefighting UAV">
+                    <div class="work-body">
+                        <span class="work-dates">2020 — 2022</span>
+                        <h3>Drone-Hopper — Wild Hopper Firefighting UAV</h3>
+                        <p>A heavy-duty autonomous UAV built for day-and-night wildfire response. Findings published in Heliyon and Unmanned Systems.</p>
+                        <div class="work-tags">
+                            <span class="work-tag">Autonomous UAV</span>
+                            <span class="work-tag">Aerodynamics</span>
+                            <span class="work-tag">Published</span>
+                        </div>
+                    </div>
+                </a>
+                
+                <a class="work-card reveal" href="html/works.html">
+                    <img class="work-media" src="images/work-ahyres.jpg" alt="Ahyres inspection mission ground control software">
+                    <div class="work-body">
+                        <span class="work-dates">2023 — 2024</span>
+                        <h3>Ahyres — Inspection Mission Ground Control</h3>
+                        <p>A compact Qt-based ground-control app streamlining single-UAV inspection missions, online or offline.</p>
+                        <div class="work-tags">
+                            <span class="work-tag">Qt</span>
+                            <span class="work-tag">GCS Software</span>
+                        </div>
+                    </div>
+                </a>
+                
+                <a class="work-card reveal" href="html/cv.html">
+                    <img class="work-media" src="images/work-phd.jpg" alt="Doctoral research on UAV thrust-vectoring control">
+                    <div class="work-body">
+                        <span class="work-dates">2019 — 2024</span>
+                        <h3>Doctoral Research — CAR, UPM</h3>
+                        <p>Thrust-vectoring control for a multi-ducted-fan UAV — nonlinear control theory taken from simulation to real flight.</p>
+                        <div class="work-tags">
+                            <span class="work-tag">PhD Thesis</span>
+                            <span class="work-tag">Nonlinear Control</span>
+                        </div>
+                    </div>
+                </a>
             </div>
         </section>
         
-        <!-- Analytics Display
-        <div class="analytics-display">
-            <p><span class="label">Now:</span> <span id="current-viewers">0</span></p>
-            <p><span class="label">L. Mo.:</span> <span id="last-month">0</span></p>
-            <p><span class="label">Total:</span> <span id="total-visits">0</span></p>
-        </div> -->
-    </div>
+        <!-- Education -->
+        <section id="education" class="section-panel">
+            <div class="section-head reveal">
+                <span class="section-eyebrow">Sec. 02</span>
+                <h2 class="section-title">Education</h2>
+                <p class="section-sub">Three degrees, one throughline: flight dynamics and nonlinear control.</p>
+            </div>
+            
+            <div class="education-strip">
+                <div class="education-card highest-honors reveal">
+                    <img src="images/edu-upm.jpg" alt="Polytechnic University of Madrid">
+                    <span class="edu-dates">2019–2024</span>
+                    <div class="edu-info">
+                        <h4>PhD, Automation &amp; Robotics Engineering</h4>
+                        <p>Polytechnic University of Madrid (UPM), Spain — Sobresaliente (Highest Honors)</p>
+                    </div>
+                </div>
+                
+                <div class="education-card reveal">
+                    <img src="images/edu-amirkabir.jpg" alt="Amir Kabir University of Technology">
+                    <span class="edu-dates">2016–2019</span>
+                    <div class="edu-info">
+                        <h4>MS, Aerospace Engineering</h4>
+                        <p>Amir Kabir University of Technology (Polytechnic)</p>
+                    </div>
+                </div>
+                
+                <div class="education-card reveal">
+                    <img src="images/edu-khajehnasir.jpg" alt="Khajeh Nasir University of Technology">
+                    <span class="edu-dates">2011–2015</span>
+                    <div class="edu-info">
+                        <h4>BS, Aerospace Engineering</h4>
+                        <p>Khajeh Nasir University of Technology</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="education-cta reveal">
+                <a href="html/cv.html" class="btn-hud secondary">View Full CV</a>
+            </div>
+        </section>
+    </main>
     
     <!-- Footer -->
     <footer>
         <!-- Visitor counters -->
         <div class="counters">
-            <!-- <span id="watching-count">
-                <i class="fa-solid fa-eye"></i> <span id="active-users">0</span> watching
-            </span> -->
             <span id="visited-count">
                 <i class="fa-solid fa-shoe-prints"></i> <span id="total-visits">0</span> visits
             </span>
@@ -176,20 +261,12 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="scripts/3dmodel.js"></script>
     
-    <!-- Particles.js Script
-    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
-    <script src="scripts/particles.js"></script> -->
-    
     <!-- Import Awesome and Google Fonts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     
-    <!-- Hand Motion Written Mode -->
-    <script src="scripts/typeWriter.js"></script>
-    
-    <!-- Google API Client Library
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="scripts/analyticsCredentials.js"></script> -->
+    <!-- Hero fade, eye tracking, scroll reveal -->
+    <script src="scripts/interactions.js"></script>
     
     <!-- Firebase Analytics -->
     <script type="module">
@@ -236,18 +313,16 @@
             })
             .then((result) => {
                 if (result.committed) {
-                    //console.log('Visits committed:', result.snapshot.val());
                     updateCounterDisplay('total-visits', result.snapshot.val() * 2 + 70698 || 0);
                 }
             })
             .catch((error) => {
-                //console.error('Error updating visits:', error);
                 updateCounterDisplay('total-visits', 'N/A');
             });
             
             // Watching counter
             const activeUsersRef = ref(db, 'activeUsers');
-            const sessionKey = `session_${Date.now()}_${Math.random().toString().replace('.', '_')}`; // Replace . with _
+            const sessionKey = `session_${Date.now()}_${Math.random().toString().replace('.', '_')}`;
             set(ref(db, `activeUsers/${sessionKey}`), { active: true })
             .catch((error) => console.error('Error setting active user:', error));
             onDisconnect(ref(db, `activeUsers/${sessionKey}`)).remove()
@@ -255,11 +330,9 @@
             
             // Update watching count in real-time
             onValue(activeUsersRef, (snapshot) => {
-                const count = snapshot.size; // Use snapshot.size
-                //console.log('Active users count:', count);
+                const count = snapshot.size;
                 updateCounterDisplay('active-users', count || 0);
             }, (error) => {
-                //console.error('Error fetching active users:', error);
                 updateCounterDisplay('active-users', 'N/A');
             });
         };
