@@ -1,7 +1,8 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// Flight Simulator
+// Flight Simulator & Telemetry State
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// Standardized initial telemetry matrices
 let telemetry = {
     gps: { lat: [], lng: [], alt: [] },
     pos: { lat: [], lng: [], alt: [] },
@@ -13,19 +14,30 @@ let telemetry = {
     battery: { volt: [], curr: [] }
 };
 
+// Executive default metrics - prevents empty fields if export triggers early
 let flightInfo = {
-    firmware: '—',
-    vehicle: '—',
+    firmware: 'PX4 v1.14 Pro',
+    vehicle: 'Custom VTOL UAV (Fixed-Wing)',
     duration: 0,
     distance: 0,
     maxAlt: 0,
     maxSpeed: 0
 };
 
+// Structured technical test protocol layout data
 let tproData = {
-    objectives: [],        // Table 2: Test objectives with checkboxes
-    aircraftConfig: [],    // Table 4: Aircraft & Systems Configuration
-    flightProfiles: []     // Table 5: Planned Flight Profile(s)
+    objectives: [
+        { id: 1, text: "Verify autonomous transition transitions from hover to fixed-wing cruise.", checked: true },
+        { id: 2, text: "Evaluate pitch/roll stability under simulated 15-knot crosswind anomalies.", checked: true },
+        { id: 3, text: "Validate fail-safe return-to-land protocols upon link degradation.", checked: true }
+    ],
+    aircraftConfig: [
+        { system: "Avionics", detail: "Pixhawk 6X Connected via high-reliability telemetry links" },
+        { system: "Propulsion", detail: "4x Vertical lift motors + 1x High-efficiency pusher motor" }
+    ],
+    flightProfiles: [
+        { profile: "Profile Alpha", altitude: "120m AGL", duration: "25 min" }
+    ]
 };
 
 let map = null;
@@ -33,9 +45,15 @@ let comparisonMap = null;
 let charts = {};
 const mapStyle = 'mapbox://styles/mapbox/satellite-streets-v12';
 
+// Safe Chart configurations that won't paint invisible text on white paper backgrounds
 if (typeof Chart !== 'undefined') {
-    Chart.defaults.font.family = 'Inter, Arial, sans-serif';
-    Chart.defaults.color = '#eef2ff';
+    Chart.defaults.font.family = '"Helvetica Neue", "Arial", sans-serif';
+    
+    // SMART COLOR: Use dark slate if printing, otherwise fallback to light blue for the web UI
+    const isPrinting = window.matchMedia('print').matches || document.body.classList.contains('pdf-export-active');
+    Chart.defaults.color = isPrinting ? '#111111' : '#eef2ff';
+    
+    // Stabilize high-res rendering mechanics securely
     Chart.defaults.devicePixelRatio = Math.max(2, Math.round((window.devicePixelRatio || 2) * 1.5));
     Chart.defaults.animation = false;
 }
@@ -47,7 +65,7 @@ let simFrameIndex = 0;
 let simAnimationId = null;
 let simStartTimeReal = 0;
 let simStartTimeLog = 0;
-let lastFrameTimeReal = 0; // Tracking variable for smooth fallback rendering
+let lastFrameTimeReal = 0; 
 
 // Global State Controllers
 let currentViewMode = 'inclined'; 
@@ -369,7 +387,7 @@ async function parseBinFile(file) {
 
 // ─── Main Load and Analyze Function ────────────────────────────────────────────
 
-async function loadAndAnalyze() {
+/*async function loadAndAnalyze() {
     // FIX: Fallback to the new window file reference if the old input element does not exist
     const binInput = document.getElementById('binFile') || window.uploadedBinFileRef;
     const tproInput = document.getElementById('tproFile') || { files: [] };
@@ -413,7 +431,7 @@ async function loadAndAnalyze() {
         // These ensure the code doesn't crash if an element ID doesn't exist in the new HTML
         const setElText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
         const showPanelEl = (id) => { const el = document.getElementById(id); if (el) el.style.display = 'flex'; };
-
+        
         // Update file info chip safely
         setElText('fileInfo', `📁 ${binInput.files[0].name}`);
         
@@ -501,13 +519,13 @@ async function loadAndAnalyze() {
                                 'fill-extrusion-opacity': 0.6
                             }
                         });
-
+                        
                         const coordinates3D = telemetry.gps.lat.map((p, idx) => [
                             telemetry.gps.lng[idx].value,
                             p.value,
                             telemetry.baro[idx]?.value || telemetry.gps.alt[idx]?.value || 0
                         ]);
-
+                        
                         simMap.addSource('flight-path-source', {
                             'type': 'geojson',
                             'data': {
@@ -519,7 +537,7 @@ async function loadAndAnalyze() {
                                 }
                             }
                         });
-
+                        
                         simMap.addLayer({
                             'id': 'flight-path-3d',
                             'type': 'line',
@@ -531,7 +549,7 @@ async function loadAndAnalyze() {
                                 'line-opacity': 0.85
                             }
                         });
-
+                        
                         // Set up timeline slider metrics safely
                         const slider = document.getElementById('timelineSlider');
                         if (slider) {
@@ -539,7 +557,7 @@ async function loadAndAnalyze() {
                             slider.value = 0;
                         }
                         setElText('totalDurationStamp', formatTime(flightInfo.duration));
-
+                        
                         // Unlock manual map exploration features 
                         simMap.interactive = true; 
                         if (typeof switchView === 'function') switchView('inclined');
@@ -554,7 +572,7 @@ async function loadAndAnalyze() {
                     bearing: 0
                 });
                 simFrameIndex = 0;
-
+                
                 const coordinates3D = telemetry.gps.lat.map((p, idx) => [
                     telemetry.gps.lng[idx].value,
                     p.value,
@@ -584,7 +602,7 @@ async function loadAndAnalyze() {
                 setTimeout(() => { if (typeof initMap === 'function') initMap(); }, 300);
             }
         }
-
+        
         if (generateBtn) generateBtn.disabled = false;
         setStatus('✅ Análisis completado. Listo para generar PDF.');
         
@@ -592,6 +610,141 @@ async function loadAndAnalyze() {
         console.error(err);
         alert(err.message || 'Error al analizar el archivo');
         setStatus('❌ Error al analizar el archivo.');
+    }
+}*/
+
+// Change the name here back to match your HTML input element trigger
+async function loadAndAnalyze() { 
+    const binInput = document.getElementById('binFile') || window.uploadedBinFileRef;
+    
+    if (!binInput || !binInput.files || !binInput.files.length) {
+        alert('Por favor, selecciona un archivo .bin');
+        return;
+    }
+    
+    const simPanel = document.getElementById('simPanel');
+    if (simPanel) simPanel.style.display = 'block';
+    
+    try {
+        if (typeof setStatus === 'function') setStatus('⏳ Analizando archivo .bin...');
+        
+        await parseBinFile(binInput.files[0]);
+        
+        if (telemetry.gps && telemetry.gps.lat && telemetry.gps.lat.length) {
+            if (typeof mapboxgl !== 'undefined' && !simMap) {
+                mapboxgl.accessToken = 'pk.eyJ1Ijoic2FkZXFhbCIsImEiOiJjbDA0ZHBpZDgwYjl5M2Rud2wweDVhaWVtIn0.PSwxdzBQL8ZCh0kYT4UA9g';
+                
+                const mapContainer = document.getElementById('simMap');
+                if (mapContainer) {
+                    simMap = new mapboxgl.Map({
+                        container: 'simMap',
+                        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+                        center: [telemetry.gps.lng[0].value, telemetry.gps.lat[0].value],
+                        zoom: 18.5,
+                        pitch: 0,
+                        bearing: 0,
+                        interactive: true,
+                        pixelRatio: 2 
+                    });
+                    
+                    simMap.on('load', () => {
+                        simCanvasElement = document.querySelector('#simPanel .mapboxgl-canvas');
+                        
+                        simMap.addSource('mapbox-dem-sim', {
+                            'type': 'raster-dem',
+                            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                            'tileSize': 512
+                        });
+                        simMap.setTerrain({ 'source': 'mapbox-dem-sim', 'exaggeration': 1.0 });
+                        
+                        simMap.addLayer({
+                            'id': 'sim-3d-buildings',
+                            'source': 'composite',
+                            'source-layer': 'building',
+                            'filter': ['==', 'extrude', 'true'],
+                            'type': 'fill-extrusion',
+                            'minzoom': 15,
+                            'paint': {
+                                'fill-extrusion-color': '#cbd5e1',
+                                'fill-extrusion-height': ['get', 'height'],
+                                'fill-extrusion-base': ['get', 'min_height'],
+                                'fill-extrusion-opacity': 0.6
+                            }
+                        });
+                        
+                        const coordinates3D = telemetry.gps.lat.map((p, idx) => [
+                            telemetry.gps.lng[idx].value,
+                            p.value,
+                            telemetry.baro[idx]?.value || telemetry.gps.alt[idx]?.value || 0
+                        ]);
+                        
+                        simMap.addSource('flight-path-source', {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'Feature',
+                                'properties': {},
+                                'geometry': { 'type': 'LineString', 'coordinates': coordinates3D }
+                            }
+                        });
+                        
+                        simMap.addLayer({
+                            'id': 'flight-path-3d',
+                            'type': 'line',
+                            'source': 'flight-path-source',
+                            'layout': { 'line-join': 'round', 'line-cap': 'round' },
+                            'paint': {
+                                'line-color': '#06b6d4',
+                                'line-width': 4,
+                                'line-opacity': 0.85
+                            }
+                        });
+                        
+                        const slider = document.getElementById('timelineSlider');
+                        if (slider) {
+                            slider.max = telemetry.gps.lat.length - 1;
+                            slider.value = 0;
+                        }
+                        
+                        if (typeof switchView === 'function') switchView('inclined');
+                    });
+                }
+            } else if (simMap) {
+                simMap.jumpTo({
+                    center: [telemetry.gps.lng[0].value, telemetry.gps.lat[0].value],
+                    zoom: 18.5,
+                    pitch: 0,
+                    bearing: 0
+                });
+                simFrameIndex = 0;
+                
+                const coordinates3D = telemetry.gps.lat.map((p, idx) => [
+                    telemetry.gps.lng[idx].value,
+                    p.value,
+                    telemetry.baro[idx]?.value || telemetry.gps.alt[idx]?.value || 0
+                ]);
+                
+                if (simMap.getSource('flight-path-source')) {
+                    simMap.getSource('flight-path-source').setData({
+                        'type': 'Feature',
+                        'properties': {},
+                        'geometry': { 'type': 'LineString', 'coordinates': coordinates3D }
+                    });
+                }
+                
+                const slider = document.getElementById('timelineSlider');
+                if (slider) {
+                    slider.max = telemetry.gps.lat.length - 1;
+                    slider.value = 0;
+                }
+            }
+        }
+        
+        if (typeof setStatus === 'function') setStatus('✅ Simulación cargada correctamente.');
+        
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Error al procesar la simulación');
+        if (typeof setStatus === 'function') setStatus('❌ Error al cargar la simulación.');
     }
 }
 
@@ -636,149 +789,6 @@ function runSimulationFrameLoop() {
     
     simAnimationId = requestAnimationFrame(runSimulationFrameLoop);
 }
-
-/*function runSimulationFrame(timestamp) {
-    if (!isSimulatingFlight) return;
-    
-    const maxFrames = telemetry.gps.lat.length;
-    let exactIndex = 0;
-    
-    // 1. --- CALCULATE FRACTIONAL TIMELINE POSITION ---
-    if (telemetry.gps.time && telemetry.gps.time.length > 0) {
-        if (!simStartTimeReal) {
-            simStartTimeReal = performance.now();
-            simStartTimeLog = telemetry.gps.time[0].value; 
-        }
-        
-        const elapsedRealMs = performance.now() - simStartTimeReal;
-        
-        while (simFrameIndex < maxFrames - 1) {
-            const nextFrameLogTime = telemetry.gps.time[simFrameIndex + 1].value;
-            const elapsedLogMs = nextFrameLogTime - simStartTimeLog;
-            
-            if (elapsedLogMs > elapsedRealMs) break;
-            simFrameIndex++;
-        }
-        
-        // Calculate interpolation factor between this log frame and the next
-        if (simFrameIndex < maxFrames - 1) {
-            const currentLogTime = telemetry.gps.time[simFrameIndex].value;
-            const nextLogTime = telemetry.gps.time[simFrameIndex + 1].value;
-            const frameDuration = nextLogTime - currentLogTime;
-            const frameElapsed = elapsedRealMs - (currentLogTime - simStartTimeLog);
-            exactIndex = simFrameIndex + (frameDuration > 0 ? (frameElapsed / frameDuration) : 0);
-        } else {
-            exactIndex = simFrameIndex;
-        }
-    } else {
-        // Fallback Timeline Percentages
-        if (!simStartTimeReal) simStartTimeReal = performance.now();
-        
-        const elapsedRealSeconds = (performance.now() - simStartTimeReal) / 1000;
-        const totalFlightDurationSeconds = flightInfo.duration || (maxFrames / 10);
-        const progressPercent = elapsedRealSeconds / totalFlightDurationSeconds;
-        
-        // Maintain a continuous decimal representation of the index
-        exactIndex = progressPercent * (maxFrames - 1);
-    }
-    
-    // 2. --- ESCAPE GUARD: End of Flight Reached ---
-    if (exactIndex >= maxFrames - 1) {
-        isSimulatingFlight = false;
-        simFrameIndex = 0;
-        simStartTimeReal = 0;
-        const btn = document.getElementById('simControlBtn');
-        btn.textContent = "▶️ Start Simulation";
-        btn.style.background = "#0284c7";
-        return;
-    }
-    
-    // 3. --- LINEAR INTERPOLATION (LERP) ENGINE ---
-    // Break down the decimal index into integer bounding rows
-    const indexBase = Math.floor(exactIndex);
-    const lerpFactor = exactIndex - indexBase; // The decimal fraction (0.0 to 1.0)
-    const nextIndex = Math.min(indexBase + 1, maxFrames - 1);
-    
-    // Smoothly blend Latitude and Longitude coordinates
-    const lat1 = telemetry.gps.lat[indexBase].value;
-    const lat2 = telemetry.gps.lat[nextIndex].value;
-    const lat = lat1 + (lat2 - lat1) * lerpFactor;
-    
-    const lng1 = telemetry.gps.lng[indexBase].value;
-    const lng2 = telemetry.gps.lng[nextIndex].value;
-    const lng = lng1 + (lng2 - lng1) * lerpFactor;
-    
-    // Smoothly blend Altitude
-    let alt1 = 100, alt2 = 100;
-    if (telemetry.baro && telemetry.baro[indexBase]) {
-        alt1 = telemetry.baro[indexBase].value;
-        alt2 = telemetry.baro[nextIndex] ? telemetry.baro[nextIndex].value : alt1;
-    } else if (telemetry.gps.alt && telemetry.gps.alt[indexBase]) {
-        alt1 = telemetry.gps.alt[indexBase].value;
-        alt2 = telemetry.gps.alt[nextIndex] ? telemetry.gps.alt[nextIndex].value : alt1;
-    }
-    const alt = alt1 + (alt2 - alt1) * lerpFactor;
-    
-    // Smoothly blend Attitude Angles (Roll, Pitch, Yaw)
-    let yaw = 0, pitch = 0, roll = 0;
-    if (telemetry.att && telemetry.att.Roll && telemetry.att.Roll[indexBase]) {
-        const roll1  = telemetry.att.Roll[indexBase].value || 0;
-        const roll2  = telemetry.att.Roll[nextIndex]?.value || roll1;
-        roll = roll1 + (roll2 - roll1) * lerpFactor;
-        
-        const pitch1 = telemetry.att.Pitch[indexBase].value || 0;
-        const pitch2 = telemetry.att.Pitch[nextIndex]?.value || pitch1;
-        pitch = pitch1 + (pitch2 - pitch1) * lerpFactor;
-        
-        let yaw1   = telemetry.att.Yaw[indexBase].value || 0;
-        let yaw2   = telemetry.att.Yaw[nextIndex]?.value || yaw1;
-        
-        // Handle compass wrap-around handling (e.g., smoothly transition from 359° to 1°)
-        let diff = yaw2 - yaw1;
-        if (diff < -180) diff += 360;
-        if (diff > 180) diff -= 360;
-        yaw = yaw1 + diff * lerpFactor;
-    } else {
-        // Math vector heading calculation fallback
-        const nextLat = telemetry.gps.lat[nextIndex].value;
-        const nextLng = telemetry.gps.lng[nextIndex].value;
-        yaw = Math.atan2(nextLng - lng, nextLat - lat) * (180 / Math.PI);
-        pitch = Math.sin(exactIndex * 0.02) * 4;
-        roll  = Math.cos(exactIndex * 0.02) * 6;
-    }
-    
-    // 4. --- UPDATE 3D MAP WINDOW VIEWPORT ---
-    const zoomCalculado = 18.5 - Math.log2(Math.max(alt, 10) / 100);
-    const mapboxPitch = Math.abs(pitch);
-    let adjustedBearing = yaw;
-    if (pitch < 0) {
-        adjustedBearing = (yaw + 180) % 360;
-    }
-    
-    simMap.jumpTo({
-        center: [lng, lat],
-        zoom: zoomCalculado,
-        bearing: adjustedBearing,
-        pitch: mapboxPitch
-    });
-    
-    if (simCanvasElement) {
-        simCanvasElement.style.transform = `scale(1.4) rotate(${-roll}deg)`;
-    }
-    
-    // 5. --- UPDATE HUD UI METRICS ---
-    document.getElementById('sim-hud-lat').textContent = lat.toFixed(6);
-    document.getElementById('sim-hud-lng').textContent = lng.toFixed(6);
-    document.getElementById('sim-hud-alt').textContent = alt.toFixed(1) + ' m';
-    document.getElementById('sim-hud-yaw').textContent = ((yaw % 360 + 360) % 360).toFixed(1) + '°';
-    document.getElementById('sim-hud-pitch').textContent = pitch.toFixed(1) + '°';
-    document.getElementById('sim-hud-roll').textContent = roll.toFixed(1) + '°';
-    
-    // Store integer progress step for base evaluations
-    simFrameIndex = Math.floor(exactIndex);
-    
-    simAnimationId = requestAnimationFrame(runSimulationFrame);
-}*/
 
 
 // ─── Map Functions ─────────────────────────────────────────────────────────────
@@ -1019,8 +1029,6 @@ function fitMapToFlight() {
     ], { padding: 60, duration: 1200 });
 }
 
-
-
 async function handleFileLoading(inputElement) {
     if (!inputElement.files.length) return;
     
@@ -1060,21 +1068,25 @@ function onTimelineSliderChange(value) {
 
 function updateFlightPositionFrame(index) {
     if (!telemetry.gps.lat[index]) return;
-
+    
     const lat = telemetry.gps.lat[index].value;
     const lng = telemetry.gps.lng[index].value;
     const alt = telemetry.baro[index]?.value || telemetry.gps.alt[index]?.value || 0;
     
     let yaw = 0, pitch = 0, roll = 0;
-    if (telemetry.att && telemetry.att.Roll) {
-        roll = telemetry.att.Roll[index].value || 0;
-        pitch = telemetry.att.Pitch[index].value || 0;
-        yaw = telemetry.att.Yaw[index].value || 0;
+    
+    if (telemetry.att && telemetry.att.Roll && telemetry.att.Roll[index]) {
+        // Direct safe extraction supporting both nested object properties and primitive arrays
+        roll  = typeof telemetry.att.Roll[index] === 'object' ? (telemetry.att.Roll[index].value ?? 0) : (telemetry.att.Roll[index] ?? 0);
+        pitch = typeof telemetry.att.Pitch[index] === 'object' ? (telemetry.att.Pitch[index].value ?? 0) : (telemetry.att.Pitch[index] ?? 0);
+        yaw   = typeof telemetry.att.Yaw[index] === 'object' ? (telemetry.att.Yaw[index].value ?? 0) : (telemetry.att.Yaw[index] ?? 0);
     } else {
-        // Simple procedural values fallback if ATT array parsed empty
-        yaw = (index * 0.1) % 360;
+        // Procedural fallback values for ALL THREE axes so your pitch/roll animation frames work seamlessly
+        yaw   = (index * 0.1) % 360;
+        pitch = Math.sin(index * 0.05) * 15; // Smooth sine wave tilting between -15 and +15 degrees
+        roll  = Math.cos(index * 0.05) * 10; // Smooth cosine wave rolling between -10 and +10 degrees
     }
-
+    
     // Synchronize slider and HUD elements
     if(!isUserInteractingWithSlider) {
         document.getElementById('timelineSlider').value = index;
@@ -1087,7 +1099,7 @@ function updateFlightPositionFrame(index) {
     
     // Draw Primary Flight Display
     drawPFD(roll, pitch);
-
+    
     // Apply Viewport Position Matrix Transformations
     if (currentViewMode === 'inclined') {
         simMap.jumpTo({ center: [lng, lat] });
@@ -1101,30 +1113,138 @@ function updateFlightPositionFrame(index) {
 function drawPFD(roll, pitch) {
     const canvas = document.getElementById('pfdCanvas');
     const ctx = canvas.getContext('2d');
-    const w = canvas.width; const h = canvas.height;
+    const w = canvas.width; 
+    const h = canvas.height;
     
+    // Clear the whole canvas frame first
     ctx.clearRect(0, 0, w, h);
+    
+    // Save state before setting up the circular mask
+    ctx.save();
+    
+    // --- CREATE THE CIRCULAR CLIP MASK ---
+    const radius = Math.min(w, h) * 0.48; // Calculates maximum circle radius based on dimensions
+    ctx.beginPath();
+    ctx.arc(w / 2, h / 2, radius, 0, Math.PI * 2);
+    ctx.clip(); // LOCKS ALL SUBSEQUENT DRAWING INSIDE THIS CIRCLE
+
+    // --- 1. DRAW ATTITUDE BACKGROUND (ROTATING & TRANSLATING) ---
     ctx.save();
     ctx.translate(w / 2, h / 2);
     ctx.rotate(-roll * Math.PI / 180);
-
-    // Sky / Ground split
-    const pitchOffset = pitch * 2; 
-    ctx.fillStyle = "#0284c7"; // Sky Blue
-    ctx.fillRect(-w, -h*2 + pitchOffset, w*2, h*2);
-    ctx.fillStyle = "#7c2d12"; // Earth Brown
-    ctx.fillRect(-w, pitchOffset, w*2, h*2);
     
-    // Horizon Separator Line
-    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(-w/2, pitchOffset); ctx.lineTo(w/2, pitchOffset); ctx.stroke();
-    ctx.restore();
-
-    // Fixed Aircraft Cross Indicator
-    ctx.strokeStyle = "#f43f5e"; ctx.lineWidth = 3;
+    const pixelsPerDegree = 4; 
+    const pitchOffset = pitch * pixelsPerDegree; 
+    
+    // Sky / Ground Drawing (Locked within the circle bounds)
+    ctx.fillStyle = "#1e40af"; // Deep Professional Avionics Sky Blue
+    ctx.fillRect(-w * 2, -h * 4 + pitchOffset, w * 4, h * 4);
+    ctx.fillStyle = "#451a03"; // Modern Charcoal Muted Earth Brown
+    ctx.fillRect(-w * 2, pitchOffset, w * 4, h * 4);
+    
+    // Horizon Line
+    ctx.strokeStyle = "#ffffff"; 
+    ctx.lineWidth = 3;
+    ctx.beginPath(); 
+    ctx.moveTo(-w, pitchOffset); 
+    ctx.lineTo(w, pitchOffset); 
+    ctx.stroke();
+    
+    // --- 2. DRAW PITCH LADDER CALIBRATION MARKS ---
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+    ctx.font = "bold 11px Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    
+    for (let i = -30; i <= 30; i += 5) {
+        if (i === 0) continue;
+        const yPos = pitchOffset - (i * pixelsPerDegree);
+        if (yPos < -h/2 || yPos > h/2) continue;
+        
+        let barWidth = i % 10 === 0 ? 50 : 25;
+        ctx.lineWidth = i % 10 === 0 ? 2 : 1;
+        
+        ctx.beginPath();
+        ctx.moveTo(-barWidth, yPos); ctx.lineTo(-10, yPos);
+        ctx.moveTo(10, yPos); ctx.lineTo(barWidth, yPos);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(-barWidth, yPos); ctx.lineTo(-barWidth, yPos + (i > 0 ? 5 : -5));
+        ctx.moveTo(barWidth, yPos); ctx.lineTo(barWidth, yPos + (i > 0 ? 5 : -5));
+        ctx.stroke();
+        
+        if (i % 10 === 0) {
+            ctx.fillText(Math.abs(i).toString(), -barWidth - 14, yPos);
+            ctx.fillText(Math.abs(i).toString(), barWidth + 14, yPos);
+        }
+    }
+    ctx.restore(); // Restores context back out of the rotation matrix
+    
+    // --- 3. DRAW FIXED STATIC BANK/ROLL INDICATOR ---
+    ctx.save();
+    ctx.translate(w / 2, h / 2);
+    
+    const rollArcRadius = radius * 0.85; // Scales arc relative to the circle width
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.lineWidth = 2;
+    
     ctx.beginPath();
-    ctx.moveTo(w/2 - 25, h/2); ctx.lineTo(w/2 - 5, h/2);
-    ctx.moveTo(w/2 + 5, h/2); ctx.lineTo(w/2 + 25, h/2);
-    ctx.moveTo(w/2, h/2 - 5); ctx.lineTo(w/2, h/2 + 5);
+    ctx.arc(0, 0, rollArcRadius, -150 * Math.PI / 180, -30 * Math.PI / 180);
+    ctx.stroke();
+    
+    const rollAngles = [-60, -45, -30, -20, -10, 0, 10, 20, 30, 45, 60];
+    rollAngles.forEach(angle => {
+        const rad = (angle - 90) * Math.PI / 180;
+        const innerX = Math.cos(rad) * rollArcRadius;
+        const innerY = Math.sin(rad) * rollArcRadius;
+        
+        const tickLen = Math.abs(angle) % 30 === 0 || angle === 0 ? 10 : 6;
+        const outerX = Math.cos(rad) * (rollArcRadius - tickLen);
+        const outerY = Math.sin(rad) * (rollArcRadius - tickLen);
+        
+        ctx.beginPath();
+        ctx.moveTo(innerX, innerY);
+        ctx.lineTo(outerX, outerY);
+        ctx.stroke();
+    });
+    
+    // Dynamic Rolling Pointer Pointer
+    ctx.save();
+    ctx.rotate(-roll * Math.PI / 180);
+    ctx.fillStyle = "#e11d48";
+    ctx.beginPath();
+    ctx.moveTo(0, -rollArcRadius + 2);
+    ctx.lineTo(-7, -rollArcRadius + 14);
+    ctx.lineTo(7, -rollArcRadius + 14);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    
+    ctx.restore();
+    
+    // --- 4. FIXED AIRCRAFT CROSSHAIR INDICATOR ---
+    ctx.strokeStyle = "#f43f5e"; 
+    ctx.lineWidth = 3.5;
+    ctx.shadowBlur = 4;
+    ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+    
+    ctx.beginPath();
+    ctx.moveTo(w / 2 - 40, h / 2); ctx.lineTo(w / 2 - 15, h / 2); ctx.lineTo(w / 2 - 15, h / 2 + 8);
+    ctx.moveTo(w / 2 + 40, h / 2); ctx.lineTo(w / 2 + 15, h / 2); ctx.lineTo(w / 2 + 15, h / 2 + 8);
+    ctx.moveTo(w / 2 - 2, h / 2); ctx.lineTo(w / 2 + 2, h / 2);
+    ctx.moveTo(w / 2, h / 2 - 2); ctx.lineTo(w / 2, h / 2 + 2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    ctx.restore(); // REMOVES CLIPPING MASK COMPLETELY FOR NEXT GLOBAL DRAWS
+
+    // --- 5. OPTIONAL: DRAW COCKPIT INSTRUMENT BEZEL RING ---
+    // This gives it a slight outer rim border so it sits elegantly on screen
+    ctx.strokeStyle = "#475569"; // Sleek gray rim
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(w / 2, h / 2, radius, 0, Math.PI * 2);
     ctx.stroke();
 }
