@@ -84,10 +84,7 @@ html, body {
 }
 
 /****************************** TOOLBAR ******************************/
-.toolbar {
-    top: -7px;
-    left: 0px;
-}
+/* Positioning now lives in common.css (shared spread/compact nav dock) */
 
 /****************************** HERO ******************************/
 #home {

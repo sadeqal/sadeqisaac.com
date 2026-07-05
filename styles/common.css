@@ -31,6 +31,31 @@ body::-webkit-scrollbar-track {
     background: transparent; /* Transparent track */
 }
 
+:root {
+    --ink:        #0b0f14;
+    --panel:      rgba(18, 26, 36, 0.55);
+    --panel-solid:#121a24;
+    --border:     rgba(140, 180, 210, 0.16);
+    --border-hi:  rgba(76, 201, 240, 0.45);
+
+    --cyan:       #4cc9f0;
+    --cyan-dim:   rgba(76, 201, 240, 0.14);
+    --blue:       #5b8def;
+    --amber:      #ffb020;
+    --green:      #33d17a;
+
+    --text:       #e8edf2;
+    --text-dim:   #93a3b5;
+    --text-faint: #5f7086;
+
+    --font-display: 'Krvx', 'Space Grotesk', sans-serif;
+    --font-body:    'Poppins', sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
+
+    --cut-sm: 14px;
+    --cut-lg: 26px;
+}
+
 /****************************** BACKGROUND ******************************/
 #background {
     position: relative;
@@ -152,7 +177,7 @@ body::-webkit-scrollbar-track {
 button {
     padding: 10px 20px;
     font-size: 1em;
-    background-color: #222222;
+    background-color: var(--cyan-dim);
     color: white;
     border: none;
     border-radius: 5px;
@@ -162,7 +187,7 @@ button {
 }
   
 button:hover {
-    background-color: #8B00FF;
+    background-color: var(--cyan-dim);
 }
 
 /****************************** TOOLBAR ******************************/
@@ -185,19 +210,19 @@ button:hover {
     height: 40px;
     border: none;
     border-radius: 50%;
-    background: radial-gradient(circle, #222222, #000000);
-    color: #8B00FF;
+    background: var(--cyan-dim);
+    color: var(--cyan);
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 15px #8B00FF, 0 0 30px #4D008E;
+    box-shadow: 0 0 15px var(--cyan), 0 0 30px var(--blue);
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .toolbar-toggle:hover {
     transform: scale(1.2);
-    box-shadow: 0 0 20px #C700FF, 0 0 40px #8B00FF;
+    box-shadow: 0 0 20px var(--cyan), 0 0 40px var(--blue);
 }
 
 /* Toolbar Items - Holographic Floating Panel */
@@ -208,15 +233,15 @@ button:hover {
     justify-content: center;
     position: fixed;
     top: 10px;
-    left: calc(40%);
+    left: calc(40.8%);
     width: 250px;
     height: 15px;
     transform: translateX(-50%);
-    background: black; /* linear-gradient(145deg, rgba(50, 50, 50, 0.8), rgba(10, 10, 10, 0.9));*/
+    background: var(--cyan-dim);
     border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     padding: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 50px rgba(100, 0, 255, 0.5);
+    box-shadow: 0 10px 30px var(--cyan-dim), 0 0 50px var(--blue);
     animation: float 5s infinite ease-in-out;
 }
 
@@ -300,12 +325,12 @@ button:hover {
     height: 40px;
     border: none;
     border-radius: 50%;
-    background: radial-gradient(circle, #222222, #000000);
-    color: #8B00FF;
+    background: var(--cyan-dim);
+    color: var(--cyan);
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 15px #8B00FF, 0 0 30px #4D008E;
+    box-shadow: 0 0 15px var(--cyan), 0 0 30px var(--blue);
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
 }
@@ -317,7 +342,7 @@ button:hover {
 
 .menu-button:hover {
     transform: scale(1.2);
-    box-shadow: 0 0 20px #C700FF, 0 0 40px #8B00FF;
+    box-shadow: 0 0 20px var(--cyan), 0 0 40px var(--blue);
 }
 
 .menu-button:active {
@@ -332,13 +357,13 @@ button:hover {
     justify-content: center;
     position: fixed;
     bottom: 5px;
-    left: calc(33%);
+    left: calc(36.2%);
     transform: translateX(-50%);
-    background: black; /*(145deg, rgb(50, 50, 50), rgba(10, 10, 10, 0.9));*/
+    background: var(--cyan-dim);
     border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     padding: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 50px rgba(100, 0, 255, 0.5);
+    box-shadow: 0 10px 30px var(--cyan-dim), 0 0 50px var(--blue);
     animation: float 5s infinite ease-in-out;
     z-index: 10000;
 }
