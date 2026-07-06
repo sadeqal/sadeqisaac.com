@@ -11,7 +11,8 @@ let telemetry = {
     imu: { z: [] },
     airspeed: [],
     vibrations: { x: [], y: [], z: [] },
-    battery: { volt: [], curr: [] }
+    battery: { volt: [], curr: [] },
+    att: { roll: [], pitch: [], yaw: [] } // NEW: real ArduPilot attitude (roll/pitch/yaw), see parseBinFile
 };
 
 // Executive default metrics - prevents empty fields if export triggers early
@@ -48,11 +49,11 @@ const mapStyle = 'mapbox://styles/mapbox/satellite-streets-v12';
 // Safe Chart configurations that won't paint invisible text on white paper backgrounds
 if (typeof Chart !== 'undefined') {
     Chart.defaults.font.family = '"Helvetica Neue", "Arial", sans-serif';
-    
+
     // SMART COLOR: Use dark slate if printing, otherwise fallback to light blue for the web UI
     const isPrinting = window.matchMedia('print').matches || document.body.classList.contains('pdf-export-active');
     Chart.defaults.color = isPrinting ? '#111111' : '#eef2ff';
-    
+
     // Stabilize high-res rendering mechanics securely
     Chart.defaults.devicePixelRatio = Math.max(2, Math.round((window.devicePixelRatio || 2) * 1.5));
     Chart.defaults.animation = false;
@@ -63,13 +64,43 @@ let simCanvasElement = null;
 let isSimulatingFlight = false;
 let simFrameIndex = 0;
 let simAnimationId = null;
-let simStartTimeReal = 0;
-let simStartTimeLog = 0;
-let lastFrameTimeReal = 0; 
+let simStartTimeReal = 0;   // performance.now() when playback was last (re)started
+let simStartTimeLog = 0;    // telemetry log-time (seconds) that corresponds to simStartTimeReal
+let lastFrameTimeReal = 0;
 
 // Global State Controllers
-let currentViewMode = 'inclined'; 
+let currentViewMode = 'cockpit'; // cockpit (belly cam) | nadir (straight down) | orbit (third-eye chase)
 let isUserInteractingWithSlider = false;
+let playbackSpeed = 1; // 1 = real time. Adjustable from the speed selector in the toolbar.
+
+// ─── 3D VTOL Model + Free Camera state ─────────────────────────────────────────
+// NOTE: adjust this path to wherever VTOL5M.glb actually lives relative to the site root.
+const VTOL_MODEL_URL = '../3dmodels/vtol/VTOL5M.glb';
+// If the model looks too big/small once it renders, tweak this.
+const MODEL_SCALE_FACTOR = 1.0;
+// If the model's nose/roll axis doesn't line up with real heading/attitude once you see it
+// rendered, tweak these offsets (in degrees) until it looks right. x=pitch, y=roll, z=yaw.
+const MODEL_ROTATION_OFFSET_DEG = { x: 0, y: 0, z: 0 };
+// How far above the aircraft's real altitude the top-down (nadir) camera sits.
+const NADIR_CAMERA_OFFSET_M = 80;
+
+let vtolModelLayer = null;
+let vtolModelReady = false;
+let vtolModelTransform = null;
+let terrainElevCache = { key: null, value: 0 };
+
+// Orbit ("third eye") camera controls - like plot.ardupilot.org's 3D view
+let orbitAzimuth = 30;     // degrees, 0 = looking from the north
+let orbitElevation = 35;   // degrees above the horizon
+let orbitDistance = 120;   // meters from the aircraft
+const ORBIT_MIN_DIST = 20, ORBIT_MAX_DIST = 600;
+const ORBIT_MIN_ELEV = 8, ORBIT_MAX_ELEV = 85;
+let isOrbitDragging = false;
+let lastPointerX = 0, lastPointerY = 0;
+
+// Cache of the last rendered telemetry frame, so orbit drag/zoom can redraw the
+// camera immediately even while playback is paused.
+let lastFrame = { lng: null, lat: null, relAlt: 0, yaw: 0, pitch: 0, roll: 0 };
 
 
 // ─── Utility Functions ─────────────────────────────────────────────────────────
@@ -92,6 +123,18 @@ function formatTime(seconds) {
     return `${s}s`;
 }
 
+// NEW: zero-padded mm:ss (or h:mm:ss) clock format, used by the sim playback toolbar
+// so it actually matches the "00:00" style already shown in the HTML.
+function formatClock(totalSeconds) {
+    const s = Math.max(0, Math.floor(totalSeconds || 0));
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    const mm = String(m).padStart(2, '0');
+    const ss = String(sec).padStart(2, '0');
+    return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
 function haversineMetres(lat1, lon1, lat2, lon2) {
     const R = 6371000;
     const φ1 = lat1 * Math.PI / 180;
@@ -102,19 +145,47 @@ function haversineMetres(lat1, lon1, lat2, lon2) {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+// NEW: great-circle bearing between two GPS points, in degrees (0-360).
+// Used as a fallback heading source when the log has no ATT message.
+function computeBearingDeg(lat1, lon1, lat2, lon2) {
+    const φ1 = lat1 * Math.PI / 180, φ2 = lat2 * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const y = Math.sin(Δλ) * Math.cos(φ2);
+    const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+    const brng = Math.atan2(y, x) * 180 / Math.PI;
+    return (brng + 360) % 360;
+}
+
+// NEW: binary search for the closest sample (by `.time`) in a sorted-ascending array.
+// Used both for real-time playback (find the GPS index matching elapsed real time)
+// and for cross-referencing ATT samples against the current GPS frame.
+function findNearestIndexByTime(sortedArr, t) {
+    if (!sortedArr || !sortedArr.length) return -1;
+    const hi0 = sortedArr.length - 1;
+    if (t <= sortedArr[0].time) return 0;
+    if (t >= sortedArr[hi0].time) return hi0;
+    let lo = 0, hi = hi0;
+    while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (sortedArr[mid].time < t) lo = mid + 1; else hi = mid;
+    }
+    if (lo > 0 && Math.abs(sortedArr[lo - 1].time - t) < Math.abs(sortedArr[lo].time - t)) return lo - 1;
+    return lo;
+}
+
 // ─── BIN File Parser ───────────────────────────────────────────────────────────
 async function parseBinFile(file) {
     const buffer = await file.arrayBuffer();
-    
+
     if (typeof DataflashParser === 'undefined') {
         throw new Error('DataflashParser no disponible.');
     }
-    
+
     const parser = new DataflashParser(false);
     const parsed = parser.processData(buffer, [
-        'GPS', 'POS', 'BARO', 'RFND', 'IMU', 'ARSP', 'VIBE', 'BAT', 'MSG', 'FMT'
+        'GPS', 'POS', 'BARO', 'RFND', 'IMU', 'ARSP', 'VIBE', 'BAT', 'MSG', 'FMT', 'ATT'
     ]);
-    
+
     // Reset telemetry
     telemetry = {
         gps: { lat: [], lng: [], alt: [] },
@@ -124,11 +195,12 @@ async function parseBinFile(file) {
         imu: { z: [] },
         airspeed: [],
         vibrations: { x: [], y: [], z: [] },
-        battery: { volt: [], curr: [] }
+        battery: { volt: [], curr: [] },
+        att: { roll: [], pitch: [], yaw: [] }
     };
-    
+
     let baseTime = null;
-    
+
     // ─── GPS ───────────────────────────────────────────────────
     const gpsMsg = parsed?.messages?.['GPS[0]'] || parsed?.messages?.GPS;
     if (gpsMsg?.time_boot_ms && gpsMsg?.Lat && gpsMsg?.Lng && gpsMsg?.Alt) {
@@ -296,6 +368,25 @@ async function parseBinFile(file) {
         telemetry.battery.volt = mk(batMsg.Volt);
         telemetry.battery.curr = mk(batMsg.Curr);
     }
+
+    // ─── ATTITUDE (NEW) ─────────────────────────────────────────
+    // This is the real Roll/Pitch/Yaw of the aircraft. Previously nothing populated
+    // telemetry.att, so the simulator was silently drawing a fake sine-wave wobble
+    // and a fake slowly-spinning heading instead of the actual flight attitude.
+    const attMsg = parsed?.messages?.['ATT[0]'] || parsed?.messages?.ATT;
+    if (attMsg?.time_boot_ms && attMsg?.Roll) {
+        const mk = (arr) => Array.from(arr || [])
+        .map((v, i) => ({
+            timeAbs: Number(attMsg.time_boot_ms[i]) / 1000,
+            value: Number(v)
+        }))
+        .filter(p => Number.isFinite(p.timeAbs) && Number.isFinite(p.value))
+        .sort((a, b) => a.timeAbs - b.timeAbs);
+
+        telemetry.att.roll = mk(attMsg.Roll);
+        telemetry.att.pitch = mk(attMsg.Pitch);
+        telemetry.att.yaw = mk(attMsg.Yaw);
+    }
     
     // ─── Normalize times ───────────────────────────────────────
     if (!baseTime) throw new Error('No se encontraron datos de telemetría.');
@@ -320,6 +411,9 @@ async function parseBinFile(file) {
     telemetry.vibrations.z = normalize(telemetry.vibrations.z);
     telemetry.battery.volt = normalize(telemetry.battery.volt);
     telemetry.battery.curr = normalize(telemetry.battery.curr);
+    telemetry.att.roll = normalize(telemetry.att.roll);
+    telemetry.att.pitch = normalize(telemetry.att.pitch);
+    telemetry.att.yaw = normalize(telemetry.att.yaw);
     
     // ─── Flight info ───────────────────────────────────────────
     const msgData = parsed?.messages?.MSG;
@@ -643,12 +737,24 @@ async function loadAndAnalyze() {
                         zoom: 18.5,
                         pitch: 0,
                         bearing: 0,
-                        interactive: true,
+                        interactive: false, // camera is fully driven by the Free Camera system below
                         pixelRatio: 2 
                     });
                     
                     simMap.on('load', () => {
                         simCanvasElement = document.querySelector('#simPanel .mapboxgl-canvas');
+
+                        // Disable every built-in interaction handler: in every view mode the
+                        // camera is now explicitly positioned every frame via setFreeCameraOptions,
+                        // so letting Mapbox's own pan/zoom/rotate run would just fight it.
+                        // (The orbit view gets its own custom drag/scroll handlers - see setupOrbitControls.)
+                        simMap.dragPan.disable();
+                        simMap.scrollZoom.disable();
+                        simMap.dragRotate.disable();
+                        simMap.touchZoomRotate.disable();
+                        simMap.doubleClickZoom.disable();
+                        simMap.boxZoom.disable();
+                        if (simMap.keyboard) simMap.keyboard.disable();
                         
                         simMap.addSource('mapbox-dem-sim', {
                             'type': 'raster-dem',
@@ -698,23 +804,23 @@ async function loadAndAnalyze() {
                                 'line-opacity': 0.85
                             }
                         });
+
+                        // NEW: live 3D VTOL model, positioned/rotated every frame in updateSimCamera()
+                        addVtolModelLayer();
                         
                         const slider = document.getElementById('timelineSlider');
                         if (slider) {
                             slider.max = telemetry.gps.lat.length - 1;
                             slider.value = 0;
                         }
+                        const totalEl = document.getElementById('totalDurationStamp');
+                        if (totalEl) totalEl.textContent = formatClock(flightInfo.duration);
                         
-                        if (typeof switchView === 'function') switchView('inclined');
+                        if (typeof switchView === 'function') switchView('cockpit');
+                        updateFlightPositionFrame(0);
                     });
                 }
             } else if (simMap) {
-                simMap.jumpTo({
-                    center: [telemetry.gps.lng[0].value, telemetry.gps.lat[0].value],
-                    zoom: 18.5,
-                    pitch: 0,
-                    bearing: 0
-                });
                 simFrameIndex = 0;
                 
                 const coordinates3D = telemetry.gps.lat.map((p, idx) => [
@@ -736,6 +842,11 @@ async function loadAndAnalyze() {
                     slider.max = telemetry.gps.lat.length - 1;
                     slider.value = 0;
                 }
+                const totalEl = document.getElementById('totalDurationStamp');
+                if (totalEl) totalEl.textContent = formatClock(flightInfo.duration);
+
+                // Immediately snap the camera/model to the new flight's starting frame
+                updateFlightPositionFrame(0);
             }
         }
         
@@ -751,7 +862,6 @@ async function loadAndAnalyze() {
 // ─── Flight Simulation ───────────────────────────────────────────────
 
 function toggleFlightSimulation() {
-    // FIX: Changed from 'simControlBtn' to 'playPauseBtn'
     const btn = document.getElementById('playPauseBtn');
     
     if (isSimulatingFlight) {
@@ -766,27 +876,61 @@ function toggleFlightSimulation() {
         isUserInteractingWithSlider = false; // Reset slider interaction flag
         isSimulatingFlight = true;
         if (btn) btn.textContent = "⏸️";
+
+        // Anchor the real-world clock to whatever log-time the current frame sits at,
+        // so playback resumes from exactly where the slider/last frame left off.
+        simStartTimeReal = performance.now();
+        simStartTimeLog = telemetry.gps.lat[simFrameIndex]?.time ?? 0;
+
         simAnimationId = requestAnimationFrame(runSimulationFrameLoop);
     }
 }
 
-function runSimulationFrameLoop() {
+// NEW: change playback speed without causing a jump - re-anchors the real/log time pair.
+function setPlaybackSpeed(value) {
+    const v = parseFloat(value);
+    if (!Number.isFinite(v) || v <= 0) return;
+    if (isSimulatingFlight) {
+        simStartTimeLog = telemetry.gps.lat[simFrameIndex]?.time ?? simStartTimeLog;
+        simStartTimeReal = performance.now();
+    }
+    playbackSpeed = v;
+}
+
+// NEW: pause cleanly the moment the user grabs the scrubber, so the animation loop
+// stops fighting the manual drag (this is what made the timestamp/position feel broken
+// while scrubbing).
+function onTimelineDragStart() {
+    isUserInteractingWithSlider = true;
+    if (isSimulatingFlight) toggleFlightSimulation();
+}
+
+// REWRITTEN: this used to advance simFrameIndex by a fixed +1 every animation frame,
+// i.e. tied to screen refresh rate (~60/s) rather than to real elapsed time - that's
+// exactly why a minute of flight blew by in a couple of seconds. Now the frame index
+// is derived from actual elapsed wall-clock time mapped onto the log's own timestamps,
+// so 1x playback really is real time (and the speed selector changes that ratio on purpose).
+function runSimulationFrameLoop(nowMs) {
     if (!isSimulatingFlight) return;
-    
-    // Advance the timeframe track index safely
-    simFrameIndex++;
-    
-    if (simFrameIndex >= telemetry.gps.lat.length) {
+
+    const arr = telemetry.gps.lat;
+    if (!arr.length) { isSimulatingFlight = false; return; }
+
+    const elapsedRealSec = (nowMs - simStartTimeReal) / 1000;
+    const targetLogTime = simStartTimeLog + elapsedRealSec * playbackSpeed;
+
+    if (targetLogTime >= arr[arr.length - 1].time) {
+        simFrameIndex = arr.length - 1;
+        updateFlightPositionFrame(simFrameIndex);
         isSimulatingFlight = false;
-        simFrameIndex = 0;
         const btn = document.getElementById('playPauseBtn');
         if (btn) btn.textContent = "▶️";
         return;
     }
-    
-    // Reuse your new optimized camera and PFD rendering matrix smoothly!
+
+    simFrameIndex = findNearestIndexByTime(arr, targetLogTime);
     updateFlightPositionFrame(simFrameIndex);
-    
+
     simAnimationId = requestAnimationFrame(runSimulationFrameLoop);
 }
 
@@ -1044,21 +1188,23 @@ async function handleFileLoading(inputElement) {
     document.getElementById('uploadLayer').classList.add('fade-out');
 }
 
+// REWRITTEN: three real view modes instead of three cosmetic pitch/bearing presets.
+// cockpit = belly-mounted onboard camera (follows real position/altitude/heading/attitude)
+// nadir   = straight-down chase drone shot, altitude-locked to the real telemetry altitude
+// orbit   = third-eye chase camera around the live 3D VTOL model, mouse-drag to rotate / scroll to zoom
 function switchView(mode) {
     currentViewMode = mode;
     document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`btn-${mode}`).classList.add('active');
-    
-    if (mode === 'inclined') {
-        simMap.dragRotate.enable();
-        simMap.pitch.enable();
-    } else if (mode === 'downward') {
-        simMap.dragRotate.disable();
-        simMap.easeTo({ pitch: 0, bearing: 0, duration: 400 });
-    } else if (mode === 'default') {
-        simMap.dragRotate.enable();
-        simMap.easeTo({ pitch: 45, duration: 400 });
-    }
+    const activeBtn = document.getElementById(`btn-${mode}`);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    const hint = document.getElementById('orbitHint');
+    if (hint) hint.style.display = (mode === 'orbit') ? 'block' : 'none';
+
+    const simMapEl = document.getElementById('simMap');
+    if (simMapEl) simMapEl.classList.toggle('orbit-mode', mode === 'orbit');
+
+    refreshCameraNow();
 }
 
 function onTimelineSliderChange(value) {
@@ -1066,25 +1212,35 @@ function onTimelineSliderChange(value) {
     updateFlightPositionFrame(simFrameIndex);
 }
 
+// REWRITTEN: real attitude (from ATT, with a GPS-bearing fallback instead of a fake
+// sine-wave wobble), a real elapsed-time readout (instead of an index-proportion guess),
+// and camera placement handed off to the new Free Camera system.
 function updateFlightPositionFrame(index) {
     if (!telemetry.gps.lat[index]) return;
     
     const lat = telemetry.gps.lat[index].value;
     const lng = telemetry.gps.lng[index].value;
     const alt = telemetry.baro[index]?.value || telemetry.gps.alt[index]?.value || 0;
+    const currentTime = telemetry.gps.lat[index].time;
     
     let yaw = 0, pitch = 0, roll = 0;
     
-    if (telemetry.att && telemetry.att.Roll && telemetry.att.Roll[index]) {
-        // Direct safe extraction supporting both nested object properties and primitive arrays
-        roll  = typeof telemetry.att.Roll[index] === 'object' ? (telemetry.att.Roll[index].value ?? 0) : (telemetry.att.Roll[index] ?? 0);
-        pitch = typeof telemetry.att.Pitch[index] === 'object' ? (telemetry.att.Pitch[index].value ?? 0) : (telemetry.att.Pitch[index] ?? 0);
-        yaw   = typeof telemetry.att.Yaw[index] === 'object' ? (telemetry.att.Yaw[index].value ?? 0) : (telemetry.att.Yaw[index] ?? 0);
-    } else {
-        // Procedural fallback values for ALL THREE axes so your pitch/roll animation frames work seamlessly
-        yaw   = (index * 0.1) % 360;
-        pitch = Math.sin(index * 0.05) * 15; // Smooth sine wave tilting between -15 and +15 degrees
-        roll  = Math.cos(index * 0.05) * 10; // Smooth cosine wave rolling between -10 and +10 degrees
+    if (telemetry.att.yaw.length) {
+        // Real logged attitude - look up the ATT sample closest in time to this GPS frame,
+        // since ATT is usually logged at a different rate than GPS.
+        const ai = findNearestIndexByTime(telemetry.att.yaw, currentTime);
+        yaw = telemetry.att.yaw[ai]?.value ?? 0;
+        const pi = findNearestIndexByTime(telemetry.att.pitch, currentTime);
+        pitch = telemetry.att.pitch[pi]?.value ?? 0;
+        const ri = findNearestIndexByTime(telemetry.att.roll, currentTime);
+        roll = telemetry.att.roll[ri]?.value ?? 0;
+    } else if (index > 0 && telemetry.gps.lat[index - 1]) {
+        // No ATT message in this log: derive heading from consecutive GPS fixes instead
+        // of fabricating one. No attitude data means no roll/pitch is claimed either.
+        yaw = computeBearingDeg(
+            telemetry.gps.lat[index - 1].value, telemetry.gps.lng[index - 1].value,
+            lat, lng
+        );
     }
     
     // Synchronize slider and HUD elements
@@ -1092,23 +1248,279 @@ function updateFlightPositionFrame(index) {
         document.getElementById('timelineSlider').value = index;
     }
     
-    const elapsedSec = (index / (telemetry.gps.lat.length - 1)) * flightInfo.duration;
-    document.getElementById('currentTimeStamp').textContent = formatTime(elapsedSec);
+    document.getElementById('currentTimeStamp').textContent = formatClock(currentTime);
     document.getElementById('pfd-alt').textContent = alt.toFixed(1) + 'm';
     document.getElementById('pfd-hdg').textContent = Math.round(yaw).toString().padStart(3, '0') + '°';
     
     // Draw Primary Flight Display
     drawPFD(roll, pitch);
-    
-    // Apply Viewport Position Matrix Transformations
-    if (currentViewMode === 'inclined') {
-        simMap.jumpTo({ center: [lng, lat] });
-    } else if (currentViewMode === 'downward') {
-        simMap.jumpTo({ center: [lng, lat], pitch: 0, bearing: 0 });
-    } else {
-        simMap.jumpTo({ center: [lng, lat], pitch: 45, bearing: yaw });
-    }
+
+    // Cache this frame so orbit drag/zoom can redraw the camera even while paused
+    lastFrame = { lng, lat, relAlt: alt, yaw, pitch, roll };
+
+    // Apply the real 3D camera + model transform for whichever view is active
+    updateSimCamera(lng, lat, alt, yaw, pitch, roll);
 }
+
+
+// ─── Free Camera / Live 3D Model System (NEW) ──────────────────────────────────
+
+// Looks up ground elevation under a point using the loaded terrain-DEM, so altitude
+// (which is relative-to-home in the log) can be converted into a true height above
+// sea level for camera/model placement. Falls back to the last known value while
+// terrain tiles are still loading.
+function getGroundElevation(lng, lat) {
+    if (!simMap || typeof simMap.queryTerrainElevation !== 'function') return terrainElevCache.value;
+    try {
+        const e = simMap.queryTerrainElevation([lng, lat]);
+        if (e !== null && Number.isFinite(e)) {
+            terrainElevCache = { key: `${lng.toFixed(5)},${lat.toFixed(5)}`, value: e };
+            return e;
+        }
+    } catch (err) { /* terrain not ready yet - use cached value */ }
+    return terrainElevCache.value;
+}
+
+// Given a camera position and a target, both as MercatorCoordinates, works out the
+// pitch/bearing Mapbox's FreeCameraOptions needs to look at the target. Mapbox's own
+// lookAtPoint() helper only accepts a 2D lng/lat (no altitude), which isn't precise
+// enough once the target has real height, so this computes it directly from geometry.
+function computePitchBearing(camMerc, targetMerc, metersToMerc) {
+    const dxM = (targetMerc.x - camMerc.x) / metersToMerc;       // + east
+    const dyNorthM = -(targetMerc.y - camMerc.y) / metersToMerc; // + north
+    const dzM = (targetMerc.z - camMerc.z) / metersToMerc;       // + up
+
+    const horizontalDist = Math.max(Math.sqrt(dxM * dxM + dyNorthM * dyNorthM), 0.001);
+    const verticalDrop = -dzM; // how far the camera must look down to reach the target
+
+    const depressionDeg = Math.atan2(verticalDrop, horizontalDist) * 180 / Math.PI;
+    let pitch = 90 - depressionDeg; // Mapbox: 0 = straight down, 90 = horizon
+    pitch = Math.max(0, Math.min(180, pitch));
+
+    let bearing = Math.atan2(dxM, dyNorthM) * 180 / Math.PI;
+    if (bearing < 0) bearing += 360;
+
+    return { pitch, bearing };
+}
+
+// Recomputes the Three.js model transform (translate + rotate + scale) for the current
+// frame. The base +90° X rotation converts Three.js's Y-up convention into Mapbox's
+// Z-up convention; MODEL_ROTATION_OFFSET_DEG is there for you to fine-tune once you see
+// VTOL5M.glb actually rendered, in case its authored nose/up axes don't match this.
+function updateVtolModelTransform(lng, lat, alt, yawDeg, pitchDeg, rollDeg, targetMerc, metersToMerc) {
+    const merc = targetMerc || mapboxgl.MercatorCoordinate.fromLngLat([lng, lat], alt);
+    const scaleUnit = metersToMerc || merc.meterInMercatorCoordinateUnits();
+
+    const yawRad = (yawDeg + MODEL_ROTATION_OFFSET_DEG.z) * Math.PI / 180;
+    const pitchRad = (pitchDeg + MODEL_ROTATION_OFFSET_DEG.x) * Math.PI / 180;
+    const rollRad = (rollDeg + MODEL_ROTATION_OFFSET_DEG.y) * Math.PI / 180;
+
+    vtolModelTransform = {
+        translateX: merc.x,
+        translateY: merc.y,
+        translateZ: merc.z,
+        rotateX: Math.PI / 2 + pitchRad,
+        rotateY: rollRad,
+        rotateZ: -yawRad,
+        scale: scaleUnit * MODEL_SCALE_FACTOR
+    };
+}
+
+// Main per-frame camera update. Positions the Free Camera according to the active
+// view mode, using the aircraft's real altitude (ground elevation + relative height)
+// instead of a fixed pitch/zoom illusion - this is what makes altitude changes actually
+// change what you see, in every view.
+function updateSimCamera(lng, lat, relAlt, yawDeg, pitchDeg, rollDeg) {
+    if (!simMap || !mapboxgl.FreeCameraOptions) return;
+
+    const groundElev = getGroundElevation(lng, lat);
+    const targetAlt = groundElev + Math.max(relAlt, 0);
+    const targetMerc = mapboxgl.MercatorCoordinate.fromLngLat([lng, lat], targetAlt);
+    const metersToMerc = targetMerc.meterInMercatorCoordinateUnits();
+
+    updateVtolModelTransform(lng, lat, targetAlt, yawDeg, pitchDeg, rollDeg, targetMerc, metersToMerc);
+
+    const camera = simMap.getFreeCameraOptions();
+
+    if (currentViewMode === 'cockpit') {
+        // Belly-mounted onboard camera: sits exactly at the aircraft's real position and
+        // altitude, faces the direction of travel, and tips up/down with the vehicle's
+        // own pitch attitude - a rigid mount, so it moves 1:1 with the airframe.
+        camera.position = mapboxgl.MercatorCoordinate.fromLngLat([lng, lat], targetAlt);
+        const lookPitch = Math.max(15, Math.min(165, 78 + pitchDeg));
+        camera.setPitchBearing(lookPitch, yawDeg);
+
+    } else if (currentViewMode === 'nadir') {
+        // Straight-down chase-drone shot, positioned a fixed height above the aircraft's
+        // own real altitude so it always frames both the vehicle and the ground below.
+        const nadirAlt = groundElev + Math.max(relAlt, 0) + NADIR_CAMERA_OFFSET_M;
+        camera.position = mapboxgl.MercatorCoordinate.fromLngLat([lng, lat], nadirAlt);
+        camera.setPitchBearing(0, yawDeg);
+
+    } else if (currentViewMode === 'orbit') {
+        // Third-eye chase camera orbiting the aircraft's live 3D position, like
+        // plot.ardupilot.org's 3D view - drag to rotate, scroll to zoom (setupOrbitControls).
+        const azRad = orbitAzimuth * Math.PI / 180;
+        const elRad = orbitElevation * Math.PI / 180;
+        const dxE = orbitDistance * Math.cos(elRad) * Math.sin(azRad);
+        const dyN = orbitDistance * Math.cos(elRad) * Math.cos(azRad);
+        const dzUp = orbitDistance * Math.sin(elRad);
+
+        const camMerc = new mapboxgl.MercatorCoordinate(
+            targetMerc.x + dxE * metersToMerc,
+            targetMerc.y - dyN * metersToMerc,
+            targetMerc.z + dzUp * metersToMerc
+        );
+        camera.position = camMerc;
+        const { pitch, bearing } = computePitchBearing(camMerc, targetMerc, metersToMerc);
+        camera.setPitchBearing(pitch, bearing);
+    }
+
+    simMap.setFreeCameraOptions(camera);
+}
+
+// Adds the custom Mapbox layer that renders the live 3D VTOL model (Three.js + glTF)
+// at the aircraft's real position/attitude. Hidden in cockpit view, since the camera
+// sits at the aircraft itself there and would just be looking at the inside of its own
+// model.
+function addVtolModelLayer() {
+    if (!simMap || vtolModelLayer) return;
+    if (typeof THREE === 'undefined' || typeof THREE.GLTFLoader === 'undefined') {
+        console.warn('THREE.js / GLTFLoader no están disponibles; el modelo 3D del VTOL no se mostrará.');
+        return;
+    }
+
+    vtolModelLayer = {
+        id: 'vtol-3d-model',
+        type: 'custom',
+        renderingMode: '3d',
+        onAdd(mbMap, gl) {
+            this.map = mbMap;
+            this.camera = new THREE.Camera();
+            this.scene = new THREE.Scene();
+
+            const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+            sun.position.set(0, -70, 100).normalize();
+            this.scene.add(sun);
+            const fill = new THREE.DirectionalLight(0xffffff, 0.5);
+            fill.position.set(0, 70, 50).normalize();
+            this.scene.add(fill);
+            this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+            this.modelGroup = new THREE.Group();
+            this.scene.add(this.modelGroup);
+
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+                VTOL_MODEL_URL,
+                (gltf) => {
+                    this.modelGroup.add(gltf.scene);
+                    vtolModelReady = true;
+                },
+                undefined,
+                (err) => {
+                    console.warn('No se pudo cargar el modelo 3D del VTOL. Revisa VTOL_MODEL_URL en sim.js:', err);
+                }
+            );
+
+            this.renderer = new THREE.WebGLRenderer({
+                canvas: mbMap.getCanvas(),
+                context: gl,
+                antialias: true
+            });
+            this.renderer.autoClear = false;
+        },
+        render(gl, matrix) {
+            if (currentViewMode === 'cockpit' || !vtolModelTransform) {
+                this.map && this.map.triggerRepaint();
+                return;
+            }
+
+            const t = vtolModelTransform;
+            const rotX = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), t.rotateX);
+            const rotY = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), t.rotateY);
+            const rotZ = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), t.rotateZ);
+
+            const m = new THREE.Matrix4().fromArray(matrix);
+            const l = new THREE.Matrix4()
+                .makeTranslation(t.translateX, t.translateY, t.translateZ)
+                .scale(new THREE.Vector3(t.scale, -t.scale, t.scale))
+                .multiply(rotX).multiply(rotY).multiply(rotZ);
+
+            this.camera.projectionMatrix = m.multiply(l);
+            this.renderer.resetState();
+            this.renderer.render(this.scene, this.camera);
+            this.map.triggerRepaint();
+        }
+    };
+
+    simMap.addLayer(vtolModelLayer);
+}
+
+// Re-draws the camera from the last known telemetry frame without waiting for playback -
+// used by the orbit drag/zoom handlers so the view responds instantly even while paused.
+function refreshCameraNow() {
+    if (lastFrame.lng === null) return;
+    updateSimCamera(lastFrame.lng, lastFrame.lat, lastFrame.relAlt, lastFrame.yaw, lastFrame.pitch, lastFrame.roll);
+}
+
+// Mouse (and touch) controls for the orbit / third-eye view: drag to rotate around the
+// aircraft, scroll wheel to zoom in/out - only active while currentViewMode === 'orbit'.
+function setupOrbitControls() {
+    const container = document.getElementById('simMap');
+    if (!container) return;
+
+    container.addEventListener('wheel', (e) => {
+        if (currentViewMode !== 'orbit') return;
+        e.preventDefault();
+        orbitDistance = Math.max(ORBIT_MIN_DIST, Math.min(ORBIT_MAX_DIST, orbitDistance * (1 + e.deltaY * 0.001)));
+        refreshCameraNow();
+    }, { passive: false });
+
+    container.addEventListener('mousedown', (e) => {
+        if (currentViewMode !== 'orbit') return;
+        isOrbitDragging = true;
+        lastPointerX = e.clientX;
+        lastPointerY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isOrbitDragging) return;
+        const dx = e.clientX - lastPointerX;
+        const dy = e.clientY - lastPointerY;
+        lastPointerX = e.clientX;
+        lastPointerY = e.clientY;
+        orbitAzimuth = (orbitAzimuth + dx * 0.4 + 360) % 360;
+        orbitElevation = Math.max(ORBIT_MIN_ELEV, Math.min(ORBIT_MAX_ELEV, orbitElevation - dy * 0.3));
+        refreshCameraNow();
+    });
+
+    window.addEventListener('mouseup', () => { isOrbitDragging = false; });
+
+    // Touch equivalents (tablets/phones)
+    container.addEventListener('touchstart', (e) => {
+        if (currentViewMode !== 'orbit' || e.touches.length !== 1) return;
+        isOrbitDragging = true;
+        lastPointerX = e.touches[0].clientX;
+        lastPointerY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+        if (!isOrbitDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - lastPointerX;
+        const dy = e.touches[0].clientY - lastPointerY;
+        lastPointerX = e.touches[0].clientX;
+        lastPointerY = e.touches[0].clientY;
+        orbitAzimuth = (orbitAzimuth + dx * 0.4 + 360) % 360;
+        orbitElevation = Math.max(ORBIT_MIN_ELEV, Math.min(ORBIT_MAX_ELEV, orbitElevation - dy * 0.3));
+        refreshCameraNow();
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => { isOrbitDragging = false; });
+}
+
+document.addEventListener('DOMContentLoaded', setupOrbitControls);
+
 
 function drawPFD(roll, pitch) {
     const canvas = document.getElementById('pfdCanvas');

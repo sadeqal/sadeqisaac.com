@@ -1,0 +1,136 @@
+:root {
+    --glass-bg: rgba(15, 23, 42, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --accent: #06b6d4;
+}
+
+body, html {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #090d16; color: #f8fafc; overflow: hidden;
+}
+
+/* Full Screen Drop/Upload UI */
+.upload-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease;
+}
+.upload-overlay.fade-out {
+    opacity: 0; pointer-events: none; transform: scale(1.02);
+}
+.upload-box {
+    background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px);
+    border: 2px dashed rgba(6, 182, 212, 0.3); padding: 3.5rem;
+    border-radius: 1.5rem; text-align: center; max-width: 450px; width: 85%;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    transition: border-color 0.3s;
+}
+.upload-box:hover { border-color: var(--accent); }
+.upload-box h2 { margin: 0 0 0.5rem 0; font-size: 1.75rem; letter-spacing: -0.025em; }
+.upload-box p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+
+.file-btn {
+    background: linear-gradient(135deg, #0891b2, #0284c7);
+    color: white; padding: 0.75rem 2rem; border-radius: 0.75rem;
+    font-weight: 600; cursor: pointer; display: inline-block;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.file-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3); }
+input[type="file"] { display: none; }
+
+/* Loader Animation */
+.loader-spin {
+    width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 1s linear infinite; margin: 1.5rem auto 0; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Full Page Simulation Viewport Container */
+.flight-sim-container {
+    position: relative; width: 100vw; height: 100vh;
+}
+
+/* Top Center View Controller Switcher */
+.view-switcher {
+    position: absolute; top: 1.5rem; left: 50%; transform: translateX(-50%);
+    z-index: 10; display: flex; gap: 0.5rem;
+    background: var(--glass-bg); backdrop-filter: blur(12px);
+    padding: 0.35rem; border-radius: 0.85rem; border: 1px solid var(--glass-border);
+}
+.view-btn {
+    background: transparent; border: none; color: #94a3b8;
+    padding: 0.5rem 1.25rem; font-size: 0.85rem; font-weight: 500;
+    border-radius: 0.6rem; cursor: pointer; transition: all 0.2s;
+    white-space: nowrap;
+}
+.view-btn:hover { color: #fff; }
+.view-btn.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+/* Hint shown only in the orbital / third-eye view */
+.orbit-hint {
+    position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%);
+    z-index: 10; background: var(--glass-bg); backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border); padding: 0.4rem 1rem;
+    border-radius: 0.6rem; font-size: 0.78rem; color: #cbd5e1;
+    pointer-events: none; white-space: nowrap;
+}
+
+/* Right Middle PFD Panel Overlays */
+.pfd-overlay-container {
+    position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
+    z-index: 10; background: var(--glass-bg); backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border); padding: 1rem; border-radius: 1.25rem;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); text-align: center;
+}
+#pfdCanvas {
+    background: #1e293b; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.05);
+}
+.pfd-stats-mini {
+    display: flex; justify-content: space-around; margin-top: 0.75rem;
+    font-family: 'Courier New', monospace; font-weight: bold; font-size: 0.9rem;
+}
+.stat-lbl { color: #64748b; font-size: 0.75rem; margin-bottom: 0.1rem; }
+
+/* Bottom Playback Track Control Bar */
+.playback-timeline-toolbar {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    width: 80%; max-width: 960px; z-index: 10;
+    background: var(--glass-bg); backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border); padding: 0.85rem 1.5rem;
+    border-radius: 1.25rem; display: flex; align-items: center; gap: 1.1rem;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4);
+}
+.control-icon-btn {
+    background: none; border: none; font-size: 1.5rem; cursor: pointer;
+    color: #fff; padding: 0; display: flex; align-items: center;
+    transition: transform 0.1s;
+}
+.control-icon-btn:active { transform: scale(0.9); }
+.timestamp-display {
+    font-family: monospace; font-size: 0.85rem; color: #94a3b8; min-width: 45px;
+}
+.timeline-slider {
+    flex-grow: 1; -webkit-appearance: none; appearance: none;
+    background: rgba(255, 255, 255, 0.1); height: 6px; border-radius: 3px; outline: none;
+}
+.timeline-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--accent); cursor: pointer;
+    box-shadow: 0 0 10px var(--accent);
+}
+
+/* Playback speed selector */
+.speed-select {
+    background: rgba(255,255,255,0.06); color: #e2e8f0;
+    border: 1px solid var(--glass-border); border-radius: 0.5rem;
+    padding: 0.3rem 0.5rem; font-size: 0.8rem; font-family: monospace;
+    cursor: pointer; outline: none;
+}
+.speed-select:hover { background: rgba(255,255,255,0.12); }
+
+/* Cursor states for the orbit (third-eye) camera control */
+#simMap.orbit-mode { cursor: grab; }
+#simMap.orbit-mode:active { cursor: grabbing; }
