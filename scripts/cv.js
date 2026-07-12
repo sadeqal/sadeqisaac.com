@@ -200,7 +200,7 @@ const CV_DATA = {
                 role: "eVTOL &amp; Propulsive VTOL Systems",
                 groups: [
                     { sub: null, bullets: [
-                        "Flight Dynamics &amp; Control Engineer for PEM and LINCE eVTOL programs.",
+                        "Lead Engineer of Flight Dynamics & Control for PEM and LINCE eVTOL programs.",
                         "Designed autonomous navigation architecture for GNSS-denied operations.",
                         "Modified PX4/ArduPilot flight-control firmware and core control loops.",
                         "Designed and tuned flight-control algorithms for multi-rotor and VTOL platforms.",
@@ -358,7 +358,7 @@ const CV_DATA = {
                 role: "Sistemas eVTOL y VTOL Propulsivo",
                 groups: [
                     { sub: null, bullets: [
-                        "Ingeniero de Dinámica de Vuelo y Control para los programas eVTOL PEM y LINCE.",
+                        "Ingeniero Líder de Dinámica de Vuelo y Control para los programas eVTOL PEM y LINCE.",
                         "Diseñó la arquitectura de navegación autónoma para operaciones sin GNSS.",
                         "Modificó el firmware de control de vuelo PX4/ArduPilot y los bucles de control principales.",
                         "Diseñó y ajustó algoritmos de control de vuelo para plataformas multirotor y VTOL.",
