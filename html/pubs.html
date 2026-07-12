@@ -3,388 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Publications</title>
+    <title>Publications — Sadeq Isaac</title>
     <link rel="stylesheet" href="../styles/common.css">
     <link rel="stylesheet" href="../styles/pubs.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="background">      
+    <div class="background">
         <!-- Menu Toolbar -->
-        <div class="toolbar">
-            <!-- Toggle Icon -->
-            <button id="toggle-menu" class="toolbar-toggle">
+        <nav class="toolbar">
+            <button id="toggle-menu" class="toolbar-toggle" aria-label="Toggle navigation" aria-expanded="false">
                 <i class="fas fa-bars"></i>
             </button>
-            <!-- Toolbar Icons -->
+
             <div class="toolbar-items" id="toolbar-items">
-                <!-- Clsoe Icon -->
                 <div class="close-button">
-                    <a class="close-toolbar" id="close-menu">
-                        <i class="fas fa-times"></i>
-                    </a>
+                    <a class="close-toolbar" id="close-menu"><i class="fas fa-times"></i></a>
                 </div>
-                <!-- Home Icon -->
-                <div class="toolbar-item">
-                    <a href="../index.html" class="toolbar-item" data-tooltip="Home">
-                        <img src="../icons/home.png" alt="Home" />
-                    </a>
-                </div>
-                <!-- Works Icon -->
-                <div class="toolbar-item">
-                    <a href="../html/works.html" class="toolbar-item" data-tooltip="Works">
-                        <img src="../icons/work.png" alt="Works" />
-                    </a>
-                </div>
-                <!-- Publications Icon -->
-                <div class="toolbar-item">
-                    <a href="../html/pubs.html" class="toolbar-item" data-tooltip="Publications">
-                        <img src="../icons/pub.png" alt="Publications" />
-                    </a>
-                </div>
-                <!-- CV Icon -->
-                <div class="toolbar-item">
-                    <a href="../html/cv.html" class="toolbar-item" data-tooltip="CV">
-                        <img src="../icons/cv.png" alt="CV" />
-                    </a>
+
+                <a href="../index.html" class="nav-item">
+                    <img src="../icons/home.png" alt="" /><span>Home</span>
+                </a>
+                <a href="../html/works.html" class="nav-item">
+                    <img src="../icons/work.png" alt="" /><span>Works</span>
+                </a>
+                <a href="../html/pubs.html" class="nav-item">
+                    <img src="../icons/pub.png" alt="" /><span>Publications</span>
+                </a>
+                <a href="../html/cv.html" class="nav-item">
+                    <img src="../icons/cv.png" alt="" /><span>CV</span>
+                </a>
+
+                <div class="nav-tools" id="toolsToggle">
+                    <button class="nav-tools-trigger" id="toggle-tools" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-toolbox"></i><span>Useful Tools</span><i class="fas fa-chevron-down chevron"></i>
+                    </button>
+                    <div class="tools-submenu">
+                        <a href="mavlink.html"><i class="fas fa-satellite-dish"></i><span>MAVLink Console</span></a>
+                        <a href="sync.html"><i class="fas fa-arrows-rotate"></i><span>Sync Tool</span></a>
+                        <a href="sim.html"><i class="fas fa-cube"></i><span>Flight Simulator</span></a>
+                        <a href="log.html"><i class="fas fa-file-lines"></i><span>Log Viewer</span></a>
+                        <a href="gmailProfs.html"><i class="fas fa-envelope-open-text"></i><span>Professor Outreach</span></a>
+                        <a href="ai.html"><i class="fas fa-robot"></i><span>AI Assistant</span></a>
+                    </div>
                 </div>
             </div>
-        </div>
+        </nav>
 
         <!-- Contact Toolbar -->
         <div id="contact-menu-container">
-            <!-- Contact Toggle Button -->
-            <button id="toggle-contact" class="menu-button">
-                <img src="../icons/phone.png" alt="Phone" />
+            <button id="toggle-contact" class="menu-button" aria-label="Toggle contact links" aria-expanded="false">
+                <img src="../icons/phone.png" alt="" />
             </button>
             <div id="contact-menu" class="contact-menu">
-                <!-- Clsoe Icon -->
                 <div class="close-button">
-                    <a class="close-contact" id="close-contact">
-                        <i class="fas fa-times"></i>
-                    </a>
+                    <a class="close-contact" id="close-contact"><i class="fas fa-times"></i></a>
                 </div>
-                <!-- Triangle for Toggle -->
                 <div id="toggle-triangle"></div>
-                <!-- Email Icon -->
-                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item" data-tooltip="Email">
-                    <img src="../icons/email.png" alt="Email" />
+
+                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item">
+                    <img src="../icons/email.png" alt="" /><span>Email</span>
                 </a>
-                <!-- LinkedIn Icon -->
-                <a href="https://www.linkedin.com/in/sadeqisaac/" target="_blank" class="contact-item" data-tooltip="LinkedIn">
-                    <img src="../icons/linkedin.png" alt="LinkedIn" />
+                <a href="https://www.linkedin.com/in/sadeqisaac/" target="_blank" class="contact-item">
+                    <img src="../icons/linkedin.png" alt="" /><span>LinkedIn</span>
                 </a>
-                <!-- Google Scholar Icon -->
-                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item" data-tooltip="Google Scholar">
-                    <img src="../icons/scholar.png" alt="Google Scholar" />
+                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item">
+                    <img src="../icons/scholar.png" alt="" /><span>Google Scholar</span>
                 </a>
-                <!-- Portal Cientifico UPM Icon -->
-                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item" data-tooltip="Portal Cientifico UPM">
-                    <img src="../icons/uni.png" alt="Portal Cientifico UPM" />
+                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item">
+                    <img src="../icons/uni.png" alt="" /><span>Portal Cient&iacute;fico UPM</span>
                 </a>
-                <!-- ORCID Icon -->
-                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item" data-tooltip="ORCID">
-                    <img src="../icons/orcid.png" alt="ORCID" />
+                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item">
+                    <img src="../icons/orcid.png" alt="" /><span>ORCID</span>
                 </a>
-                <!-- GitHub Icon -->
-                <a href="https://github.com/sadeqal" target="_blank" class="contact-item" data-tooltip="GitHub">
-                    <img src="../icons/github.png" alt="GitHub" />
+                <a href="https://github.com/sadeqal" target="_blank" class="contact-item">
+                    <img src="../icons/github.png" alt="" /><span>GitHub</span>
                 </a>
-                <!-- X (Twitter) Icon -->
-                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item" data-tooltip="X (Twitter)">
-                    <img src="../icons/x.png" alt="X (Twitter)" />
+                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item">
+                    <img src="../icons/x.png" alt="" /><span>X (Twitter)</span>
                 </a>
-                <!-- Instagram Icon -->
-                <a href="https://www.instagram.com/sadeq.isaac" target="_blank" class="contact-item" data-tooltip="Instagram">
-                    <img src="../icons/instagram.png" alt="Instagram" />
+                <a href="https://www.instagram.com/sadeq.isaac" target="_blank" class="contact-item">
+                    <img src="../icons/instagram.png" alt="" /><span>Instagram</span>
                 </a>
             </div>
         </div>
 
-        <!-- Pubs page content -->
+        <!-- Publications content -->
         <div id="pubs-content">
-            <div class="pubsTyping-content">
+            <header class="pubs-header">
+                <span class="eyebrow-tag">Research Record</span>
                 <h1 class="pubs-title">Publications</h1>
-                <div class="publications-container">
-                    <!-- Publication 1: 2025/2/11 - Unmanned Aerial Vehicle-Based Hyperspectral Imaging -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #8B00FF">
-                            <h2>Unmanned Aerial Vehicle-Based Hyperspectral Imaging and Soil Texture Mapping with Robust AI Algorithms</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors">Pablo Flores Peña, <strong>Mohammad Sadeq Ale Isaac</strong>, Daniela Gifu, Eleftheria Maria Pechlivan, Ahmed Refaat Ragab</p>
-                                <p class="pub-abstract">This paper explores the integration of UAV-based hyperspectral imaging and advanced AI algorithms for soil texture mapping and stress detection in agricultural settings. The primary focus lies on leveraging multi-modal sensor data, including hyperspectral imaging, thermal imaging, and gamma-ray spectroscopy, to enable precise monitoring of abiotic and biotic stressors in crops. An innovative algorithm combining vegetation indices, path planning, and machine learning methods is introduced to enhance the efficiency of data collection and analysis. Experimental results demonstrate significant improvements in accuracy and operational efficiency, paving the way for real-time, data-driven decision-making in precision agriculture.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/Drones, 2025.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/Drones\,\ 2025.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.3390/drones9020129" target="_blank" class="doi-button">DOI Link</a>
-                                <p class="pub-journal">MDPI, Drones 2025</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 2: 2024/9/6 - Advanced Control Strategies for Securing UAV Systems -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #FF007A">
-                            <h2>Advanced Control Strategies for Securing UAV Systems: A Cyber-Physical Approach</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors">Pablo Flores Peña, <strong>Mohammad Sadeq Ale Isaac</strong>, Daniela Gifu, Ahmed Refaat Ragab</p>
-                                <p class="pub-abstract">This paper explores the application of sliding mode control (SMC) as a robust security enhancement strategy for unmanned aerial vehicle (UAV) systems. The study proposes integrating advanced SMC techniques with security protocols to develop a dual-purpose system that improves UAV control and fortifies against adversarial actions. The strategy includes dynamic reconfiguration capabilities within the SMC framework, allowing adaptive responses to threats by adjusting control laws and operational parameters. This is complemented by anomaly detection algorithms that monitor deviations in control signals and system states, providing early warnings of potential cyber-intrusions or physical tampering.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/ASI, 2024.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/ASI\,\ 2024.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.3390/asi7050083" target="_blank" class="doi-button">DOI Link</a>
-                                <p class="pub-journal">MDPI, Applied System Innovation 2024</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 3: 2024/6/4 - Sensing and Control Integration for Thrust Vectoring in Heavy UAVs -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #00FFB2">
-                            <h2>Sensing and Control Integration for Thrust Vectoring in Heavy UAVs: Real-World Implementation and Performance Analysis</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Pablo Flores Peña, Marco Andrés Luna, Ahmed Refaat Ragab, Pascual Campoy</p>
-                                <p class="pub-abstract">Unmanned Aerial Vehicles (UAVs) have garnered significant attention among researchers due to their versatility in diverse missions and resilience in challenging conditions. However, electric UAVs often suffer from limited flight autonomy, necessitating the exploration of alternative power sources such as thermal engines. On the other hand, managing thermal engines introduces complexities and internal uncertainties into the system. In this paper, an Adaptive Robust attitude controller (ARAC) is proposed to address these challenges by drawing inspiration from helicopter solutions while minimizing mechanical intricacies.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/US, 2024.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/US\,\ 2024.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.1142/S2301385025500396" target="_blank" class="doi-button">DOI Link</a>
-                                <p class="pub-journal">World Scientific, Unmanned Systems 2024</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 4: 2023/6/14 - Thrust Vectoring Control for Heavy UAVs, Employing a Redundant Communication System -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #FF9800">
-                            <h2>Thrust Vectoring Control for Heavy UAVs, Employing a Redundant Communication System</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Marco Andrés Luna, Mohammad Mehdi Ale Eshagh Khoeini, Pascual Campoy</p>
-                                <p class="pub-abstract">Recently, various research studies have been developed to address communication sensors for Unmanned Aerial Systems (UASs). In particular, when pondering control difficulties, communication is a crucial component. To this end, strengthening a control algorithm with redundant linking sensors ensures the overall system works accurately, even if some components fail. This paper proposes a novel approach to integrate several sensors and actuators for a heavy Unmanned Aerial Vehicle (UAV).</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/Sensors, 2023.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/Sensors\,\ 2023.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.3390/s23125561" target="_blank" class="doi-button">DOI Link</a>
-                                <p class="pub-journal">MDPI, Sensors 2023</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 5: 2022/11/25 - A Proposed System for Multi-UAVs in Remote Sensing Operations -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #6A1B9A">
-                            <h2>A Proposed System for Multi-UAVs in Remote Sensing Operations</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors">Pablo Flores Peña, Marco Andrés Luna, <strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Khaled Elmenshawy, David Martín Gómez, Pascual Campoy, Martin Molina</p>
-                                <p class="pub-abstract">This paper proposes the design of the communications, control systems, and navigation algorithms of a multi-UAV system focused on remote sensing operations. A new controller based on a compensator and a nominal controller is designed dynamically to regulate the UAVs' attitude. The navigation system addresses the multi-region coverage trajectory planning task using a new approach to solve the CPP problem.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/Sensors, 2022.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/Sensors\,\ 2022.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.3390/s22239180" target="_blank" class="doi-button">DOI Link</a>
-                                <p class="pub-journal">MDPI, Sensors 2022</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 6: 2022/9/6 - Medium-scale UAVs: A Practical Control System Considering Aerodynamics Analysis -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #F06292">
-                            <h2>Medium-scale UAVs: A Practical Control System Considering Aerodynamics Analysis</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Marco Andrés Luna, Ahmed Refaat Ragab, Mohammad Mehdi Ale Eshagh Khoeini, Rupal Kakara, Pascual Campoy, Pablo Flores Peña, Martin Molina</p>
-                                <p class="pub-abstract">Unmanned aerial vehicles (UAVs) have drawn significant attention from researchers over the last decade due to their wide range of possible uses. Carrying massive payloads concurrent with light UAVs has broadened the aeronautics context, which is feasible using powerful engines; however, it faces several practical control dilemmas.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/Drones, 2022.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/Drones\,\ 2022.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.3390/drones6090244" target="_blank" class="doi-button">DOI Link</a>
-                                <p class="pub-journal">MDPI, Drones 2022</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 7: 2022/6/1 - WILD HOPPER: A Heavy-duty UAV for Day and Night Firefighting Operations -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #4CAF50">
-                            <h2>WILD HOPPER: A Heavy-duty UAV for Day and Night Firefighting Operations</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Pablo Flores Peña, Ahmed Refaat Ragab, Marco A Luna, Pascual Campoy</p>
-                                <p class="pub-abstract">Forest fires are among the most dangerous accidents, as they lead to the repercussions of climate change by reducing oxygen levels and increasing carbon dioxide levels. These risks led to the attention of many institutions worldwide, most notably the European Union and the European Parliament, which led to the emergence of many directives and regulations aimed at controlling the phenomenon of forest fires in Europe.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/Heliyon, 2022.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/Heliyon\,\ 2022.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.1016/j.heliyon.2022.e09588" target="_blank" class="doi-button">DOI Link</a>
-                                <p class="pub-journal">Elsevier, Heliyon 2022</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 8: 2022/3/16 - Fast Multi-UAV Path Planning for Optimal Area Coverage in Aerial Sensing Applications -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #2196F3">
-                            <h2>Fast Multi-UAV Path Planning for Optimal Area Coverage in Aerial Sensing Applications</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Marco Andrés Luna, Ahmed Refaat Ragab, Pascual Campoy, Pablo Flores Peña, Martin Molina</p>
-                                <p class="pub-abstract">This paper deals with the problems and the solutions of fast coverage path planning (CPP) for multiple UAVs. Through this research, the problem is solved and analyzed with both a software framework and algorithm. The implemented algorithm generates a back-and-forth path based on the onboard sensor footprint. In addition, three methods are proposed for the individual path assignment.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/Sensors2, 2022.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/Sensors2\,\ 2022.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.3390/s22062297" target="_blank" class="doi-button">DOI Link</a>
-                                <p class="pub-journal">MDPI, Sensors 2022</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 9: 2022/1/1 - Systemic Integrated Unmanned Aerial System -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #9C27B0">
-                            <h2>Systemic Integrated Unmanned Aerial System</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Pablo Flores Peña, Marco A Luna</p>
-                                <p class="pub-abstract">Systemic integrated Unmanned Aerial System (UAS), is the process of gathering the subsystems into one fulfilled system. This integration is done in order to improve the system performance, reducing operating costs, and improving the time response of the system. Normally, such systems are integrated using different techniques such as communication processes, and computer networking. In this paper, a new integrated system is implemented by linking functionally computing systems and software applications together in one powerful system.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/iJOE, 2022.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/iJOE\,\ 2022.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.3991/ijoe.v18i01.26435" target="_blank" class="doi-button">DOI Link</a> <!-- Placeholder DOI -->
-                                <p class="pub-journal">International Journal of Online & Biomedical Engineering 2022</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 10: 2021/11/19 - Mathematical Modeling and Designing a Heavy Hybrid-Electric Quadcopter, Controlled by Flaps -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #3F51B5">
-                            <h2>Mathematical Modeling and Designing a Heavy Hybrid-Electric Quadcopter, Controlled by Flaps</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Enrique Caballero Garcés, Marco Andres Luna, Pablo Flores Peña, Pascual Campoy Cervantes</p>
-                                <p class="pub-abstract">Systemic hybrid-electric unmanned aerial vehicles (UAVs) and, especially, quadcopters are so promising due to their long flight endurance and their usage in patrol and rescue missions which gain a high interest to be under examination and test scope by researchers; however, a complete mathematical design is required to fulfill theoretical paper investigates salient sections from hypothesis to implementation. Researchers at Drone Hopper company have conducted various calculations to form a precise novel platform called Duty-Hopper (DH).</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/US, 2021.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/US\,\ 2021.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.1142/S2301385022500133" target="_blank" class="doi-button">DOI Link</a> <!-- Placeholder DOI -->
-                                <p class="pub-journal">Journal of Unmanned Systems 2021</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 11: 2021/10/27 - Unmanned aerial vehicle swarming (Duplicate entry, assuming different context) -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #E91E63">
-                            <h2>Unmanned Aerial Vehicle Swarming</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Marco A Luna, Pablo Flores Peña</p>
-                                <p class="pub-abstract">Unmanned Aerial Vehicles (UAVs) is a special case of the ad-hoc network, as it is categorized from the Flying ad-hoc network (FANET), which is a subcategory from the ad-hoc network. The massive widely used applications for UAVs through the variety of missions leads the researchers to deep through enhancing such systems by equipping different technologies and techniques for UAVs. Adding swarming facilities for UAVs was our case research interest in Drone Hopper research center to gain the accurate and powerful usage through a swarm of drones to be used in different applications such as firefighting and agriculture.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/IEEE, 2021.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/IEEE\,\ 2021.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.1109/ICEET53442.2021.9659698" target="_blank" class="doi-button">DOI Link</a> <!-- Placeholder DOI -->
-                                <p class="pub-journal">2021 International Conference on Engineering and Emerging Technologies (ICEET) 2021</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 12: 2021/9/1 - WILD HOPPER Prototype for Forest Firefighting -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #CDDC39">
-                            <h2>WILD HOPPER Prototype for Forest Firefighting</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Marco A Luna, Pablo Flores Peña</p>
-                                <p class="pub-abstract">In Europe, fire represents an important issue for a lot of researchers due to economic losses, environmental disasters, and human death. In the last decade, the European parliament sheds light upon this problem by dealing with the community project "Forest Focus". Thus, researchers and scientific research departments of European companies begin to work on solving and creating different techniques to deal with such a problem.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/iJOE, 2021.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/iJOE\,\ 2021.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://doi.org/10.3991/ijoe.v17i09.25205" target="_blank" class="doi-button">DOI Link</a> <!-- Placeholder DOI -->
-                                <p class="pub-journal">International Journal of Online & Biomedical Engineering 2021</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 13: 2019/5 - Control and Guidance of an Autonomous Quad-rotor Landing Phase on a Moving Platform -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #795548">
-                            <h2>Control and Guidance of an Autonomous Quad-rotor Landing Phase on a Moving Platform</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Sayyed Hodjatollah Mirtajadini, Abolghasem Naghash</p>
-                                <p class="pub-abstract">[Abstract not provided in image; placeholder] This paper discusses the control and guidance strategies for an autonomous quad-rotor landing on a moving platform.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pubs/IMAV, 2019.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/IMAV\,\ 2019.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://www.imavs.org/papers/2019/5.pdf" target="_blank" class="doi-button">DOI Link</a> <!-- Placeholder DOI -->
-                                <p class="pub-journal">IMAV 2019, Flight Control and Dynamics of the drone 2019</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Publication 14: 2017 - Aerospace Engineering, graduate exams with comprehensive answers -->
-                    <div class="publication-card">
-                        <div class="pub-header" style="background-color: #607D8B">
-                            <h2>Aerospace Engineering, graduate exams with comprehensive answers</h2>
-                        </div>
-                        <div class="pub-content">
-                            <div class="pub-left-column">
-                                <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Arman Navizi, Isa Sepahvand, Nafise Abdolmohammadi, Iman Sabahi</p>
-                                <p class="pub-abstract">[Abstract not provided in image; placeholder] This publication provides comprehensive answers to graduate-level aerospace engineering exams.</p>
-                            </div>
-                            <div class="pub-right-column">
-                                <a href="../pdfs/paper15_2017.pdf" download class="pdf-preview-button" style="background-image: url('../pubs/Book\,\ 2017.png');">
-                                    <span class="pdf-text">PDF Preview</span>
-                                </a>
-                                <a href="https://shorturl.at/EGIy9" target="_blank" class="doi-button">DOI Link</a> <!-- Placeholder DOI -->
-                                <p class="pub-journal">Nasir Publisher 2017</p> <!-- Publisher not specified in image -->
-                            </div>
-                        </div>
-                    </div>
+                <p class="pubs-subtitle">Peer-reviewed work on UAV flight control, thrust vectoring, autonomy, and aerodynamics.</p>
+                <div class="pubs-stats">
+                    <div class="stat"><span class="stat-num">14</span><span class="stat-label">Publications</span></div>
+                    <div class="stat"><span class="stat-num">9</span><span class="stat-label">Venues</span></div>
+                    <div class="stat"><span class="stat-num">2017&ndash;2025</span><span class="stat-label">Span</span></div>
                 </div>
+            </header>
+
+            <div class="year-filter">
+                <button class="year-chip is-active" data-year="all">All</button>
+                <button class="year-chip" data-year="2025">2025</button>
+                <button class="year-chip" data-year="2024">2024</button>
+                <button class="year-chip" data-year="2023">2023</button>
+                <button class="year-chip" data-year="2022">2022</button>
+                <button class="year-chip" data-year="2021">2021</button>
+                <button class="year-chip" data-year="2019">2019</button>
+                <button class="year-chip" data-year="2017">2017</button>
+            </div>
+
+            <div class="pub-list">
+
+                <!-- 1: 2025 -->
+                <article class="pub-card" data-year="2025">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2025</span><span class="pub-venue">MDPI, Drones 2025</span></div>
+                            <h2 class="pub-title">Unmanned Aerial Vehicle-Based Hyperspectral Imaging and Soil Texture Mapping with Robust AI Algorithms</h2>
+                            <p class="pub-authors">Pablo Flores Pe&ntilde;a, <strong>Mohammad Sadeq Ale Isaac</strong>, Daniela Gifu, Eleftheria Maria Pechlivan, Ahmed Refaat Ragab</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">This paper explores the integration of UAV-based hyperspectral imaging and advanced AI algorithms for soil texture mapping and stress detection in agricultural settings. The primary focus lies on leveraging multi-modal sensor data, including hyperspectral imaging, thermal imaging, and gamma-ray spectroscopy, to enable precise monitoring of abiotic and biotic stressors in crops. An innovative algorithm combining vegetation indices, path planning, and machine learning methods is introduced to enhance the efficiency of data collection and analysis. Experimental results demonstrate significant improvements in accuracy and operational efficiency, paving the way for real-time, data-driven decision-making in precision agriculture.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/Drones, 2025.pdf" download class="pdf-thumb" style="background-image: url('../pubs/Drones\,\ 2025.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.3390/drones9020129" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 2: 2024 -->
+                <article class="pub-card" data-year="2024">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2024</span><span class="pub-venue">MDPI, Applied System Innovation 2024</span></div>
+                            <h2 class="pub-title">Advanced Control Strategies for Securing UAV Systems: A Cyber-Physical Approach</h2>
+                            <p class="pub-authors">Pablo Flores Pe&ntilde;a, <strong>Mohammad Sadeq Ale Isaac</strong>, Daniela Gifu, Ahmed Refaat Ragab</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">This paper explores the application of sliding mode control (SMC) as a robust security enhancement strategy for unmanned aerial vehicle (UAV) systems. The study proposes integrating advanced SMC techniques with security protocols to develop a dual-purpose system that improves UAV control and fortifies against adversarial actions. The strategy includes dynamic reconfiguration capabilities within the SMC framework, allowing adaptive responses to threats by adjusting control laws and operational parameters. This is complemented by anomaly detection algorithms that monitor deviations in control signals and system states, providing early warnings of potential cyber-intrusions or physical tampering.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/ASI, 2024.pdf" download class="pdf-thumb" style="background-image: url('../pubs/ASI\,\ 2024.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.3390/asi7050083" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 3: 2024 -->
+                <article class="pub-card" data-year="2024">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2024</span><span class="pub-venue">World Scientific, Unmanned Systems 2024</span></div>
+                            <h2 class="pub-title">Sensing and Control Integration for Thrust Vectoring in Heavy UAVs: Real-World Implementation and Performance Analysis</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Pablo Flores Pe&ntilde;a, Marco Andr&eacute;s Luna, Ahmed Refaat Ragab, Pascual Campoy</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">Unmanned Aerial Vehicles (UAVs) have garnered significant attention among researchers due to their versatility in diverse missions and resilience in challenging conditions. However, electric UAVs often suffer from limited flight autonomy, necessitating the exploration of alternative power sources such as thermal engines. On the other hand, managing thermal engines introduces complexities and internal uncertainties into the system. In this paper, an Adaptive Robust attitude controller (ARAC) is proposed to address these challenges by drawing inspiration from helicopter solutions while minimizing mechanical intricacies.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/US, 2024.pdf" download class="pdf-thumb" style="background-image: url('../pubs/US\,\ 2024.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.1142/S2301385025500396" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 4: 2023 -->
+                <article class="pub-card" data-year="2023">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2023</span><span class="pub-venue">MDPI, Sensors 2023</span></div>
+                            <h2 class="pub-title">Thrust Vectoring Control for Heavy UAVs, Employing a Redundant Communication System</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Marco Andr&eacute;s Luna, Mohammad Mehdi Ale Eshagh Khoeini, Pascual Campoy</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">Recently, various research studies have been developed to address communication sensors for Unmanned Aerial Systems (UASs). In particular, when pondering control difficulties, communication is a crucial component. To this end, strengthening a control algorithm with redundant linking sensors ensures the overall system works accurately, even if some components fail. This paper proposes a novel approach to integrate several sensors and actuators for a heavy Unmanned Aerial Vehicle (UAV).</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/Sensors, 2023.pdf" download class="pdf-thumb" style="background-image: url('../pubs/Sensors\,\ 2023.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.3390/s23125561" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 5: 2022 -->
+                <article class="pub-card" data-year="2022">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2022</span><span class="pub-venue">MDPI, Sensors 2022</span></div>
+                            <h2 class="pub-title">A Proposed System for Multi-UAVs in Remote Sensing Operations</h2>
+                            <p class="pub-authors">Pablo Flores Pe&ntilde;a, Marco Andr&eacute;s Luna, <strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Khaled Elmenshawy, David Mart&iacute;n G&oacute;mez, Pascual Campoy, Martin Molina</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">This paper proposes the design of the communications, control systems, and navigation algorithms of a multi-UAV system focused on remote sensing operations. A new controller based on a compensator and a nominal controller is designed dynamically to regulate the UAVs' attitude. The navigation system addresses the multi-region coverage trajectory planning task using a new approach to solve the CPP problem.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/Sensors, 2022.pdf" download class="pdf-thumb" style="background-image: url('../pubs/Sensors\,\ 2022.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.3390/s22239180" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 6: 2022 -->
+                <article class="pub-card" data-year="2022">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2022</span><span class="pub-venue">MDPI, Drones 2022</span></div>
+                            <h2 class="pub-title">Medium-scale UAVs: A Practical Control System Considering Aerodynamics Analysis</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Marco Andr&eacute;s Luna, Ahmed Refaat Ragab, Mohammad Mehdi Ale Eshagh Khoeini, Rupal Kakara, Pascual Campoy, Pablo Flores Pe&ntilde;a, Martin Molina</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">Unmanned aerial vehicles (UAVs) have drawn significant attention from researchers over the last decade due to their wide range of possible uses. Carrying massive payloads concurrent with light UAVs has broadened the aeronautics context, which is feasible using powerful engines; however, it faces several practical control dilemmas.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/Drones, 2022.pdf" download class="pdf-thumb" style="background-image: url('../pubs/Drones\,\ 2022.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.3390/drones6090244" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 7: 2022 -->
+                <article class="pub-card" data-year="2022">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2022</span><span class="pub-venue">Elsevier, Heliyon 2022</span></div>
+                            <h2 class="pub-title">WILD HOPPER: A Heavy-duty UAV for Day and Night Firefighting Operations</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Pablo Flores Pe&ntilde;a, Ahmed Refaat Ragab, Marco A Luna, Pascual Campoy</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">Forest fires are among the most dangerous accidents, as they lead to the repercussions of climate change by reducing oxygen levels and increasing carbon dioxide levels. These risks led to the attention of many institutions worldwide, most notably the European Union and the European Parliament, which led to the emergence of many directives and regulations aimed at controlling the phenomenon of forest fires in Europe.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/Heliyon, 2022.pdf" download class="pdf-thumb" style="background-image: url('../pubs/Heliyon\,\ 2022.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.1016/j.heliyon.2022.e09588" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 8: 2022 -->
+                <article class="pub-card" data-year="2022">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2022</span><span class="pub-venue">MDPI, Sensors 2022</span></div>
+                            <h2 class="pub-title">Fast Multi-UAV Path Planning for Optimal Area Coverage in Aerial Sensing Applications</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Marco Andr&eacute;s Luna, Ahmed Refaat Ragab, Pascual Campoy, Pablo Flores Pe&ntilde;a, Martin Molina</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">This paper deals with the problems and the solutions of fast coverage path planning (CPP) for multiple UAVs. Through this research, the problem is solved and analyzed with both a software framework and algorithm. The implemented algorithm generates a back-and-forth path based on the onboard sensor footprint. In addition, three methods are proposed for the individual path assignment.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/Sensors2, 2022.pdf" download class="pdf-thumb" style="background-image: url('../pubs/Sensors2\,\ 2022.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.3390/s22062297" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 9: 2022 -->
+                <article class="pub-card" data-year="2022">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2022</span><span class="pub-venue">International Journal of Online &amp; Biomedical Engineering 2022</span></div>
+                            <h2 class="pub-title">Systemic Integrated Unmanned Aerial System</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Pablo Flores Pe&ntilde;a, Marco A Luna</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">Systemic integrated Unmanned Aerial System (UAS), is the process of gathering the subsystems into one fulfilled system. This integration is done in order to improve the system performance, reducing operating costs, and improving the time response of the system. Normally, such systems are integrated using different techniques such as communication processes, and computer networking. In this paper, a new integrated system is implemented by linking functionally computing systems and software applications together in one powerful system.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/iJOE, 2022.pdf" download class="pdf-thumb" style="background-image: url('../pubs/iJOE\,\ 2022.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.3991/ijoe.v18i01.26435" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 10: 2021 -->
+                <article class="pub-card" data-year="2021">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2021</span><span class="pub-venue">Journal of Unmanned Systems 2021</span></div>
+                            <h2 class="pub-title">Mathematical Modeling and Designing a Heavy Hybrid-Electric Quadcopter, Controlled by Flaps</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Enrique Caballero Garc&eacute;s, Marco Andres Luna, Pablo Flores Pe&ntilde;a, Pascual Campoy Cervantes</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">Systemic hybrid-electric unmanned aerial vehicles (UAVs) and, especially, quadcopters are so promising due to their long flight endurance and their usage in patrol and rescue missions which gain a high interest to be under examination and test scope by researchers; however, a complete mathematical design is required to fulfill theoretical paper investigates salient sections from hypothesis to implementation. Researchers at Drone Hopper company have conducted various calculations to form a precise novel platform called Duty-Hopper (DH).</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/US, 2021.pdf" download class="pdf-thumb" style="background-image: url('../pubs/US\,\ 2021.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.1142/S2301385022500133" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 11: 2021 -->
+                <article class="pub-card" data-year="2021">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2021</span><span class="pub-venue">2021 International Conference on Engineering and Emerging Technologies (ICEET) 2021</span></div>
+                            <h2 class="pub-title">Unmanned Aerial Vehicle Swarming</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Marco A Luna, Pablo Flores Pe&ntilde;a</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">Unmanned Aerial Vehicles (UAVs) is a special case of the ad-hoc network, as it is categorized from the Flying ad-hoc network (FANET), which is a subcategory from the ad-hoc network. The massive widely used applications for UAVs through the variety of missions leads the researchers to deep through enhancing such systems by equipping different technologies and techniques for UAVs. Adding swarming facilities for UAVs was our case research interest in Drone Hopper research center to gain the accurate and powerful usage through a swarm of drones to be used in different applications such as firefighting and agriculture.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/IEEE, 2021.pdf" download class="pdf-thumb" style="background-image: url('../pubs/IEEE\,\ 2021.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.1109/ICEET53442.2021.9659698" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 12: 2021 -->
+                <article class="pub-card" data-year="2021">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2021</span><span class="pub-venue">International Journal of Online &amp; Biomedical Engineering 2021</span></div>
+                            <h2 class="pub-title">WILD HOPPER Prototype for Forest Firefighting</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Ahmed Refaat Ragab, Marco A Luna, Pablo Flores Pe&ntilde;a</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract">In Europe, fire represents an important issue for a lot of researchers due to economic losses, environmental disasters, and human death. In the last decade, the European parliament sheds light upon this problem by dealing with the community project &ldquo;Forest Focus&rdquo;. Thus, researchers and scientific research departments of European companies begin to work on solving and creating different techniques to deal with such a problem.</p>
+                                <button class="abstract-toggle" aria-expanded="false"><span class="toggle-label">Read abstract</span> <i class="fas fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/iJOE, 2021.pdf" download class="pdf-thumb" style="background-image: url('../pubs/iJOE\,\ 2021.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://doi.org/10.3991/ijoe.v17i09.25205" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 13: 2019 -->
+                <article class="pub-card" data-year="2019">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2019</span><span class="pub-venue">IMAV 2019, Flight Control and Dynamics of the drone 2019</span></div>
+                            <h2 class="pub-title">Control and Guidance of an Autonomous Quad-rotor Landing Phase on a Moving Platform</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Sayyed Hodjatollah Mirtajadini, Abolghasem Naghash</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract no-clamp">This paper discusses the control and guidance strategies for an autonomous quad-rotor landing on a moving platform.</p>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pubs/IMAV, 2019.pdf" download class="pdf-thumb" style="background-image: url('../pubs/IMAV\,\ 2019.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://www.imavs.org/papers/2019/5.pdf" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 14: 2017 -->
+                <article class="pub-card" data-year="2017">
+                    <div class="pub-card-inner">
+                        <div class="pub-main">
+                            <div class="pub-meta"><span class="pub-year">2017</span><span class="pub-venue">Nasir Publisher 2017</span></div>
+                            <h2 class="pub-title">Aerospace Engineering, graduate exams with comprehensive answers</h2>
+                            <p class="pub-authors"><strong>Mohammad Sadeq Ale Isaac</strong>, Arman Navizi, Isa Sepahvand, Nafise Abdolmohammadi, Iman Sabahi</p>
+                            <div class="pub-abstract-wrap">
+                                <p class="pub-abstract no-clamp">This publication provides comprehensive answers to graduate-level aerospace engineering exams.</p>
+                            </div>
+                        </div>
+                        <div class="pub-actions">
+                            <a href="../pdfs/paper15_2017.pdf" download class="pdf-thumb" style="background-image: url('../pubs/Book\,\ 2017.png');">
+                                <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            </a>
+                            <a href="https://shorturl.at/EGIy9" target="_blank" class="btn-hud small">DOI <i class="fas fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </article>
+
             </div>
         </div>
     </div>
@@ -395,8 +418,10 @@
     <script src="../scripts/contact.js"></script>
     <script src="../scripts/background.js"></script>
 
-    <!-- Import Awesome and Google Fonts -->
+    <!-- Page interactions: year filter, abstract accordion, scroll reveal -->
+    <script src="../scripts/pubs.js"></script>
+
+    <!-- Import Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </body>
 </html>
