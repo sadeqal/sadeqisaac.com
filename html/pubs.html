@@ -13,79 +13,92 @@
 <body>
     <div class="background">
         <!-- Menu Toolbar -->
-        <nav class="toolbar">
-            <button id="toggle-menu" class="toolbar-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <div class="toolbar">
+            <!-- Toggle Icon -->
+            <button id="toggle-menu" class="toolbar-toggle">
                 <i class="fas fa-bars"></i>
             </button>
-
+            <!-- Toolbar Icons -->
             <div class="toolbar-items" id="toolbar-items">
+                <!-- Clsoe Icon -->
                 <div class="close-button">
-                    <a class="close-toolbar" id="close-menu"><i class="fas fa-times"></i></a>
+                    <a class="close-toolbar" id="close-menu">
+                        <i class="fas fa-times"></i>
+                    </a>
                 </div>
-
-                <a href="../index.html" class="nav-item">
-                    <img src="../icons/home.png" alt="" /><span>Home</span>
-                </a>
-                <a href="../html/works.html" class="nav-item">
-                    <img src="../icons/work.png" alt="" /><span>Works</span>
-                </a>
-                <a href="../html/pubs.html" class="nav-item">
-                    <img src="../icons/pub.png" alt="" /><span>Publications</span>
-                </a>
-                <a href="../html/cv.html" class="nav-item">
-                    <img src="../icons/cv.png" alt="" /><span>CV</span>
-                </a>
-
-                <div class="nav-tools" id="toolsToggle">
-                    <button class="nav-tools-trigger" id="toggle-tools" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-toolbox"></i><span>Useful Tools</span><i class="fas fa-chevron-down chevron"></i>
-                    </button>
-                    <div class="tools-submenu">
-                        <a href="mavlink.html"><i class="fas fa-satellite-dish"></i><span>MAVLink Console</span></a>
-                        <a href="sync.html"><i class="fas fa-arrows-rotate"></i><span>Sync Tool</span></a>
-                        <a href="sim.html"><i class="fas fa-cube"></i><span>Flight Simulator</span></a>
-                        <a href="log.html"><i class="fas fa-file-lines"></i><span>Log Viewer</span></a>
-                        <a href="gmailProfs.html"><i class="fas fa-envelope-open-text"></i><span>Professor Outreach</span></a>
-                        <a href="ai.html"><i class="fas fa-robot"></i><span>AI Assistant</span></a>
-                    </div>
+                <!-- Home Icon -->
+                <div class="toolbar-item">
+                    <a href="../index.html" class="toolbar-item" data-tooltip="Home">
+                        <img src="../icons/home.png" alt="Home" />
+                    </a>
+                </div>
+                <!-- Works Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/works.html" class="toolbar-item" data-tooltip="Works">
+                        <img src="../icons/work.png" alt="Works" />
+                    </a>
+                </div>
+                <!-- Publications Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/pubs.html" class="toolbar-item" data-tooltip="Publications">
+                        <img src="../icons/pub.png" alt="Publications" />
+                    </a>
+                </div>
+                <!-- CV Icon -->
+                <div class="toolbar-item">
+                    <a href="../html/cv.html" class="toolbar-item" data-tooltip="CV">
+                        <img src="../icons/cv.png" alt="CV" />
+                    </a>
                 </div>
             </div>
-        </nav>
+        </div>
 
         <!-- Contact Toolbar -->
         <div id="contact-menu-container">
-            <button id="toggle-contact" class="menu-button" aria-label="Toggle contact links" aria-expanded="false">
-                <img src="../icons/phone.png" alt="" />
+            <!-- Contact Toggle Button -->
+            <button id="toggle-contact" class="menu-button">
+                <img src="../icons/phone.png" alt="Phone" />
             </button>
             <div id="contact-menu" class="contact-menu">
+                <!-- Clsoe Icon -->
                 <div class="close-button">
-                    <a class="close-contact" id="close-contact"><i class="fas fa-times"></i></a>
+                    <a class="close-contact" id="close-contact">
+                        <i class="fas fa-times"></i>
+                    </a>
                 </div>
+                <!-- Triangle for Toggle -->
                 <div id="toggle-triangle"></div>
-
-                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item">
-                    <img src="../icons/email.png" alt="" /><span>Email</span>
+                <!-- Email Icon -->
+                <a href="mailto:sadeqalisaac@gmail.com" class="contact-item" data-tooltip="Email">
+                    <img src="../icons/email.png" alt="Email" />
                 </a>
-                <a href="https://www.linkedin.com/in/sadeqisaac/" target="_blank" class="contact-item">
-                    <img src="../icons/linkedin.png" alt="" /><span>LinkedIn</span>
+                <!-- LinkedIn Icon -->
+                <a href="https://www.linkedin.com/in/sadeqisaac/" target="_blank" class="contact-item" data-tooltip="LinkedIn">
+                    <img src="../icons/linkedin.png" alt="LinkedIn" />
                 </a>
-                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item">
-                    <img src="../icons/scholar.png" alt="" /><span>Google Scholar</span>
+                <!-- Google Scholar Icon -->
+                <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank" class="contact-item" data-tooltip="Google Scholar">
+                    <img src="../icons/scholar.png" alt="Google Scholar" />
                 </a>
-                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item">
-                    <img src="../icons/uni.png" alt="" /><span>Portal Cient&iacute;fico UPM</span>
+                <!-- Portal Cientifico UPM Icon -->
+                <a href="https://portalcientifico.upm.es/es/ipublic/researcher/335374" target="_blank" class="contact-item" data-tooltip="Portal Cientifico UPM">
+                    <img src="../icons/uni.png" alt="Portal Cientifico UPM" />
                 </a>
-                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item">
-                    <img src="../icons/orcid.png" alt="" /><span>ORCID</span>
+                <!-- ORCID Icon -->
+                <a href="https://orcid.org/0000-0001-8773-7184" target="_blank" class="contact-item" data-tooltip="ORCID">
+                    <img src="../icons/orcid.png" alt="ORCID" />
                 </a>
-                <a href="https://github.com/sadeqal" target="_blank" class="contact-item">
-                    <img src="../icons/github.png" alt="" /><span>GitHub</span>
+                <!-- GitHub Icon -->
+                <a href="https://github.com/sadeqal" target="_blank" class="contact-item" data-tooltip="GitHub">
+                    <img src="../icons/github.png" alt="GitHub" />
                 </a>
-                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item">
-                    <img src="../icons/x.png" alt="" /><span>X (Twitter)</span>
+                <!-- X (Twitter) Icon -->
+                <a href="https://x.com/SadeqAlisaac" target="_blank" class="contact-item" data-tooltip="X (Twitter)">
+                    <img src="../icons/x.png" alt="X (Twitter)" />
                 </a>
-                <a href="https://www.instagram.com/sadeq.isaac" target="_blank" class="contact-item">
-                    <img src="../icons/instagram.png" alt="" /><span>Instagram</span>
+                <!-- Instagram Icon -->
+                <a href="https://www.instagram.com/sadeq.isaac" target="_blank" class="contact-item" data-tooltip="Instagram">
+                    <img src="../icons/instagram.png" alt="Instagram" />
                 </a>
             </div>
         </div>
