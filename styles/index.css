@@ -366,7 +366,7 @@ main {
 }
 
 .work-card h3 {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: 1.15rem;
     margin: 0 0 10px;
     color: var(--text);
@@ -433,7 +433,7 @@ main {
 
 .education-card .edu-info h4 {
     margin: 0 0 4px;
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: 1.02rem;
     color: var(--text);
 }
