@@ -197,6 +197,7 @@ const CV_DATA = {
             {
                 dates: "2022 — Present",
                 company: "Indra Sistemas, Madrid, Spain",
+                companyNote: "Formerly Wake Engineering",
                 role: "eVTOL &amp; Propulsive VTOL Systems",
                 groups: [
                     { sub: null, bullets: [
@@ -355,6 +356,7 @@ const CV_DATA = {
             {
                 dates: "2022 — Actualidad",
                 company: "Indra Sistemas, Madrid, España",
+                companyNote: "Anteriormente Wake Engineering",
                 role: "Sistemas eVTOL y VTOL Propulsivo",
                 groups: [
                     { sub: null, bullets: [
@@ -513,6 +515,9 @@ function renderPdfDocument(lang) {
         const skillsLineHTML = job.skillsLine
         ? `<div class="pdf-job-sub" style="margin-top:2mm;">${job.skillsLine}</div>`
         : '';
+        const companyNoteHTML = job.companyNote
+        ? `<div class="pdf-company-note">${job.companyNote}</div>`
+        : '';
         
         // SI ES EL BLOQUE DE DRONE-HOPPER (ÍNDICE 2), LE METEMOS UNA CLASE ESPECIAL
         const extraClass = (idx === 2) ? 'pdf-top-page-buffer' : '';
@@ -523,6 +528,7 @@ function renderPdfDocument(lang) {
             <span class="pdf-job-title">${job.company}</span>
             <span class="pdf-job-dates">${job.dates}</span>
         </div>
+        ${companyNoteHTML}
         <div class="pdf-job-role">${job.role}</div>
         ${groupsHTML}
         ${skillsLineHTML}

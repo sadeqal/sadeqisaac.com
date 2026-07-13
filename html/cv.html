@@ -12,11 +12,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-
+    
     <div class="background">
         <!-- Background Canvas -->
         <canvas id="bg-canvas"></canvas>
-
+        
         <!-- Menu Toolbar -->
         <div class="toolbar">
             <!-- Toggle Icon -->
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Contact Toolbar -->
         <div id="contact-menu-container">
             <!-- Contact Toggle Button -->
@@ -101,7 +101,7 @@
                 </a>
             </div>
         </div>
-
+        
         <div class="export-dropdown">
             <button class="export-btn" id="exportBtn">
                 <i class="fas fa-file-download"></i> Export PDF <i class="fas fa-chevron-down"></i>
@@ -111,7 +111,7 @@
                 <a href="#" data-lang="es" onclick="exportCV('es'); return false;"><span class="lang-tag">ES</span> Español</a>
             </div>
         </div>
-
+        
         <!-- CV page content -->
         <div id="cv-content">
             <div class="cv-header">
@@ -135,7 +135,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- Summary Section -->
             <section class="cv-section">
                 <span class="eyebrow">Sec. A</span>
@@ -144,20 +144,20 @@
                     PhD Robotics Engineer with <strong>10+ years of experience</strong> in <strong>UAVs, Flight Dynamics, and Autonomous Systems</strong>. Technical lead in the development of <strong>military VTOL and fixed-wing UAV platforms</strong>, specializing in <strong>autopilot engineering, flight-control systems, avionics integration, autonomous navigation, and GCS software development</strong>. Proven track record delivering complex aerospace systems from concept and simulation to flight validation and operational deployment.
                 </p>
             </section>
-
+            
             <!-- Skills Section -->
             <section class="cv-section">
                 <span class="eyebrow">Sec. B</span>
                 <h2><i class="fas fa-microchip"></i> Technical Skills</h2>
                 <div class="cv-skills-container">
-
+                    
                     <!-- UAV -->
                     <div class="cv-skill">
                         <div class="skill-header">
                             <i class="fas fa-plane skill-icon"></i>
                             <span class="skill-title">UAV & Flight Systems</span>
                         </div>
-
+                        
                         <ul class="skill-list">
                             <li><span>Flight Dynamics & Control Systems</span><span class="skill-level expert">Expert</span></li>
                             <li><span>Autopilot Development</span><span class="skill-level expert">Expert</span></li>
@@ -170,14 +170,14 @@
                             <li><span>Flight Testing & Validation</span><span class="skill-level expert">Expert</span></li>
                         </ul>
                     </div>
-
+                    
                     <!-- Embedded -->
                     <div class="cv-skill">
                         <div class="skill-header">
                             <i class="fas fa-microchip skill-icon"></i>
                             <span class="skill-title">Embedded & Avionics</span>
                         </div>
-
+                        
                         <ul class="skill-list">
                             <li><span>CAN / UAVCAN</span><span class="skill-level expert">Expert</span></li>
                             <li><span>Ethernet</span><span class="skill-level expert">Expert</span></li>
@@ -189,14 +189,14 @@
                             <li><span>Payload Integration</span><span class="skill-level advanced">Advanced</span></li>
                         </ul>
                     </div>
-
+                    
                     <!-- Programming -->
                     <div class="cv-skill">
                         <div class="skill-header">
                             <i class="fas fa-code skill-icon"></i>
                             <span class="skill-title">Programming</span>
                         </div>
-
+                        
                         <ul class="skill-list">
                             <li><span>C#</span><span class="skill-level expert">Expert</span></li>
                             <li><span>C++</span><span class="skill-level expert">Expert</span></li>
@@ -206,14 +206,14 @@
                             <li><span>JavaScript / HTML / CSS</span><span class="skill-level advanced">Advanced</span></li>
                         </ul>
                     </div>
-
+                    
                     <!-- Modeling -->
                     <div class="cv-skill">
                         <div class="skill-header">
                             <i class="fas fa-chart-line skill-icon"></i>
                             <span class="skill-title">Modeling & Simulation</span>
                         </div>
-
+                        
                         <ul class="skill-list">
                             <li><span>MATLAB</span><span class="skill-level expert">Expert</span></li>
                             <li><span>Simulink</span><span class="skill-level expert">Expert</span></li>
@@ -223,14 +223,14 @@
                             <li><span>Algorithm Development</span><span class="skill-level expert">Expert</span></li>
                         </ul>
                     </div>
-
+                    
                     <!-- Software -->
                     <div class="cv-skill">
                         <div class="skill-header">
                             <i class="fas fa-laptop-code skill-icon"></i>
                             <span class="skill-title">Software & Tools</span>
                         </div>
-
+                        
                         <ul class="skill-list">
                             <li><span>Qt Framework</span><span class="skill-level expert">Expert</span></li>
                             <li><span>Visual Studio</span><span class="skill-level expert">Expert</span></li>
@@ -241,7 +241,7 @@
                             <li><span>SolidWorks</span><span class="skill-level advanced">Advanced</span></li>
                         </ul>
                     </div>
-
+                    
                     <!-- Languages -->
                     <div class="cv-skill">
                         <div class="skill-header">
@@ -255,7 +255,7 @@
                     </div>
                 </div>
             </section>
-
+            
             <!-- Experience Section -->
             <section class="cv-section">
                 <span class="eyebrow">Sec. C</span>
@@ -264,7 +264,8 @@
                     <div class="timeline-item">
                         <div class="date">2022 - Present</div>
                         <div class="content">
-                            <h3><i class="fas fa-plane-departure"></i> <a href="https://www.indragroup.com/en" target="_blank">Indra Sistemas, Madrid, Spain</a></h3>
+                            <h3><i class="fas fa-plane"></i><a href="https://www.indragroup.com/en" target="_blank"> Indra Sistemas, Madrid, Spain</a></h3>
+                            <p class="company-note"> Formerly Wake Engineering.</p>
                             <h4>eVTOL & Propulsive VTOL Systems</h4>
                             <ul>
                                 <li>Lead Engineer of Flight Dynamics & Control for PEM and LINCE eVTOL programs.</li>
@@ -284,7 +285,7 @@
                                 <li>Developed real-time 3D Primary Flight Displays (PFD) and avionics status interfaces.</li>
                                 <li>Developed software for real-time control of industrial ECUs and Engine Management Systems (EMS).</li>
                             </ul>
-
+                            
                             <h4>Fixed-Wing Systems</h4>
                             <ul>
                                 <li>Integrated and configured UAV Navigation VECTOR-600 autopilot for military fixed-wing UAVs.</li>
@@ -294,7 +295,7 @@
                             </ul>
                         </div>
                     </div>
-
+                    
                     <div class="timeline-item">
                         <div class="date">2023 - 2024</div>
                         <div class="content">
@@ -309,7 +310,7 @@
                             </ul>
                         </div>
                     </div>
-
+                    
                     <div class="timeline-item">
                         <div class="date">2020 - 2022</div>
                         <div class="content">
@@ -324,7 +325,7 @@
                                 <li>Designed innovative flap-based control system.</li>
                                 <li>Conducted aerodynamics analysis for hybrid-electric propulsion.</li>
                             </ul>
-
+                            
                             <h4>Modern GCS for Swarm Missions</h4>
                             <ul>
                                 <li>Designed a fast multi-UAV path planning GCS SW for optimal area coverage in aerial sensing applications.</li>
@@ -334,7 +335,7 @@
                             </ul>
                         </div>
                     </div>
-
+                    
                     <div class="timeline-item">
                         <div class="date">2019 - 2020</div>
                         <div class="content">
@@ -349,7 +350,7 @@
                             </ul>
                         </div>
                     </div>
-
+                    
                     <div class="timeline-item">
                         <div class="date">2012 - 2018</div>
                         <div class="content">
@@ -366,13 +367,13 @@
                     </div>
                 </div>
             </section>
-
+            
             <!-- Education Section -->
             <section class="cv-section">
                 <span class="eyebrow">Sec. D</span>
                 <h2><i class="fas fa-graduation-cap"></i> Education</h2>
                 <div class="education-list">
-
+                    
                     <!-- PhD -->
                     <div class="education-item execution-focus">
                         <div class="date">2019 - 2024</div>
@@ -396,7 +397,7 @@
                             </p>
                         </div>
                     </div>
-
+                    
                     <!-- MS -->
                     <div class="education-item legacy-node">
                         <div class="date">2016 - 2019</div>
@@ -416,7 +417,7 @@
                             </p>
                         </div>
                     </div>
-
+                    
                     <!-- BS -->
                     <div class="education-item legacy-node">
                         <div class="date">2011 - 2015</div>
@@ -440,12 +441,12 @@
             </section>
         </div>
     </div>
-
+    
     <!-- Menu, Contact, and Background -->
     <script src="../scripts/menu.js"></script>
     <script src="../scripts/contact.js"></script>
     <script src="../scripts/cv.js"></script>
-
+    
     <!-- Import Awesome and Google Fonts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
