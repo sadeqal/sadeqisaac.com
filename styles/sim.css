@@ -1,19 +1,22 @@
 :root {
-    --glass-bg: rgba(15, 23, 42, 0.65);
+    --glass-bg: rgba(15, 23, 42, 0.75); /* Darker slate glass tint */
     --glass-border: rgba(255, 255, 255, 0.08);
-    --accent: #06b6d4;
+    --accent: #06b6d4; /* Neon cyan */
+    --accent-glow: rgba(6, 182, 212, 0.35);
+    --text-main: #f8fafc;
+    --text-muted: #64748b;
 }
 
 body, html {
     margin: 0; padding: 0; width: 100%; height: 100%;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: #090d16; color: #f8fafc; overflow: hidden;
+    background: #090d16; color: var(--text-main); overflow: hidden;
 }
 
 /* Full Screen Drop/Upload UI */
 .upload-overlay {
     position: fixed; inset: 0; z-index: 9999;
-    background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease;
 }
@@ -21,15 +24,17 @@ body, html {
     opacity: 0; pointer-events: none; transform: scale(1.02);
 }
 .upload-box {
-    background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px);
-    border: 2px dashed rgba(6, 182, 212, 0.3); padding: 3.5rem;
+    background: rgba(30, 41, 59, 0.25); 
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(6, 182, 212, 0.2); padding: 3.5rem;
     border-radius: 1.5rem; text-align: center; max-width: 450px; width: 85%;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.05);
     transition: border-color 0.3s;
 }
 .upload-box:hover { border-color: var(--accent); }
-.upload-box h2 { margin: 0 0 0.5rem 0; font-size: 1.75rem; letter-spacing: -0.025em; }
-.upload-box p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+.upload-box h2 { margin: 0 0 0.5rem 0; font-size: 1.75rem; letter-spacing: -0.025em; font-weight: 700; }
+.upload-box p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5; }
 
 .file-btn {
     background: linear-gradient(135deg, #0891b2, #0284c7);
@@ -37,7 +42,7 @@ body, html {
     font-weight: 600; cursor: pointer; display: inline-block;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-.file-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3); }
+.file-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(6, 182, 212, 0.4); }
 input[type="file"] { display: none; }
 
 /* Loader Animation */
@@ -56,81 +61,337 @@ input[type="file"] { display: none; }
 /* Top Center View Controller Switcher */
 .view-switcher {
     position: absolute; top: 1.5rem; left: 50%; transform: translateX(-50%);
-    z-index: 10; display: flex; gap: 0.5rem;
-    background: var(--glass-bg); backdrop-filter: blur(12px);
-    padding: 0.35rem; border-radius: 0.85rem; border: 1px solid var(--glass-border);
+    z-index: 10; display: flex; gap: 0.25rem;
+    background: var(--glass-bg); 
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 4px; border-radius: 12px; border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 .view-btn {
     background: transparent; border: none; color: #94a3b8;
-    padding: 0.5rem 1.25rem; font-size: 0.85rem; font-weight: 500;
-    border-radius: 0.6rem; cursor: pointer; transition: all 0.2s;
+    padding: 0.5rem 1.25rem; font-size: 0.85rem; font-weight: 600;
+    border-radius: 8px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     white-space: nowrap;
 }
-.view-btn:hover { color: #fff; }
-.view-btn.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.view-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+.view-btn.active { background: rgba(255, 255, 255, 0.12); color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
 /* Hint shown only in the orbital / third-eye view */
 .orbit-hint {
-    position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%);
+    position: absolute; top: 5rem; left: 50%; transform: translateX(-50%);
     z-index: 10; background: var(--glass-bg); backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border); padding: 0.4rem 1rem;
     border-radius: 0.6rem; font-size: 0.78rem; color: #cbd5e1;
     pointer-events: none; white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* Right Middle PFD Panel Overlays */
+/* --- THE CYBERPUNK HUD CONTAINER --- */
 .pfd-overlay-container {
-    position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
-    z-index: 10; background: var(--glass-bg); backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border); padding: 1rem; border-radius: 1.25rem;
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); text-align: center;
+    position: absolute; 
+    right: 2rem; 
+    top: 50%; 
+    transform: translateY(-50%);
+    z-index: 10; 
+    
+    /* Elegant Dark Glass Plate */
+    background: rgba(8, 13, 24, 0.82); 
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    
+    /* Razor thin borders and dual-shadow layers for depth */
+    border: 1px solid rgba(6, 182, 212, 0.15); 
+    padding: 20px 16px 16px 16px; 
+    border-radius: 12px;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.75),
+                0 0 30px rgba(6, 182, 212, 0.05),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    
+    width: 200px;
+    transition: all 0.3s ease;
+    user-select: none;
 }
-#pfdCanvas {
-    background: #1e293b; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.05);
-}
-.pfd-stats-mini {
-    display: flex; justify-content: space-around; margin-top: 0.75rem;
-    font-family: 'Courier New', monospace; font-weight: bold; font-size: 0.9rem;
-}
-.stat-lbl { color: #64748b; font-size: 0.75rem; margin-bottom: 0.1rem; }
 
-/* Bottom Playback Track Control Bar */
+/* Cybernetic Bracket Corners for a Military Grid Aesthetic */
+.hud-corner {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--accent);
+    pointer-events: none;
+}
+.hud-corner.top-left     { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+.hud-corner.top-right    { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+.hud-corner.bottom-left  { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+.hud-corner.bottom-right { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+
+/* Small tech header text */
+.hud-header {
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 8px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* Framed Canvas Container */
+.pfd-canvas-wrapper {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #090d16;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 2px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+}
+
+#pfdCanvas {
+    display: block;
+    background: #0d1321;
+    border-radius: 8px;
+    width: 100%;
+}
+
+/* Redesigned Minimal Stats Block */
+.pfd-stats-mini {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.stat-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+}
+.stat-group.hdg-group {
+    align-items: flex-end;
+}
+
+/* Small, dim labels above telemetry */
+.stat-lbl { 
+    color: var(--text-muted); 
+    font-size: 9px; 
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Numeric text displays using monospace for clean vertical alignment */
+.stat-value-container {
+    display: flex;
+    align-items: baseline;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+
+.stat-val {
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+#pfd-alt {
+    color: #10b981; /* Premium Emerald green */
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+}
+
+#pfd-hdg {
+    color: #f59e0b; /* Amber gold */
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+}
+
+.stat-unit {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
+    margin-left: 2px;
+}
+
+/* Vertical divider between altitude and heading values */
+.hud-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 8px;
+}
+
+/* ─── NEW HIGH-END TIMELINE TOOLBAR ─── */
 .playback-timeline-toolbar {
     position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-    width: 80%; max-width: 960px; z-index: 10;
-    background: var(--glass-bg); backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border); padding: 0.85rem 1.5rem;
-    border-radius: 1.25rem; display: flex; align-items: center; gap: 1.1rem;
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4);
-}
-.control-icon-btn {
-    background: none; border: none; font-size: 1.5rem; cursor: pointer;
-    color: #fff; padding: 0; display: flex; align-items: center;
-    transition: transform 0.1s;
-}
-.control-icon-btn:active { transform: scale(0.9); }
-.timestamp-display {
-    font-family: monospace; font-size: 0.85rem; color: #94a3b8; min-width: 45px;
-}
-.timeline-slider {
-    flex-grow: 1; -webkit-appearance: none; appearance: none;
-    background: rgba(255, 255, 255, 0.1); height: 6px; border-radius: 3px; outline: none;
-}
-.timeline-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
-    border-radius: 50%; background: var(--accent); cursor: pointer;
-    box-shadow: 0 0 10px var(--accent);
+    width: 80%; max-width: 900px; z-index: 10;
+    background: var(--glass-bg); 
+    backdrop-filter: blur(20px) saturate(120%);
+    -webkit-backdrop-filter: blur(20px) saturate(120%);
+    border: 1px solid var(--glass-border); 
+    padding: 10px 20px;
+    border-radius: 999px; /* Seamless Pill Shape */
+    display: flex; align-items: center; gap: 1rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.08);
 }
 
-/* Playback speed selector */
-.speed-select {
-    background: rgba(255,255,255,0.06); color: #e2e8f0;
-    border: 1px solid var(--glass-border); border-radius: 0.5rem;
-    padding: 0.3rem 0.5rem; font-size: 0.8rem; font-family: monospace;
-    cursor: pointer; outline: none;
+/* --- HIGH-END PLAY/PAUSE BUTTON --- */
+.control-icon-btn {
+    background: rgba(255, 255, 255, 0.05); 
+    border: 1px solid rgba(255, 255, 255, 0.12); 
+    border-radius: 50%;
+    width: 46px;      /* Significantly larger button */
+    height: 46px;     /* Significantly larger button */
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-main);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    outline: none;
+    flex-shrink: 0; /* Prevents warping */
 }
-.speed-select:hover { background: rgba(255,255,255,0.12); }
+
+/* Make the inner SVG larger and centered */
+.control-icon-btn svg {
+    width: 22px; 
+    height: 22px;
+    display: block;
+}
+
+.control-icon-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #020617; /* High contrast dark icon color on hover */
+    box-shadow: 0 0 18px var(--accent-glow);
+    transform: scale(1.08);
+}
+
+.control-icon-btn:active { 
+    transform: scale(0.92); 
+}
+
+/* Monospaced Scannable Timestamps */
+.timestamp-display {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.82rem; 
+    color: var(--text-main); 
+    min-width: 45px;
+    font-variant-numeric: tabular-nums; /* Prevents text elements dancing around */
+}
+.timestamp-display.total {
+    color: var(--text-muted);
+}
+
+/* Scrubber Timeline Track */
+.timeline-slider-wrapper {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+.timeline-slider {
+    width: 100%; -webkit-appearance: none; appearance: none;
+    background: rgba(255, 255, 255, 0.12); height: 5px; border-radius: 99px; outline: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.timeline-slider:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+.timeline-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; 
+    width: 14px; height: 14px;
+    border-radius: 50%; background: var(--accent); cursor: pointer;
+    box-shadow: 0 0 8px var(--accent);
+    transition: transform 0.1s ease;
+}
+.timeline-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+}
+
+/* ─── BEAUTIFUL COCKPIT SPEED DROPDOWN ─── */
+.custom-select-wrapper {
+    position: relative;
+    width: 78px;
+    user-select: none;
+}
+.custom-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.custom-select-trigger:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+.chevron-icon {
+    width: 12px; height: 12px;
+    transition: transform 0.2s ease;
+    color: var(--text-muted);
+}
+.custom-select-wrapper.open .chevron-icon {
+    transform: rotate(180deg);
+}
+
+/* Options container pops UPWARDS elegantly over the map */
+.custom-options {
+    position: absolute;
+    bottom: calc(100% + 12px); 
+    left: 0; right: 0;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    opacity: 0; pointer-events: none;
+    transform: translateY(10px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 99;
+}
+.custom-select-wrapper.open .custom-options {
+    opacity: 1; pointer-events: auto;
+    transform: translateY(0);
+}
+.custom-option {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+}
+.custom-option:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+.custom-option.active {
+    background: rgba(6, 182, 212, 0.15);
+    color: var(--accent);
+    font-weight: 700;
+}
 
 /* Cursor states for the orbit (third-eye) camera control */
 #simMap.orbit-mode { cursor: grab; }
 #simMap.orbit-mode:active { cursor: grabbing; }
+
+/* Instantly hide Mapbox branding logo and copyright text */
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib {
+    display: none !important;
+}

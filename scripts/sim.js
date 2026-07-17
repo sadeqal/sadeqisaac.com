@@ -49,11 +49,11 @@ const mapStyle = 'mapbox://styles/mapbox/satellite-streets-v12';
 // Safe Chart configurations that won't paint invisible text on white paper backgrounds
 if (typeof Chart !== 'undefined') {
     Chart.defaults.font.family = '"Helvetica Neue", "Arial", sans-serif';
-
+    
     // SMART COLOR: Use dark slate if printing, otherwise fallback to light blue for the web UI
     const isPrinting = window.matchMedia('print').matches || document.body.classList.contains('pdf-export-active');
     Chart.defaults.color = isPrinting ? '#111111' : '#eef2ff';
-
+    
     // Stabilize high-res rendering mechanics securely
     Chart.defaults.devicePixelRatio = Math.max(2, Math.round((window.devicePixelRatio || 2) * 1.5));
     Chart.defaults.animation = false;
@@ -69,15 +69,20 @@ let simStartTimeLog = 0;    // telemetry log-time (seconds) that corresponds to 
 let lastFrameTimeReal = 0;
 
 // Global State Controllers
-let currentViewMode = 'cockpit'; // cockpit (belly cam) | nadir (straight down) | orbit (third-eye chase)
+let currentViewMode = 'orbit'; // cockpit (belly cam) | nadir (straight down) | orbit (third-eye chase)
 let isUserInteractingWithSlider = false;
 let playbackSpeed = 1; // 1 = real time. Adjustable from the speed selector in the toolbar.
+
+let smoothYaw = null;
+let smoothPitch = null;
+let smoothRoll = null;
+const SMOOTHING_FACTOR = 0.15; // 0.1 = very smooth/lazy, 0.9 = fast/sharp. 0.15 is sweet!
 
 // ─── 3D VTOL Model + Free Camera state ─────────────────────────────────────────
 // NOTE: adjust this path to wherever VTOL5M.glb actually lives relative to the site root.
 const VTOL_MODEL_URL = '../3dmodels/vtol/VTOL5M.glb';
 // If the model looks too big/small once it renders, tweak this.
-const MODEL_SCALE_FACTOR = 1.0;
+const MODEL_SCALE_FACTOR = 0.1;
 // If the model's nose/roll axis doesn't line up with real heading/attitude once you see it
 // rendered, tweak these offsets (in degrees) until it looks right. x=pitch, y=roll, z=yaw.
 const MODEL_ROTATION_OFFSET_DEG = { x: 0, y: 0, z: 0 };
@@ -176,16 +181,16 @@ function findNearestIndexByTime(sortedArr, t) {
 // ─── BIN File Parser ───────────────────────────────────────────────────────────
 async function parseBinFile(file) {
     const buffer = await file.arrayBuffer();
-
+    
     if (typeof DataflashParser === 'undefined') {
         throw new Error('DataflashParser no disponible.');
     }
-
+    
     const parser = new DataflashParser(false);
     const parsed = parser.processData(buffer, [
         'GPS', 'POS', 'BARO', 'RFND', 'IMU', 'ARSP', 'VIBE', 'BAT', 'MSG', 'FMT', 'ATT'
     ]);
-
+    
     // Reset telemetry
     telemetry = {
         gps: { lat: [], lng: [], alt: [] },
@@ -198,9 +203,9 @@ async function parseBinFile(file) {
         battery: { volt: [], curr: [] },
         att: { roll: [], pitch: [], yaw: [] }
     };
-
+    
     let baseTime = null;
-
+    
     // ─── GPS ───────────────────────────────────────────────────
     const gpsMsg = parsed?.messages?.['GPS[0]'] || parsed?.messages?.GPS;
     if (gpsMsg?.time_boot_ms && gpsMsg?.Lat && gpsMsg?.Lng && gpsMsg?.Alt) {
@@ -368,7 +373,7 @@ async function parseBinFile(file) {
         telemetry.battery.volt = mk(batMsg.Volt);
         telemetry.battery.curr = mk(batMsg.Curr);
     }
-
+    
     // ─── ATTITUDE (NEW) ─────────────────────────────────────────
     // This is the real Roll/Pitch/Yaw of the aircraft. Previously nothing populated
     // telemetry.att, so the simulator was silently drawing a fake sine-wave wobble
@@ -382,7 +387,7 @@ async function parseBinFile(file) {
         }))
         .filter(p => Number.isFinite(p.timeAbs) && Number.isFinite(p.value))
         .sort((a, b) => a.timeAbs - b.timeAbs);
-
+        
         telemetry.att.roll = mk(attMsg.Roll);
         telemetry.att.pitch = mk(attMsg.Pitch);
         telemetry.att.yaw = mk(attMsg.Yaw);
@@ -478,235 +483,6 @@ async function parseBinFile(file) {
     return flightInfo;
 }
 
-
-// ─── Main Load and Analyze Function ────────────────────────────────────────────
-
-/*async function loadAndAnalyze() {
-    // FIX: Fallback to the new window file reference if the old input element does not exist
-    const binInput = document.getElementById('binFile') || window.uploadedBinFileRef;
-    const tproInput = document.getElementById('tproFile') || { files: [] };
-    
-    // Extra safety to ensure binInput has files
-    if (!binInput || !binInput.files || !binInput.files.length) {
-        alert('Por favor, selecciona un archivo .bin');
-        return;
-    }
-    
-    // Create a safety fallback check for old panel containers that might be missing
-    const simPanel = document.getElementById('simPanel');
-    if (simPanel) simPanel.style.display = 'block';
-    
-    try {
-        setStatus('⏳ Analizando archivos...');
-        
-        const generateBtn = document.getElementById('generateBtn');
-        if (generateBtn) generateBtn.disabled = true;
-        
-        // Reset TPRO data
-        tproData = {
-            objectives: [],
-            aircraftConfig: [],
-            flightProfiles: []
-        };
-        
-        // Parse TPRO if provided
-        if (tproInput.files && tproInput.files.length) {
-            const tproFile = tproInput.files[0];
-            if (tproFile.type === 'application/pdf' || tproFile.name.endsWith('.pdf')) {
-                await parseTPROPDF(tproFile);
-                if (typeof renderObjectivesList === 'function') renderObjectivesList();
-                if (typeof renderAircraftConfig === 'function') renderAircraftConfig();
-                if (typeof renderFlightProfiles === 'function') renderFlightProfiles();
-                setStatus('✅ Archivo TPRO cargado. Analizando archivo .bin...');
-            }
-        }
-        
-        // --- DOM SAFETY HELPERS ---
-        // These ensure the code doesn't crash if an element ID doesn't exist in the new HTML
-        const setElText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
-        const showPanelEl = (id) => { const el = document.getElementById(id); if (el) el.style.display = 'flex'; };
-        
-        // Update file info chip safely
-        setElText('fileInfo', `📁 ${binInput.files[0].name}`);
-        
-        // Parse BIN file
-        await parseBinFile(binInput.files[0]);
-        
-        // Update statistics safely
-        setElText('durationStat', formatTime(flightInfo.duration));
-        setElText('distanceStat', (flightInfo.distance / 1000).toFixed(2) + ' km');
-        setElText('maxAltStat', flightInfo.maxAlt.toFixed(1) + ' m');
-        setElText('maxSpeedStat', flightInfo.maxSpeed.toFixed(1) + ' m/s');
-        setElText('fwVersionStat', flightInfo.firmware !== '—' ? flightInfo.firmware.split(' ')[0] : '—');
-        setElText('vehicleTypeStat', flightInfo.vehicle);
-        setElText('gpsPointsStat', String(telemetry.gps.lat.length));
-        setElText('imuSamplesStat', String(telemetry.imu.z.length));
-        setElText('parseInfo', '✅ Análisis completado');
-        
-        // Render all charts safely
-        if (telemetry.baro && telemetry.baro.length) {
-            showPanelEl('altCompPanel');
-            if (typeof renderAltCompChart === 'function') renderAltCompChart();
-        }
-        if (telemetry.imu && telemetry.imu.z && telemetry.imu.z.length) {
-            showPanelEl('imuPanel');
-            if (typeof renderIMUChart === 'function') renderIMUChart();
-        }
-        if (telemetry.airspeed && telemetry.airspeed.length) {
-            showPanelEl('airspeedPanel');
-            if (typeof renderAirspeedChart === 'function') renderAirspeedChart();
-        }
-        if (telemetry.vibrations && telemetry.vibrations.x && telemetry.vibrations.x.length) {
-            showPanelEl('vibrationsPanel');
-            if (typeof renderVibrationsChart === 'function') renderVibrationsChart();
-        }
-        if (telemetry.battery && telemetry.battery.volt && telemetry.battery.volt.length) {
-            showPanelEl('batteryPanel');
-            if (typeof renderBatteryChart === 'function') renderBatteryChart();
-        }    
-        
-        // 3. NOW DATA EXISTS: Safe to initialize the Synthetic Vision Simulation Map!
-        if (telemetry.gps && telemetry.gps.lat && telemetry.gps.lat.length) {
-            if (typeof mapboxgl !== 'undefined' && !simMap) {
-                
-                // CRITICAL FIX: Explicitly assign your token right before building the map
-                mapboxgl.accessToken = 'pk.eyJ1Ijoic2FkZXFhbCIsImEiOiJjbDA0ZHBpZDgwYjl5M2Rud2wweDVhaWVtIn0.PSwxdzBQL8ZCh0kYT4UA9g';
-                
-                // Only initialize if simMap container exists
-                const mapContainer = document.getElementById('simMap');
-                if (mapContainer) {
-                    simMap = new mapboxgl.Map({
-                        container: 'simMap',
-                        style: 'mapbox://styles/mapbox/satellite-streets-v12',
-                        center: [telemetry.gps.lng[0].value, telemetry.gps.lat[0].value],
-                        zoom: 18.5,
-                        pitch: 0,
-                        bearing: 0,
-                        interactive: false,
-                        pixelRatio: 2 
-                    });
-                    
-                    simMap.on('load', () => {
-                        // We target the canvas specifically inside the simulation panel wrapper
-                        simCanvasElement = document.querySelector('#simPanel .mapboxgl-canvas');
-                        
-                        // Add real 3D mountain/hill terrain elevation metrics
-                        simMap.addSource('mapbox-dem-sim', {
-                            'type': 'raster-dem',
-                            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-                            'tileSize': 512
-                        });
-                        simMap.setTerrain({ 'source': 'mapbox-dem-sim', 'exaggeration': 1.0 });
-                        
-                        // Add 3D Tower/Skyscraper extrusions
-                        simMap.addLayer({
-                            'id': 'sim-3d-buildings',
-                            'source': 'composite',
-                            'source-layer': 'building',
-                            'filter': ['==', 'extrude', 'true'],
-                            'type': 'fill-extrusion',
-                            'minzoom': 15,
-                            'paint': {
-                                'fill-extrusion-color': '#cbd5e1',
-                                'fill-extrusion-height': ['get', 'height'],
-                                'fill-extrusion-base': ['get', 'min_height'],
-                                'fill-extrusion-opacity': 0.6
-                            }
-                        });
-                        
-                        const coordinates3D = telemetry.gps.lat.map((p, idx) => [
-                            telemetry.gps.lng[idx].value,
-                            p.value,
-                            telemetry.baro[idx]?.value || telemetry.gps.alt[idx]?.value || 0
-                        ]);
-                        
-                        simMap.addSource('flight-path-source', {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'Feature',
-                                'properties': {},
-                                'geometry': {
-                                    'type': 'LineString',
-                                    'coordinates': coordinates3D
-                                }
-                            }
-                        });
-                        
-                        simMap.addLayer({
-                            'id': 'flight-path-3d',
-                            'type': 'line',
-                            'source': 'flight-path-source',
-                            'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                            'paint': {
-                                'line-color': '#06b6d4',
-                                'line-width': 4,
-                                'line-opacity': 0.85
-                            }
-                        });
-                        
-                        // Set up timeline slider metrics safely
-                        const slider = document.getElementById('timelineSlider');
-                        if (slider) {
-                            slider.max = telemetry.gps.lat.length - 1;
-                            slider.value = 0;
-                        }
-                        setElText('totalDurationStamp', formatTime(flightInfo.duration));
-                        
-                        // Unlock manual map exploration features 
-                        simMap.interactive = true; 
-                        if (typeof switchView === 'function') switchView('inclined');
-                    });
-                }
-            } else if (simMap) {
-                // Reset map viewpoint position if a second file gets loaded later
-                simMap.jumpTo({
-                    center: [telemetry.gps.lng[0].value, telemetry.gps.lat[0].value],
-                    zoom: 18.5,
-                    pitch: 0,
-                    bearing: 0
-                });
-                simFrameIndex = 0;
-                
-                const coordinates3D = telemetry.gps.lat.map((p, idx) => [
-                    telemetry.gps.lng[idx].value,
-                    p.value,
-                    telemetry.baro[idx]?.value || telemetry.gps.alt[idx]?.value || 0
-                ]);
-                
-                if (simMap.getSource('flight-path-source')) {
-                    simMap.getSource('flight-path-source').setData({
-                        'type': 'Feature',
-                        'properties': {},
-                        'geometry': { 'type': 'LineString', 'coordinates': coordinates3D }
-                    });
-                }
-                
-                const slider = document.getElementById('timelineSlider');
-                if (slider) {
-                    slider.max = telemetry.gps.lat.length - 1;
-                    slider.value = 0;
-                }
-                setElText('totalDurationStamp', formatTime(flightInfo.duration));
-            }
-            
-            // Standard trajectory display map initialization logic block safely mapped
-            const mapPanel = document.getElementById('mapPanel');
-            if (mapPanel) {
-                mapPanel.style.display = 'flex';
-                setTimeout(() => { if (typeof initMap === 'function') initMap(); }, 300);
-            }
-        }
-        
-        if (generateBtn) generateBtn.disabled = false;
-        setStatus('✅ Análisis completado. Listo para generar PDF.');
-        
-    } catch (err) {
-        console.error(err);
-        alert(err.message || 'Error al analizar el archivo');
-        setStatus('❌ Error al analizar el archivo.');
-    }
-}*/
-
 // Change the name here back to match your HTML input element trigger
 async function loadAndAnalyze() { 
     const binInput = document.getElementById('binFile') || window.uploadedBinFileRef;
@@ -743,7 +519,7 @@ async function loadAndAnalyze() {
                     
                     simMap.on('load', () => {
                         simCanvasElement = document.querySelector('#simPanel .mapboxgl-canvas');
-
+                        
                         // Disable every built-in interaction handler: in every view mode the
                         // camera is now explicitly positioned every frame via setFreeCameraOptions,
                         // so letting Mapbox's own pan/zoom/rotate run would just fight it.
@@ -804,7 +580,7 @@ async function loadAndAnalyze() {
                                 'line-opacity': 0.85
                             }
                         });
-
+                        
                         // NEW: live 3D VTOL model, positioned/rotated every frame in updateSimCamera()
                         addVtolModelLayer();
                         
@@ -816,7 +592,7 @@ async function loadAndAnalyze() {
                         const totalEl = document.getElementById('totalDurationStamp');
                         if (totalEl) totalEl.textContent = formatClock(flightInfo.duration);
                         
-                        if (typeof switchView === 'function') switchView('cockpit');
+                        if (typeof switchView === 'function') switchView('orbit');
                         updateFlightPositionFrame(0);
                     });
                 }
@@ -844,7 +620,7 @@ async function loadAndAnalyze() {
                 }
                 const totalEl = document.getElementById('totalDurationStamp');
                 if (totalEl) totalEl.textContent = formatClock(flightInfo.duration);
-
+                
                 // Immediately snap the camera/model to the new flight's starting frame
                 updateFlightPositionFrame(0);
             }
@@ -876,12 +652,12 @@ function toggleFlightSimulation() {
         isUserInteractingWithSlider = false; // Reset slider interaction flag
         isSimulatingFlight = true;
         if (btn) btn.textContent = "⏸️";
-
+        
         // Anchor the real-world clock to whatever log-time the current frame sits at,
         // so playback resumes from exactly where the slider/last frame left off.
         simStartTimeReal = performance.now();
         simStartTimeLog = telemetry.gps.lat[simFrameIndex]?.time ?? 0;
-
+        
         simAnimationId = requestAnimationFrame(runSimulationFrameLoop);
     }
 }
@@ -912,13 +688,13 @@ function onTimelineDragStart() {
 // so 1x playback really is real time (and the speed selector changes that ratio on purpose).
 function runSimulationFrameLoop(nowMs) {
     if (!isSimulatingFlight) return;
-
+    
     const arr = telemetry.gps.lat;
     if (!arr.length) { isSimulatingFlight = false; return; }
-
+    
     const elapsedRealSec = (nowMs - simStartTimeReal) / 1000;
     const targetLogTime = simStartTimeLog + elapsedRealSec * playbackSpeed;
-
+    
     if (targetLogTime >= arr[arr.length - 1].time) {
         simFrameIndex = arr.length - 1;
         updateFlightPositionFrame(simFrameIndex);
@@ -927,10 +703,10 @@ function runSimulationFrameLoop(nowMs) {
         if (btn) btn.textContent = "▶️";
         return;
     }
-
+    
     simFrameIndex = findNearestIndexByTime(arr, targetLogTime);
     updateFlightPositionFrame(simFrameIndex);
-
+    
     simAnimationId = requestAnimationFrame(runSimulationFrameLoop);
 }
 
@@ -955,7 +731,18 @@ function initMap() {
         pitch: 60,
         bearing: 0,
         preserveDrawingBuffer: true,
-        antialias: true
+        antialias: true,
+        attributionControl: false
+    });
+    
+    map.on('style.load', () => {
+        const targets = ['symbol']; // Symbol layers are text labels
+        
+        map.getStyle().layers.forEach((layer) => {
+            if (targets.includes(layer.type)) {
+                map.setLayoutProperty(layer.id, 'visibility', 'none');
+            }
+        });
     });
     
     // 2. Toda la lógica visual y de capas se ejecuta al cargar el mapa
@@ -1197,13 +984,13 @@ function switchView(mode) {
     document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
     const activeBtn = document.getElementById(`btn-${mode}`);
     if (activeBtn) activeBtn.classList.add('active');
-
+    
     const hint = document.getElementById('orbitHint');
     if (hint) hint.style.display = (mode === 'orbit') ? 'block' : 'none';
-
+    
     const simMapEl = document.getElementById('simMap');
     if (simMapEl) simMapEl.classList.toggle('orbit-mode', mode === 'orbit');
-
+    
     refreshCameraNow();
 }
 
@@ -1254,10 +1041,10 @@ function updateFlightPositionFrame(index) {
     
     // Draw Primary Flight Display
     drawPFD(roll, pitch);
-
+    
     // Cache this frame so orbit drag/zoom can redraw the camera even while paused
     lastFrame = { lng, lat, relAlt: alt, yaw, pitch, roll };
-
+    
     // Apply the real 3D camera + model transform for whichever view is active
     updateSimCamera(lng, lat, alt, yaw, pitch, roll);
 }
@@ -1289,17 +1076,17 @@ function computePitchBearing(camMerc, targetMerc, metersToMerc) {
     const dxM = (targetMerc.x - camMerc.x) / metersToMerc;       // + east
     const dyNorthM = -(targetMerc.y - camMerc.y) / metersToMerc; // + north
     const dzM = (targetMerc.z - camMerc.z) / metersToMerc;       // + up
-
+    
     const horizontalDist = Math.max(Math.sqrt(dxM * dxM + dyNorthM * dyNorthM), 0.001);
     const verticalDrop = -dzM; // how far the camera must look down to reach the target
-
+    
     const depressionDeg = Math.atan2(verticalDrop, horizontalDist) * 180 / Math.PI;
     let pitch = 90 - depressionDeg; // Mapbox: 0 = straight down, 90 = horizon
     pitch = Math.max(0, Math.min(180, pitch));
-
+    
     let bearing = Math.atan2(dxM, dyNorthM) * 180 / Math.PI;
     if (bearing < 0) bearing += 360;
-
+    
     return { pitch, bearing };
 }
 
@@ -1310,11 +1097,29 @@ function computePitchBearing(camMerc, targetMerc, metersToMerc) {
 function updateVtolModelTransform(lng, lat, alt, yawDeg, pitchDeg, rollDeg, targetMerc, metersToMerc) {
     const merc = targetMerc || mapboxgl.MercatorCoordinate.fromLngLat([lng, lat], alt);
     const scaleUnit = metersToMerc || merc.meterInMercatorCoordinateUnits();
-
-    const yawRad = (yawDeg + MODEL_ROTATION_OFFSET_DEG.z) * Math.PI / 180;
-    const pitchRad = (pitchDeg + MODEL_ROTATION_OFFSET_DEG.x) * Math.PI / 180;
-    const rollRad = (rollDeg + MODEL_ROTATION_OFFSET_DEG.y) * Math.PI / 180;
-
+    
+    // Initialize smooth values on the first frame
+    if (smoothYaw === null) {
+        smoothYaw = yawDeg;
+        smoothPitch = pitchDeg;
+        smoothRoll = rollDeg;
+    } else {
+        // Handle 360-degree wrap-around for Yaw so it doesn't spin backwards at North
+        let diffYaw = yawDeg - smoothYaw;
+        while (diffYaw < -180) diffYaw += 360;
+        while (diffYaw > 180) diffYaw -= 360;
+        
+        // Apply linear interpolation (lerp)
+        smoothYaw += diffYaw * SMOOTHING_FACTOR;
+        smoothPitch += (pitchDeg - smoothPitch) * SMOOTHING_FACTOR;
+        smoothRoll += (rollDeg - smoothRoll) * SMOOTHING_FACTOR;
+    }
+    
+    // Use the smoothed values for rendering the model
+    const yawRad = (smoothYaw + MODEL_ROTATION_OFFSET_DEG.z) * Math.PI / 180;
+    const pitchRad = (smoothPitch + MODEL_ROTATION_OFFSET_DEG.x) * Math.PI / 180;
+    const rollRad = (smoothRoll + MODEL_ROTATION_OFFSET_DEG.y) * Math.PI / 180;
+    
     vtolModelTransform = {
         translateX: merc.x,
         translateY: merc.y,
@@ -1332,16 +1137,16 @@ function updateVtolModelTransform(lng, lat, alt, yawDeg, pitchDeg, rollDeg, targ
 // change what you see, in every view.
 function updateSimCamera(lng, lat, relAlt, yawDeg, pitchDeg, rollDeg) {
     if (!simMap || !mapboxgl.FreeCameraOptions) return;
-
+    
     const groundElev = getGroundElevation(lng, lat);
     const targetAlt = groundElev + Math.max(relAlt, 0);
     const targetMerc = mapboxgl.MercatorCoordinate.fromLngLat([lng, lat], targetAlt);
     const metersToMerc = targetMerc.meterInMercatorCoordinateUnits();
-
+    
     updateVtolModelTransform(lng, lat, targetAlt, yawDeg, pitchDeg, rollDeg, targetMerc, metersToMerc);
-
+    
     const camera = simMap.getFreeCameraOptions();
-
+    
     if (currentViewMode === 'cockpit') {
         // Belly-mounted onboard camera: sits exactly at the aircraft's real position and
         // altitude, faces the direction of travel, and tips up/down with the vehicle's
@@ -1349,14 +1154,14 @@ function updateSimCamera(lng, lat, relAlt, yawDeg, pitchDeg, rollDeg) {
         camera.position = mapboxgl.MercatorCoordinate.fromLngLat([lng, lat], targetAlt);
         const lookPitch = Math.max(15, Math.min(165, 78 + pitchDeg));
         camera.setPitchBearing(lookPitch, yawDeg);
-
+        
     } else if (currentViewMode === 'nadir') {
         // Straight-down chase-drone shot, positioned a fixed height above the aircraft's
         // own real altitude so it always frames both the vehicle and the ground below.
         const nadirAlt = groundElev + Math.max(relAlt, 0) + NADIR_CAMERA_OFFSET_M;
         camera.position = mapboxgl.MercatorCoordinate.fromLngLat([lng, lat], nadirAlt);
         camera.setPitchBearing(0, yawDeg);
-
+        
     } else if (currentViewMode === 'orbit') {
         // Third-eye chase camera orbiting the aircraft's live 3D position, like
         // plot.ardupilot.org's 3D view - drag to rotate, scroll to zoom (setupOrbitControls).
@@ -1365,7 +1170,7 @@ function updateSimCamera(lng, lat, relAlt, yawDeg, pitchDeg, rollDeg) {
         const dxE = orbitDistance * Math.cos(elRad) * Math.sin(azRad);
         const dyN = orbitDistance * Math.cos(elRad) * Math.cos(azRad);
         const dzUp = orbitDistance * Math.sin(elRad);
-
+        
         const camMerc = new mapboxgl.MercatorCoordinate(
             targetMerc.x + dxE * metersToMerc,
             targetMerc.y - dyN * metersToMerc,
@@ -1375,7 +1180,7 @@ function updateSimCamera(lng, lat, relAlt, yawDeg, pitchDeg, rollDeg) {
         const { pitch, bearing } = computePitchBearing(camMerc, targetMerc, metersToMerc);
         camera.setPitchBearing(pitch, bearing);
     }
-
+    
     simMap.setFreeCameraOptions(camera);
 }
 
@@ -1389,7 +1194,7 @@ function addVtolModelLayer() {
         console.warn('THREE.js / GLTFLoader no están disponibles; el modelo 3D del VTOL no se mostrará.');
         return;
     }
-
+    
     vtolModelLayer = {
         id: 'vtol-3d-model',
         type: 'custom',
@@ -1398,7 +1203,7 @@ function addVtolModelLayer() {
             this.map = mbMap;
             this.camera = new THREE.Camera();
             this.scene = new THREE.Scene();
-
+            
             const sun = new THREE.DirectionalLight(0xffffff, 1.0);
             sun.position.set(0, -70, 100).normalize();
             this.scene.add(sun);
@@ -1406,10 +1211,10 @@ function addVtolModelLayer() {
             fill.position.set(0, 70, 50).normalize();
             this.scene.add(fill);
             this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-
+            
             this.modelGroup = new THREE.Group();
             this.scene.add(this.modelGroup);
-
+            
             const loader = new THREE.GLTFLoader();
             loader.load(
                 VTOL_MODEL_URL,
@@ -1422,7 +1227,7 @@ function addVtolModelLayer() {
                     console.warn('No se pudo cargar el modelo 3D del VTOL. Revisa VTOL_MODEL_URL en sim.js:', err);
                 }
             );
-
+            
             this.renderer = new THREE.WebGLRenderer({
                 canvas: mbMap.getCanvas(),
                 context: gl,
@@ -1435,25 +1240,25 @@ function addVtolModelLayer() {
                 this.map && this.map.triggerRepaint();
                 return;
             }
-
+            
             const t = vtolModelTransform;
             const rotX = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), t.rotateX);
             const rotY = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), t.rotateY);
             const rotZ = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), t.rotateZ);
-
+            
             const m = new THREE.Matrix4().fromArray(matrix);
             const l = new THREE.Matrix4()
-                .makeTranslation(t.translateX, t.translateY, t.translateZ)
-                .scale(new THREE.Vector3(t.scale, -t.scale, t.scale))
-                .multiply(rotX).multiply(rotY).multiply(rotZ);
-
+            .makeTranslation(t.translateX, t.translateY, t.translateZ)
+            .scale(new THREE.Vector3(t.scale, -t.scale, t.scale))
+            .multiply(rotX).multiply(rotY).multiply(rotZ);
+            
             this.camera.projectionMatrix = m.multiply(l);
             this.renderer.resetState();
             this.renderer.render(this.scene, this.camera);
             this.map.triggerRepaint();
         }
     };
-
+    
     simMap.addLayer(vtolModelLayer);
 }
 
@@ -1469,21 +1274,21 @@ function refreshCameraNow() {
 function setupOrbitControls() {
     const container = document.getElementById('simMap');
     if (!container) return;
-
+    
     container.addEventListener('wheel', (e) => {
         if (currentViewMode !== 'orbit') return;
         e.preventDefault();
         orbitDistance = Math.max(ORBIT_MIN_DIST, Math.min(ORBIT_MAX_DIST, orbitDistance * (1 + e.deltaY * 0.001)));
         refreshCameraNow();
     }, { passive: false });
-
+    
     container.addEventListener('mousedown', (e) => {
         if (currentViewMode !== 'orbit') return;
         isOrbitDragging = true;
         lastPointerX = e.clientX;
         lastPointerY = e.clientY;
     });
-
+    
     window.addEventListener('mousemove', (e) => {
         if (!isOrbitDragging) return;
         const dx = e.clientX - lastPointerX;
@@ -1494,9 +1299,9 @@ function setupOrbitControls() {
         orbitElevation = Math.max(ORBIT_MIN_ELEV, Math.min(ORBIT_MAX_ELEV, orbitElevation - dy * 0.3));
         refreshCameraNow();
     });
-
+    
     window.addEventListener('mouseup', () => { isOrbitDragging = false; });
-
+    
     // Touch equivalents (tablets/phones)
     container.addEventListener('touchstart', (e) => {
         if (currentViewMode !== 'orbit' || e.touches.length !== 1) return;
@@ -1504,7 +1309,7 @@ function setupOrbitControls() {
         lastPointerX = e.touches[0].clientX;
         lastPointerY = e.touches[0].clientY;
     }, { passive: true });
-
+    
     window.addEventListener('touchmove', (e) => {
         if (!isOrbitDragging || e.touches.length !== 1) return;
         const dx = e.touches[0].clientX - lastPointerX;
@@ -1515,7 +1320,7 @@ function setupOrbitControls() {
         orbitElevation = Math.max(ORBIT_MIN_ELEV, Math.min(ORBIT_MAX_ELEV, orbitElevation - dy * 0.3));
         refreshCameraNow();
     }, { passive: true });
-
+    
     window.addEventListener('touchend', () => { isOrbitDragging = false; });
 }
 
@@ -1539,7 +1344,7 @@ function drawPFD(roll, pitch) {
     ctx.beginPath();
     ctx.arc(w / 2, h / 2, radius, 0, Math.PI * 2);
     ctx.clip(); // LOCKS ALL SUBSEQUENT DRAWING INSIDE THIS CIRCLE
-
+    
     // --- 1. DRAW ATTITUDE BACKGROUND (ROTATING & TRANSLATING) ---
     ctx.save();
     ctx.translate(w / 2, h / 2);
@@ -1649,9 +1454,9 @@ function drawPFD(roll, pitch) {
     ctx.moveTo(w / 2, h / 2 - 2); ctx.lineTo(w / 2, h / 2 + 2);
     ctx.stroke();
     ctx.shadowBlur = 0;
-
+    
     ctx.restore(); // REMOVES CLIPPING MASK COMPLETELY FOR NEXT GLOBAL DRAWS
-
+    
     // --- 5. OPTIONAL: DRAW COCKPIT INSTRUMENT BEZEL RING ---
     // This gives it a slight outer rim border so it sits elegantly on screen
     ctx.strokeStyle = "#475569"; // Sleek gray rim
@@ -1660,3 +1465,45 @@ function drawPFD(roll, pitch) {
     ctx.arc(w / 2, h / 2, radius, 0, Math.PI * 2);
     ctx.stroke();
 }
+
+// Toggle the custom speed dropdown view
+function toggleCustomDropdown(event) {
+    event.stopPropagation();
+    const wrapper = event.currentTarget.parentElement;
+    wrapper.classList.toggle('open');
+}
+
+// Handle speed selection logic and close on focus loss
+document.addEventListener('DOMContentLoaded', () => {
+    const optionContainer = document.getElementById('speedDropdownOptions');
+    
+    if (optionContainer) {
+        optionContainer.querySelectorAll('.custom-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                const selectedValue = e.target.getAttribute('data-value');
+                const selectedText = e.target.textContent;
+                
+                // 1. Update UI Text Trigger
+                document.getElementById('currentSpeedVal').textContent = selectedText;
+                
+                // 2. Clear previous active state and set current
+                optionContainer.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // 3. Trigger your original sim.js speed system!
+                if (typeof setPlaybackSpeed === 'function') {
+                    setPlaybackSpeed(selectedValue);
+                }
+                
+                // Close list
+                e.target.parentElement.parentElement.classList.remove('open');
+            });
+        });
+    }
+    
+    // Close custom dropdown safely if clicking anywhere else outside the menu
+    document.addEventListener('click', () => {
+        const activeWrapper = document.querySelector('.custom-select-wrapper.open');
+        if (activeWrapper) activeWrapper.classList.remove('open');
+    });
+});

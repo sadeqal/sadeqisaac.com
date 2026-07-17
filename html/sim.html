@@ -8,15 +8,15 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dataflash-parser@1.0.0/dist/dataflash-parser.min.js"></script>
-
-    <!-- Three.js: powers the live 3D VTOL model rendered inside the Mapbox scene (used by the orbital/nadir views) -->
+    
+    <!-- Three.js: powers the live 3D VTOL model rendered inside the Mapbox scene -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
-
+    
     <link rel="stylesheet" href="../styles/sim.css">
 </head>
 <body>
-
+    
     <!-- Upload Landing State Screen -->
     <div class="upload-overlay" id="uploadLayer">
         <div class="upload-box">
@@ -29,51 +29,223 @@
             <div class="loader-spin" id="uploadSpinner"></div>
         </div>
     </div>
-
+    
     <!-- Active Flight Simulator Screen Area -->
     <div class="flight-sim-container">
-
+        
         <div class="view-switcher">
-            <button class="view-btn active" id="btn-cockpit" onclick="switchView('cockpit')">🎥 Cámara Ventral</button>
+            <button class="view-btn active" id="btn-orbit" onclick="switchView('orbit')">🌐 Vista 3D Orbital</button>
             <button class="view-btn" id="btn-nadir" onclick="switchView('nadir')">🛩️ Vista Cenital</button>
-            <button class="view-btn" id="btn-orbit" onclick="switchView('orbit')">🌐 Vista 3D Orbital</button>
+            <button class="view-btn" id="btn-cockpit" onclick="switchView('cockpit')">🎥 Cámara Ventral</button>    
         </div>
-
+        
         <div class="orbit-hint" id="orbitHint" style="display:none;">🖱️ Arrastra para rotar · Rueda del ratón para zoom</div>
-
+        
         <div id="simMap" style="width: 100%; height: 100vh;"></div>
-
+        
+        <!-- Ultra-Sleek Glass Cockpit HUD Overlay -->
         <div class="pfd-overlay-container">
-            <canvas id="pfdCanvas" width="180" height="180"></canvas>
+            <!-- Cybernetic Corner Accents -->
+            <div class="hud-corner top-left"></div>
+            <div class="hud-corner top-right"></div>
+            <div class="hud-corner bottom-left"></div>
+            <div class="hud-corner bottom-right"></div>
+            
+            <!-- HUD Header Status -->
+            <div class="hud-header">SVS TELEMETRY · ACTIVE</div>
+            
+            <!-- Core Pitch/Roll Canvas -->
+            <div class="pfd-canvas-wrapper">
+                <canvas id="pfdCanvas" width="180" height="180"></canvas>
+            </div>
+            
+            <!-- Redesigned High-Contrast Numeric Displays -->
             <div class="pfd-stats-mini">
-                <div><div class="stat-lbl">ALT</div><span id="pfd-alt" style="color: #22c55e;">0.0m</span></div>
-                <div><div class="stat-lbl">HDG</div><span id="pfd-hdg" style="color: #eab308;">000°</span></div>
+                <div class="stat-group alt-group">
+                    <span class="stat-lbl">ALTITUDE</span>
+                    <div class="stat-value-container">
+                        <span id="pfd-alt" class="stat-val">0.0</span><span class="stat-unit">m</span>
+                    </div>
+                </div>
+                <div class="hud-divider"></div>
+                <div class="stat-group hdg-group">
+                    <span class="stat-lbl">HEADING</span>
+                    <div class="stat-value-container">
+                        <span id="pfd-hdg" class="stat-val">000</span><span class="stat-unit">°</span>
+                    </div>
+                </div>
             </div>
         </div>
-
+        
+        <!-- REWRITTEN SEXIER TOOLBAR -->
         <div class="playback-timeline-toolbar">
-            <button id="playPauseBtn" class="control-icon-btn" onclick="toggleFlightSimulation()">▶️</button>
-            <select id="speedSelect" class="speed-select" onchange="setPlaybackSpeed(this.value)" title="Velocidad de reproducción">
-                <option value="0.25">0.25×</option>
-                <option value="0.5">0.5×</option>
-                <option value="1" selected>1×</option>
-                <option value="2">2×</option>
-                <option value="4">4×</option>
-                <option value="8">8×</option>
-                <option value="16">16×</option>
-            </select>
+            <!-- Animated Play/Pause Button -->
+            <button id="playPauseBtn" class="control-icon-btn" onclick="toggleFlightSimulation()" title="Play/Pause">
+                <svg id="playPauseIcon" viewBox="0 0 24 24" fill="currentColor">
+                    <!-- Play path default -->
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </button>
+            
+            <!-- Sexy Custom Speed Dropdown -->
+            <div class="custom-select-wrapper">
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown(event)">
+                    <span id="currentSpeedVal">1x</span>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </div>
+                <div class="custom-options" id="speedDropdownOptions">
+                    <div class="custom-option" data-value="0.25">0.25×</div>
+                    <div class="custom-option" data-value="0.5">0.5×</div>
+                    <div class="custom-option active" data-value="1">1×</div>
+                    <div class="custom-option" data-value="2">2×</div>
+                    <div class="custom-option" data-value="4">4×</div>
+                    <div class="custom-option" data-value="8">8×</div>
+                    <div class="custom-option" data-value="16">16×</div>
+                </div>
+            </div>
+            
             <span class="timestamp-display" id="currentTimeStamp">00:00</span>
-            <input type="range" id="timelineSlider" class="timeline-slider" min="0" max="100" value="0" step="1"
-                   oninput="onTimelineSliderChange(this.value)"
-                   onmousedown="onTimelineDragStart()" onmouseup="isUserInteractingWithSlider=false"
-                   ontouchstart="onTimelineDragStart()" ontouchend="isUserInteractingWithSlider=false">
-            <span class="timestamp-display" id="totalDurationStamp">00:00</span>
+            
+            <div class="timeline-slider-wrapper">
+                <input type="range" id="timelineSlider" class="timeline-slider" min="0" max="100" value="0" step="1"
+                oninput="onTimelineSliderChange(this.value)"
+                onmousedown="onTimelineDragStart()" onmouseup="isUserInteractingWithSlider=false"
+                ontouchstart="onTimelineDragStart()" ontouchend="isUserInteractingWithSlider=false">
+            </div>
+            
+            <span class="timestamp-display total" id="totalDurationStamp">00:00</span>
         </div>
-
+        
     </div>
-
+    
     <!-- Script connection entry points -->
     <script src="../scripts/sim.js"></script>
     <script src="../scripts/ardupilotParser.js"></script>
+    
+    <!-- Custom Dropdown Handler Script -->
+    <script>
+        function toggleCustomDropdown(event) {
+            event.stopPropagation();
+            const wrapper = event.currentTarget.parentElement;
+            wrapper.classList.toggle('open');
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const optionContainer = document.getElementById('speedDropdownOptions');
+            if (optionContainer) {
+                optionContainer.querySelectorAll('.custom-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        const selectedValue = e.target.getAttribute('data-value');
+                        const selectedText = e.target.textContent;
+                        
+                        document.getElementById('currentSpeedVal').textContent = selectedText;
+                        
+                        optionContainer.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('active'));
+                        e.target.classList.add('active');
+                        
+                        if (typeof setPlaybackSpeed === 'function') {
+                            setPlaybackSpeed(selectedValue);
+                        }
+                        
+                        e.target.parentElement.parentElement.classList.remove('open');
+                    });
+                });
+            }
+            
+            document.addEventListener('click', () => {
+                const activeWrapper = document.querySelector('.custom-select-wrapper.open');
+                if (activeWrapper) activeWrapper.classList.remove('open');
+            });
+        });
+        
+        // Integrate with your original toggleFlightSimulation to swap the SVG icon dynamically!
+        const originalToggle = window.toggleFlightSimulation;
+        window.toggleFlightSimulation = function() {
+            if (typeof originalToggle === 'function') {
+                originalToggle();
+                const iconSvg = document.getElementById('playPauseIcon');
+                // Check state from your sim.js variable
+                if (window.isSimulatingFlight) {
+                    iconSvg.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Pause SVG
+                } else {
+                    iconSvg.innerHTML = '<path d="M8 5v14l11-7z"/>'; // Play SVG
+                }
+            }
+        };
+    </script>
+    
+    <script>
+        // 1. Beautiful modern SVG paths
+        const SVG_PLAY = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86a1 1 0 0 0-1.5.86z"/></svg>`;
+        const SVG_PAUSE = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4" width="4" height="16" rx="1.5"/><rect x="14.5" y="4" width="4" height="16" rx="1.5"/></svg>`;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            
+            if (playPauseBtn) {
+                // Set initial state beautifully
+                playPauseBtn.innerHTML = SVG_PLAY;
+                
+                // This observer watches if sim.js changes the button text to an emoji, 
+                // and instantly replaces it with our sexy vectors.
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        const currentText = playPauseBtn.innerText.trim();
+                        
+                        // If sim.js tried to write a play emoji
+                        if (currentText.includes('▶') || currentText.includes('▶️')) {
+                            observer.disconnect(); // temporarily disconnect to avoid loop
+                            playPauseBtn.innerHTML = SVG_PLAY;
+                            observer.observe(playPauseBtn, { childList: true, characterData: true, subtree: true });
+                        } 
+                        // If sim.js tried to write a pause emoji
+                        else if (currentText.includes('⏸') || currentText.includes('⏸️')) {
+                            observer.disconnect();
+                            playPauseBtn.innerHTML = SVG_PAUSE;
+                            observer.observe(playPauseBtn, { childList: true, characterData: true, subtree: true });
+                        }
+                    });
+                });
+                
+                // Start observing the button for content changes
+                observer.observe(playPauseBtn, { childList: true, characterData: true, subtree: true });
+            }
+            
+            // Custom Dropdown UI logic
+            const optionContainer = document.getElementById('speedDropdownOptions');
+            if (optionContainer) {
+                optionContainer.querySelectorAll('.custom-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        const selectedValue = e.target.getAttribute('data-value');
+                        const selectedText = e.target.textContent;
+                        
+                        document.getElementById('currentSpeedVal').textContent = selectedText;
+                        
+                        optionContainer.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('active'));
+                        e.target.classList.add('active');
+                        
+                        if (typeof setPlaybackSpeed === 'function') {
+                            setPlaybackSpeed(selectedValue);
+                        }
+                        
+                        e.target.parentElement.parentElement.classList.remove('open');
+                    });
+                });
+            }
+            
+            document.addEventListener('click', () => {
+                const activeWrapper = document.querySelector('.custom-select-wrapper.open');
+                if (activeWrapper) activeWrapper.classList.remove('open');
+            });
+        });
+        
+        function toggleCustomDropdown(event) {
+            event.stopPropagation();
+            const wrapper = event.currentTarget.parentElement;
+            wrapper.classList.toggle('open');
+        }
+    </script>
 </body>
 </html>
