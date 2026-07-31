@@ -85,7 +85,7 @@ const VTOL_MODEL_URL = '../3dmodels/vtol/VTOL5M.glb';
 const MODEL_SCALE_FACTOR = 0.1;
 // If the model's nose/roll axis doesn't line up with real heading/attitude once you see it
 // rendered, tweak these offsets (in degrees) until it looks right. x=pitch, y=roll, z=yaw.
-const MODEL_ROTATION_OFFSET_DEG = { x: 0, y: 0, z: 0 };
+const MODEL_ROTATION_OFFSET_DEG = { x: 90, y: 0, z: 90 };
 // How far above the aircraft's real altitude the top-down (nadir) camera sits.
 const NADIR_CAMERA_OFFSET_M = 80;
 

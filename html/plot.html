@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VTOL ArduPilot Telemetry Analysis</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Mapbox -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <!-- jsPDF & AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <!-- Dataflash Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/dataflash-parser@1.0.0/dist/dataflash-parser.min.js"></script>
+    <link rel="stylesheet" href="../styles/plot.css" />
+</head>
+<body>
+    <div class="app-header">
+        <div class="header-brand">
+            <span class="icon">🛸</span>
+            <div>
+                <h1>VTOL LOG ANALYZER</h1>
+                <p>ArduPilot VTOL Telemetry Tool</p>
+            </div>
+        </div>
+        <button class="btn-primary-glow" onclick="generatePDF()" id="generateBtn" disabled>
+            📄 Export PDF Report
+        </button>
+    </div>
+    
+    <div class="main-layout">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar-panel">
+            <div class="card">
+                <h3 class="card-title">1. File Import</h3>
+                <div class="file-drop-area">
+                    <input type="file" id="binFile" accept=".bin,.BIN">
+                    <p>📂 Click or drag <b>.bin</b> log here</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">2. Metadata & Reporter</h3>
+                <div class="input-group">
+                    <label>Reporter / Prepared By:</label>
+                    <label for="reporterName">Prepared By:</label>
+                    <input type="text" id="reporterName" class="styled-input" value="Sadeq Isaac (Adv. Flight Systems Engineer)" placeholder="Enter reporter name..." />
+                </div>
+                <div class="input-group">
+                    <label>Global Flight Notes:</label>
+                    <textarea id="commentsGlobal" class="styled-input" rows="3" placeholder="General flight observations..."></textarea>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">3. Telemetry Summary</h3>
+                <div class="metrics-grid">
+                    <div class="metric-box"><span>Duration</span><strong id="durationStat">—</strong></div>
+                    <div class="metric-box"><span>Max Alt</span><strong id="maxAltStat">—</strong></div>
+                    <div class="metric-box"><span>Max Speed</span><strong id="maxSpeedStat">—</strong></div>
+                    <div class="metric-box"><span>Firmware</span><strong id="fwVersionStat">—</strong></div>
+                    <div class="metric-box"><span>Vehicle</span><strong id="vehicleTypeStat">—</strong></div>
+                    <div class="metric-box"><span>Samples</span><strong id="imuSamplesStat">—</strong></div>
+                </div>
+                <div class="status-banner" id="statusBox">Awaiting .bin file...</div>
+            </div>
+        </aside>
+        
+        <!-- Main Workspace -->
+        <main class="workspace-panel">
+            
+            <!-- Table 1: Flight Objectives -->
+            <div class="card table-card">
+                <div class="card-header-flex">
+                    <h2>🎯 FLIGHT TEST OBJECTIVES</h2>
+                    <button class="btn-secondary" onclick="addObjectiveRow()">+ Add Objective</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="pro-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">Inc.</th>
+                                <th style="width: 40px;">#</th>
+                                <th>Objective Description</th>
+                                <th style="width: 160px;">Priority</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="objectivesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Table 2: Parameter Modifications -->
+            <div class="card table-card">
+                <div class="card-header-flex">
+                    <h2>🛠️ AIRCRAFT & SYSTEMS CONFIGURATION</h2>
+                    <button class="btn-secondary" onclick="addParamRow()">+ Add Parameter</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="pro-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter Name</th>
+                                <th>Default Value</th>
+                                <th>Actual Value</th>
+                                <th>Reference / Reason</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paramsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- CONCLUSIONS SECTION -->
+            <div class="conclusiones-card">
+                <div class="conclusiones-header">
+                    <span class="icon">💡</span>
+                    <h3>3. Conclusiones y Recomendaciones</h3>
+                </div>
+                <textarea id="conclusionesText" class="conclusiones-input" rows="5" placeholder="Escribe cada conclusión en una nueva línea...">
+                    Análisis aerodinámico para bajar las velocidades de Transición, Q_ASSIST ...
+                    Calibrar el Pitot
+                    Robustecer todo el cableado de los servos/PWM, etc. y chequearlos varias veces
+                    Configurar los params de PID en modo ala-fija para llegar al vuelo FBWA/AUTO
+                </textarea>
+            </div>
+            
+            <!-- Baro Time Range Selector -->
+            <div class="card" id="timeSelectionCard" style="display:none;">
+                <div class="card-header-flex">
+                    <h2>⏱️ TIME CROP WINDOW (BARO.ALT)</h2>
+                </div>
+                <div class="plot-box" style="height: 180px;">
+                    <canvas id="baroTimeChart"></canvas>
+                </div>
+                <div class="crop-controls">
+                    <label>Start (s): <input type="number" id="timeStart" class="styled-input inline-input" value="0"></label>
+                    <label>End (s): <input type="number" id="timeEnd" class="styled-input inline-input" value="0"></label>
+                    <button class="btn-secondary" onclick="applyTimeWindow()">Apply Crop</button>
+                    <button class="btn-secondary btn-reset" onclick="resetTimeWindow()">Reset Window</button>
+                </div>
+            </div>
+            
+            <!-- High-Res Charts Container -->
+            <div class="charts-grid" id="chartsContainer">
+                
+                <!-- Baro vs GPS Alt -->
+                <div class="card chart-card" id="baroGpsPanel" style="display:none;">
+                    <div class="chart-header"><strong>Altitude Analysis (BARO vs GPS)</strong></div>
+                    <div class="plot-box"><canvas id="baroGpsChart"></canvas></div>
+                    <textarea class="comment-box" id="commentBaroGps" placeholder="Add engineering notes for Altitude..."></textarea>
+                </div>
+                
+                <!-- Vertical Acceleration -->
+                <div class="card chart-card" id="imuPanel" style="display:none;">
+                    <div class="chart-header"><strong>Vertical Dynamic Acceleration (IMU[0].AccZ)</strong></div>
+                    <div class="plot-box"><canvas id="imuChart"></canvas></div>
+                    <textarea class="comment-box" id="commentImu" placeholder="Add engineering notes for IMU AccZ..."></textarea>
+                </div>
+                
+                <!-- Airspeed vs GPS Speed -->
+                <div class="card chart-card" id="airspeedPanel" style="display:none;">
+                    <div class="chart-header"><strong>Airspeed Performance (ARSP vs GPS Spd)</strong></div>
+                    <div class="plot-box"><canvas id="airspeedChart"></canvas></div>
+                    <textarea class="comment-box" id="commentAirspeed" placeholder="Add engineering notes for Airspeed..."></textarea>
+                </div>
+                
+                <!-- Attitude Tracking -->
+                <div class="card chart-card" id="rollPanel" style="display:none;">
+                    <div class="chart-header"><strong>Roll Attitude (Actual vs Desired)</strong></div>
+                    <div class="plot-box"><canvas id="rollChart"></canvas></div>
+                    <textarea class="comment-box" id="commentRoll" placeholder="Add engineering notes for Roll..."></textarea>
+                </div>
+                
+                <div class="card chart-card" id="pitchPanel" style="display:none;">
+                    <div class="chart-header"><strong>Pitch Attitude (Actual vs Desired)</strong></div>
+                    <div class="plot-box"><canvas id="pitchChart"></canvas></div>
+                    <textarea class="comment-box" id="commentPitch" placeholder="Add engineering notes for Pitch..."></textarea>
+                </div>
+                
+                <div class="card chart-card" id="yawPanel" style="display:none;">
+                    <div class="chart-header"><strong>Yaw Attitude (Actual vs Desired)</strong></div>
+                    <div class="plot-box"><canvas id="yawChart"></canvas></div>
+                    <textarea class="comment-box" id="commentYaw" placeholder="Add engineering notes for Yaw..."></textarea>
+                </div>
+                
+                <!-- Servos & Controls -->
+                <!-- Left Aileron Panel -->
+                <div id="leftAilPanel" class="chart-card" style="display:none;">
+                    <h3>Left Aileron Servo Feedback and Aileron Command</h3>
+                    <div class="chart-container">
+                        <canvas id="leftAilChart"></canvas>
+                    </div>
+                    <textarea id="commentLeftAil" class="comment-box" placeholder="Add engineering notes for Left Aileron response..."></textarea>
+                </div>
+                
+                <!-- Right Aileron Panel -->
+                <div id="rightAilPanel" class="chart-card" style="display:none;">
+                    <h3>Right Aileron Servo Feedback and Aileron Command</h3>
+                    <div class="chart-container">
+                        <canvas id="rightAilChart"></canvas>
+                    </div>
+                    <textarea id="commentRightAil" class="comment-box" placeholder="Add engineering notes for Right Aileron response..."></textarea>
+                </div>
+                
+                <!-- Left Ruddervator Panel -->
+                <div id="leftRudPanel" class="chart-card" style="display:none;">
+                    <h3>Left Ruddervator Servo Feedback and Elevator Command</h3>
+                    <div class="chart-container">
+                        <canvas id="leftRudChart"></canvas>
+                    </div>
+                    <textarea id="commentLeftRud" class="comment-box" placeholder="Add engineering notes for Left Ruddervator response..."></textarea>
+                </div>
+                
+                <!-- Right Ruddervator Panel -->
+                <div id="rightRudPanel" class="chart-card" style="display:none;">
+                    <h3>Right Ruddervator Servo Feedback and Elevator Command</h3>
+                    <div class="chart-container">
+                        <canvas id="rightRudChart"></canvas>
+                    </div>
+                    <textarea id="commentRightRud" class="comment-box" placeholder="Add engineering notes for Right Ruddervator response..."></textarea>
+                </div>
+                
+                <!-- VTOL ESC Telemetry -->
+                <div class="card chart-card" id="escRpmPanel" style="display:none;">
+                    <div class="chart-header"><strong>VTOL ESCs — RPM Dynamics</strong></div>
+                    <div class="plot-box"><canvas id="escRpmChart"></canvas></div>
+                    <textarea class="comment-box" id="commentEscRpm" placeholder="Add engineering notes for ESC RPM..."></textarea>
+                </div>
+                
+                <div class="card chart-card" id="escCurrPanel" style="display:none;">
+                    <div class="chart-header"><strong>VTOL ESCs — Current Consumption (A)</strong></div>
+                    <div class="plot-box"><canvas id="escCurrChart"></canvas></div>
+                    <textarea class="comment-box" id="commentEscCurr" placeholder="Add engineering notes for Current..."></textarea>
+                </div>
+                
+                <div class="card chart-card" id="escTempPanel" style="display:none;">
+                    <div class="chart-header"><strong>VTOL ESCs — Thermal Status (°C)</strong></div>
+                    <div class="plot-box"><canvas id="escTempChart"></canvas></div>
+                    <textarea class="comment-box" id="commentEscTemp" placeholder="Add engineering notes for Temperature..."></textarea>
+                </div>
+                
+            </div>
+        </main>
+    </div>
+    
+    <script src="../scripts/ardupilotParser.js"></script>
+    <script src="../scripts/plot.js"></script>
+</body>
+</html>
