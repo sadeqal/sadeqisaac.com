@@ -19,7 +19,7 @@ const ARDUPILOT_PARAM_REASONS = {
     "Q_ASSIST_SPEED": "Airspeed threshold below which VTOL assistance engages.",
     
     // --- Airspeed & Stall Limits ---
-    "AIRSPEED_CRUISE": "Target cruise airspeed for TECS airspeed control (m/s).",
+    /*"AIRSPEED_CRUISE": "Target cruise airspeed for TECS airspeed control (m/s).",
     "AIRSPEED_MAX": "Maximum allowed target airspeed for auto modes.",
     "AIRSPEED_MIN": "Minimum safe target airspeed for auto modes.",
     "AIRSPEED_STALL": "Stall speed; used by TECS to prevent under-speed conditions.",
@@ -105,7 +105,7 @@ const ARDUPILOT_PARAM_REASONS = {
     "Q_M_THST_HOVER": "Estimated hover throttle ratio (0.0 to 1.0).",
     "AHRS_TRIM_Y": "AHRS Yaw offset correction.",
     "Q_P_ACCZ_I": "Calculated via: 2 * Q_M_THST_HOVER",
-    "Q_P_ACCZ_P": "Calculated via: Q_M_THST_HOVER"
+    "Q_P_ACCZ_P": "Calculated via: Q_M_THST_HOVER"*/
 };
 
 let flightInfo = {
@@ -130,7 +130,7 @@ window.onload = () => {
     
     // 3. Updated Parameters List (Default / Actual / Reason)
     // --- Image / Hardware Base Defaults ---
-    addParamRow("THR_FS", "1 (Enabled)", "1", getParamReason("THR_FS"));
+    /*addParamRow("THR_FS", "1 (Enabled)", "1", getParamReason("THR_FS"));
     addParamRow("INS_ACCEL_FILTER", "20", "15", getParamReason("INS_ACCEL_FILTER"));
     addParamRow("INS_GYRO_FILTER", "20", "15", getParamReason("INS_GYRO_FILTER"));
     addParamRow("Q_A_ACCEL_P_MAX", "40000", "15000", getParamReason("Q_A_ACCEL_P_MAX"));
@@ -145,7 +145,7 @@ window.onload = () => {
     addParamRow("Q_M_THST_HOVER", "0.35", "0.25", getParamReason("Q_M_THST_HOVER"));
     addParamRow("AHRS_TRIM_Y", "0", "0", getParamReason("AHRS_TRIM_Y"));
     addParamRow("Q_P_ACCZ_I", "0.7", "0.5", getParamReason("Q_P_ACCZ_I"));
-    addParamRow("Q_P_ACCZ_P", "0.35", "0.25", getParamReason("Q_P_ACCZ_P"));
+    addParamRow("Q_P_ACCZ_P", "0.35", "0.25", getParamReason("Q_P_ACCZ_P"));*/
     
     // --- Q_ASSIST ---
     addParamRow("Q_ASSIST_ALT", "20", "4", getParamReason("Q_ASSIST_ALT"));
@@ -162,7 +162,7 @@ window.onload = () => {
     addParamRow("ARSPD_USE", "1", "0", "Pitot desactivado; solo usando velocidad de GPS");
     
     // --- ROLL & PITCH FIXED WING ---
-    addParamRow("RLL2SRV_RMAX", "90", "4", getParamReason("RLL2SRV_RMAX"));
+    /*addParamRow("RLL2SRV_RMAX", "90", "4", getParamReason("RLL2SRV_RMAX"));
     addParamRow("RLL2SRV_TCONST", "0.5", "9", getParamReason("RLL2SRV_TCONST"));
     addParamRow("RLL_RATE_D", "0.013", "9", getParamReason("RLL_RATE_D"));
     addParamRow("RLL_RATE_FF", "0.673", "9", getParamReason("RLL_RATE_FF"));
@@ -191,7 +191,7 @@ window.onload = () => {
     addParamRow("TECS_SINK_MAX", "7.0", "9", getParamReason("TECS_SINK_MAX"));
     addParamRow("TECS_SINK_MIN", "2.0", "9", getParamReason("TECS_SINK_MIN"));
     addParamRow("TECS_SPDWEIGHT", "1.5", "9", getParamReason("TECS_SPDWEIGHT"));
-    addParamRow("TECS_TIME_CONST", "10.0", "9", getParamReason("TECS_TIME_CONST"));
+    addParamRow("TECS_TIME_CONST", "10.0", "9", getParamReason("TECS_TIME_CONST"));*/
 };
 
 function getParamReason(paramName, customReason) {
