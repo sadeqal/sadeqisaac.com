@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INTERCEPTOR BAY // C-UAS Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+<link rel="stylesheet" href="../styles/seeker.css">
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<header class="hud-bar">
+  <div class="hud-left">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <div class="brand-text">
+        <span class="brand-title">INTERCEPTOR BAY</span>
+        <span class="brand-sub">C-UAS CONTAINER CONTROL // SIM ENV</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hud-center">
+    <div class="stat-block">
+      <span class="stat-value" id="statOperational">--</span>
+      <span class="stat-label">OPERATIONAL</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-block">
+      <span class="stat-value" id="statFlying">--</span>
+      <span class="stat-label">AIRBORNE</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-block">
+      <span class="stat-value" id="statIssues">--</span>
+      <span class="stat-label">FAULTED</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-block">
+      <span class="stat-value" id="statContacts">--</span>
+      <span class="stat-label">CONTACTS</span>
+    </div>
+  </div>
+
+  <div class="hud-right">
+    <div class="clock" id="clock">00:00:00Z</div>
+    <button class="btn btn-ghost" id="startSimBtn" disabled>NEW CONTACT</button>
+    <button class="btn btn-primary" id="startGameBtn">
+      <span class="btn-dot"></span>START SIM
+    </button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- LEFT: Fleet grid -->
+  <section class="panel fleet-panel">
+    <div class="panel-head">
+      <h2>FLEET // 01&ndash;100</h2>
+      <span class="panel-hint">hover unit for telemetry</span>
+    </div>
+    <div class="fleet-grid" id="fleetGrid"></div>
+    <div class="legend">
+      <div class="legend-item"><span class="dot dot-op"></span>Operational</div>
+      <div class="legend-item"><span class="dot dot-fly"></span>Airborne</div>
+      <div class="legend-item"><span class="dot dot-fault"></span>Fault</div>
+    </div>
+  </section>
+
+  <!-- CENTER: Map -->
+  <section class="panel map-panel">
+    <div class="panel-head">
+      <h2>AO // TACTICAL MAP</h2>
+      <span class="panel-hint" id="mapHint">base: CONTAINER-01</span>
+    </div>
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="map-overlay-tl">
+        <div class="corner-bracket bracket-tl"></div>
+      </div>
+      <div class="corner-bracket bracket-tr"></div>
+      <div class="corner-bracket bracket-bl"></div>
+      <div class="corner-bracket bracket-br"></div>
+    </div>
+  </section>
+
+  <!-- RIGHT: Radar + missions -->
+  <section class="panel radar-panel">
+    <div class="panel-head">
+      <h2>RADAR // FEED</h2>
+      <span class="panel-hint" id="radarHint">standby</span>
+    </div>
+    <div class="radar-scope">
+      <canvas id="radarCanvas" width="320" height="320"></canvas>
+      <div class="radar-sweep" id="radarSweep"></div>
+      <div class="radar-readout" id="radarReadout">NO CONTACTS</div>
+    </div>
+
+    <div class="missions-head">ACTIVE MISSIONS</div>
+    <div class="missions-list" id="missionsList">
+      <div class="missions-empty">No active intercepts</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="console">
+  <div class="console-head">MAVLINK / SYSTEM LOG</div>
+  <div class="console-body" id="consoleLog"></div>
+</footer>
+
+<div class="tooltip" id="unitTooltip"></div>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+<script src="../scripts/seeker.js"></script>
+</body>
+</html>
