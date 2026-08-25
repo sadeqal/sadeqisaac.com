@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دروازه اسپانیا | Puerta España — مشاوره اقامت اسپانیا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/visa.css">
+</head>
+<body>
+
+<!-- ===== ARCH SVG DEFS (used across the page) ===== -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="arch-shape" viewBox="0 0 100 100">
+      <path d="M0,100 L0,45 C0,15 20,0 50,0 C80,0 100,15 100,45 L100,100 Z"/>
+    </symbol>
+    <symbol id="gate-mark" viewBox="0 0 120 140">
+      <path d="M10,140 L10,55 C10,20 32,4 60,4 C88,4 110,20 110,55 L110,140" fill="none" stroke="currentColor" stroke-width="6"/>
+      <path d="M28,140 L28,58 C28,32 40,20 60,20 C80,20 92,32 92,58 L92,140" fill="none" stroke="currentColor" stroke-width="4" opacity="0.55"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#hero">
+      <svg class="brand-mark" viewBox="0 0 120 140" aria-hidden="true"><use href="#gate-mark"/></svg>
+      <span class="brand-text">
+        <strong data-i18n="brandName">دروازه اسپانیا</strong>
+        <em data-i18n="brandSub">مشاوره تخصصی اقامت</em>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#services" data-i18n="navServices">خدمات</a>
+      <a href="#visas" data-i18n="navVisas">انواع اقامت</a>
+      <a href="#legal-addon" data-i18n="navLegal">وکالت رسمی</a>
+      <a href="#team" data-i18n="navTeam">تیم ما</a>
+      <a href="#offices" data-i18n="navContact">تماس و دفاتر</a>
+    </nav>
+
+    <div class="topbar-actions">
+      <div class="lang-switch" role="group" aria-label="Language / زبان">
+        <button type="button" class="lang-btn active" data-lang="fa" id="btnFa">
+          <span class="flag">🇮🇷</span><span>فارسی</span>
+        </button>
+        <button type="button" class="lang-btn" data-lang="es" id="btnEs">
+          <span class="flag">🇪🇸</span><span>Español</span>
+        </button>
+      </div>
+      <a class="btn btn-ghost call-btn" href="tel:+34645391640" data-i18n="callNowShort">تماس فوری</a>
+    </div>
+
+    <button class="burger" id="burgerBtn" aria-label="menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-route" aria-hidden="true">
+    <svg viewBox="0 0 1000 260" class="route-svg" preserveAspectRatio="none">
+      <path id="routePath" class="route-line" d="M60,190 C 260,60 740,60 940,190" />
+    </svg>
+    <div class="route-node node-start">
+      <svg viewBox="0 0 120 140" class="node-arch"><use href="#gate-mark"/></svg>
+      <span data-i18n="heroTehran">تهران</span>
+    </div>
+    <div class="route-node node-end">
+      <svg viewBox="0 0 120 140" class="node-arch"><use href="#gate-mark"/></svg>
+      <span data-i18n="heroMadrid">مادرید</span>
+    </div>
+    <div class="route-plane" id="routePlane">✈</div>
+  </div>
+
+  <div class="hero-content">
+    <p class="eyebrow" data-i18n="heroEyebrow">دفتر مادرید × دفتر تهران</p>
+    <h1 data-i18n="heroTitle">از تهران تا مادرید، مسیر اقامت‌تان را برای‌تان می‌سازیم</h1>
+    <p class="hero-sub" data-i18n="heroSub">از اولین مشاوره تا مهر نهایی سفارت؛ مدارک، بانک، بیمه، ترجمه رسمی، انگیزه‌نامه و وکیل رسمی اسپانیایی — همه زیر یک سقف.</p>
+    <div class="hero-cta">
+      <a href="tel:+34645391640" class="btn btn-primary" data-i18n="heroCta1">مشاوره تلفنی رایگان</a>
+      <a href="#visas" class="btn btn-outline" data-i18n="heroCta2">مشاهده انواع اقامت</a>
+    </div>
+    <ul class="trust-bar">
+      <li><strong data-i18n="trust1n">۵</strong><span data-i18n="trust1t">مسیر اقامتی تخصصی</span></li>
+      <li><strong data-i18n="trust2n">۲</strong><span data-i18n="trust2t">دفتر — مادرید و تهران</span></li>
+      <li><strong data-i18n="trust3n">۱۰۰٪</strong><span data-i18n="trust3t">پیگیری تا مهر نهایی</span></li>
+    </ul>
+  </div>
+</section>
+
+<div class="arch-divider" aria-hidden="true">
+  <svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0,60 Q 50,0 100,60 T 200,60 T 300,60 T 400,60 T 500,60 T 600,60 T 700,60 T 800,60 T 900,60 T 1000,60 T 1100,60 T 1200,60 Z"/></svg>
+</div>
+
+<!-- ===== SERVICES ===== -->
+<section class="services" id="services">
+  <div class="section-head">
+    <p class="eyebrow" data-i18n="servicesEyebrow">همه چیز زیر یک سقف</p>
+    <h2 data-i18n="servicesTitle">کاری که ما برای شما انجام می‌دهیم</h2>
+    <p class="section-sub" data-i18n="servicesSub">شما فقط تصمیم می‌گیرید که به اسپانیا بروید. بقیه‌اش با ماست.</p>
+  </div>
+  <div class="services-grid" id="servicesGrid"></div>
+</section>
+
+<div class="arch-divider flip" aria-hidden="true">
+  <svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0,60 Q 50,0 100,60 T 200,60 T 300,60 T 400,60 T 500,60 T 600,60 T 700,60 T 800,60 T 900,60 T 1000,60 T 1100,60 T 1200,60 Z"/></svg>
+</div>
+
+<!-- ===== VISAS ===== -->
+<section class="visas" id="visas">
+  <div class="section-head">
+    <p class="eyebrow" data-i18n="visasEyebrow">پنج مسیر اصلی</p>
+    <h2 data-i18n="visasTitle">کدام نوع اقامت مناسب شماست؟</h2>
+    <p class="section-sub" data-i18n="visasSub">روی هرکدام بزنید تا مدارک، شرایط مالی و تفاوت درخواست از ایران با تمدید داخل اسپانیا را ببینید.</p>
+  </div>
+
+  <div class="visa-tabs" id="visaTabs"></div>
+  <div class="visa-panel" id="visaPanel"></div>
+
+  <p class="fees-note" data-i18n="feesNote">* ارقام مالی بر اساس آخرین به‌روزرسانی سال ۲۰۲۶ است و ممکن است تغییر کند. برای هزینه دقیق خدمات ما و آخرین نرخ‌های سفارت، تماس بگیرید.</p>
+</section>
+
+<div class="arch-divider" aria-hidden="true">
+  <svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0,60 Q 50,0 100,60 T 200,60 T 300,60 T 400,60 T 500,60 T 600,60 T 700,60 T 800,60 T 900,60 T 1000,60 T 1100,60 T 1200,60 Z"/></svg>
+</div>
+
+<!-- ===== LEGAL ADD-ON ===== -->
+<section class="legal-addon" id="legal-addon">
+  <div class="legal-card">
+    <span class="badge" data-i18n="legalBadge">خدمت آپشنال</span>
+    <h2 data-i18n="legalTitle">وکیل رسمی اسپانیایی، پشت پرونده‌تان</h2>
+    <p data-i18n="legalBody">در صورت تمایل، می‌توانید با هزینه‌ای جداگانه یک وکیل رسمی (Abogado) اسپانیایی را مستقیماً روی پرونده‌تان بگذارید. اگر درخواست رد شود یا پرونده به مرحله شکایت اداری یا دادگاهی (recurso) برسد، وکیل ما به‌صورت رسمی و حقوقی پیگیر آن خواهد بود.</p>
+    <ul class="legal-points">
+      <li data-i18n="legalP1">بررسی حقوقی پرونده پیش از ارسال</li>
+      <li data-i18n="legalP2">پیگیری شکایت اداری (Recurso de Reposición / Alzada)</li>
+      <li data-i18n="legalP3">وکالت در دادگاه اداری اسپانیا در صورت نیاز</li>
+      <li data-i18n="legalP4">مکاتبات رسمی با اداره مهاجرت و سفارت</li>
+    </ul>
+    <a href="tel:+34645391640" class="btn btn-primary" data-i18n="legalCta">استعلام هزینه وکالت</a>
+  </div>
+</section>
+
+<!-- ===== TEAM ===== -->
+<section class="team" id="team">
+  <div class="section-head">
+    <p class="eyebrow" data-i18n="teamEyebrow">دو کشور، یک تیم</p>
+    <h2 data-i18n="teamTitle">با چه کسانی کار می‌کنید</h2>
+  </div>
+  <div class="team-grid" id="teamGrid"></div>
+</section>
+
+<!-- ===== OFFICES / CONTACT ===== -->
+<section class="offices" id="offices">
+  <div class="section-head light">
+    <p class="eyebrow" data-i18n="officesEyebrow">دو دفتر، یک مسیر</p>
+    <h2 data-i18n="officesTitle">دفاتر ما</h2>
+  </div>
+  <div class="offices-grid" id="officesGrid"></div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="brand footer-brand">
+      <svg class="brand-mark" viewBox="0 0 120 140" aria-hidden="true"><use href="#gate-mark"/></svg>
+      <span class="brand-text">
+        <strong data-i18n="brandName">دروازه اسپانیا</strong>
+      </span>
+    </div>
+    <p class="footer-note" data-i18n="footerNote">مشاوره اقامت اسپانیا برای متقاضیان ایرانی — دفتر مادرید و دفتر تهران</p>
+    <p class="footer-copy">© 2026 · Puerta España</p>
+  </div>
+</footer>
+
+<script src="../scripts/visa.js"></script>
+</body>
+</html>
