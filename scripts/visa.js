@@ -12,6 +12,7 @@ const I18N = {
     brandSub: "مشاوره تخصصی اقامت",
     navServices: "خدمات",
     navVisas: "انواع اقامت",
+    navFaq: "سوالات متداول",
     navLegal: "وکالت رسمی",
     navTeam: "تیم ما",
     navContact: "تماس و دفاتر",
@@ -48,13 +49,18 @@ const I18N = {
     footerNote: "مشاوره اقامت اسپانیا برای متقاضیان ایرانی — دفتر مادرید و دفتر تهران",
     fromIranKicker: "برای متقاضیان از ایران",
     renewKicker: "برای تمدید داخل اسپانیا",
-    financeLabel: "حداقل تمکن مالی لازم (۲۰۲۶)"
+    financeLabel: "حداقل تمکن مالی لازم (۲۰۲۶)",
+    visaFaqTitle: "سوالات پرتکرار درباره همین اقامت",
+    faqEyebrow: "قبل از تماس بخوانید",
+    faqTitle: "سوالات متداول",
+    faqSub: "این سوالات را واقعاً از ما پرسیده‌اند — شاید جواب سوال شما هم همین‌جا باشد."
   },
   es: {
     brandName: "Puerta España",
     brandSub: "Asesoría de residencia",
     navServices: "Servicios",
     navVisas: "Tipos de residencia",
+    navFaq: "Preguntas frecuentes",
     navLegal: "Representación legal",
     navTeam: "Nuestro equipo",
     navContact: "Contacto y oficinas",
@@ -91,7 +97,11 @@ const I18N = {
     footerNote: "Asesoría de residencia en España para solicitantes iraníes — oficina en Madrid y oficina en Teherán",
     fromIranKicker: "Para solicitantes desde Irán",
     renewKicker: "Para renovar dentro de España",
-    financeLabel: "Medios económicos mínimos exigidos (2026)"
+    financeLabel: "Medios económicos mínimos exigidos (2026)",
+    visaFaqTitle: "Preguntas frecuentes sobre esta residencia",
+    faqEyebrow: "Antes de llamarnos, lee esto",
+    faqTitle: "Preguntas frecuentes",
+    faqSub: "Estas son preguntas que nos han hecho de verdad — puede que la tuya ya esté respondida aquí."
   }
 };
 
@@ -390,21 +400,21 @@ const VISAS = [
 const TEAM = [
   {
     initials:"ص", color:"var(--terracotta)", img:"../images/sadeqLM.png",
-    fa:{ name:"دکتر صادق", role:"مهندس هوافضا و رباتیک — مادرید",
-         bio:"دکترای مهندسی هوافضا و رباتیک از دانشگاه پلی‌تکنیک مادرید (UPM)، با بیش از ۱۰ سال تجربه در پهپادها، دینامیک پرواز و سامانه‌های خودران. ساکن و فعال در مادرید و کاملاً مسلط به فرآیندهای اداری و زندگی در اسپانیا." },
+    fa:{ name:"دکتر صادق اسحاق", role:"مهندس هوافضا — مادرید",
+         bio:"دکترای مهندسی هوافضا از دانشگاه پلی‌تکنیک مادرید (UPM)، با بیش از ۱۰ سال تجربه در پهپادها، دینامیک پرواز و سامانه‌های خودران. ساکن و فعال در مادرید و کاملاً مسلط به فرآیندهای اداری و زندگی در اسپانیا." },
     es:{ name:"Dr. Sadeq", role:"Ingeniero Aeroespacial y de Robótica — Madrid",
          bio:"Doctor en Ingeniería Aeroespacial y Robótica por la Universidad Politécnica de Madrid (UPM), con más de 10 años de experiencia en drones, dinámica de vuelo y sistemas autónomos. Residente en Madrid y con dominio total de los trámites y la vida en España." }
   },
   {
     initials:"م", color:"var(--turquoise)", img:"../images/masoumeh.png",
-    fa:{ name:"دکتر معصومه", role:"دکترای زبان‌شناسی — مادرید",
+    fa:{ name:"دکتر معصومه رضایی", role:"دکترای زبان‌شناسی — مادرید",
          bio:"دکترای زبان از دانشگاه خودمختار مادرید (UAM). متن معرفی تکمیلی به‌زودی اضافه می‌شود." },
     es:{ name:"Dra. Masumeh", role:"Doctora en Lingüística — Madrid",
          bio:"Doctora en Filología por la Universidad Autónoma de Madrid (UAM). Texto de presentación completo próximamente." }
   },
   {
     initials:"ر", color:"var(--gold)", img:"",
-    fa:{ name:"همکار تهران", role:"مسئول امور حضوری — تهران",
+    fa:{ name:"رضا رضایی", role:"مسئول امور حضوری — تهران",
          bio:"مسئول رسیدگی حضوری به پرونده‌ها، هماهنگی وقت سفارت و پیگیری لگالایز مدارک در تهران. متن معرفی تکمیلی به‌زودی اضافه می‌شود." },
     es:{ name:"Colaborador en Teherán", role:"Responsable de gestión presencial — Teherán",
          bio:"Encargado de atender los expedientes en persona, coordinar las citas del consulado y la legalización de documentos en Teherán. Texto de presentación completo próximamente." }
@@ -432,6 +442,128 @@ const OFFICES = [
     tel:"+989123208722"
   }
 ];
+
+/* ---------------- General FAQ (site-wide) ---------------- */
+const GENERAL_FAQ = [
+  {
+    fa:{ q:"آیا دو نفر می‌توانند با هم یک شرکت ثبت کنند و هر دو برای ویزای کارآفرین اقدام کنند؟",
+         a:"بله، ثبت شرکت (SL) با چند شریک کاملاً قانونی است. اما نکته مهم این‌جاست: خودِ ویزای Emprendedor به «طرح کسب‌وکار» تعلق می‌گیرد، نه به شرکت به‌تنهایی — یعنی هر متقاضی باید نقش مدیریتی و اجرایی واقعی خودش در پروژه را برای ENISA و اداره مهاجرت اثبات کند. در پرونده‌های دو‌نفره معمولاً هرکدام باید مسئولیت مشخص و مستندی (مثلاً یکی CTO فنی، دیگری مدیر تجاری) داشته باشد تا هر دو پرونده مستقل تایید شود." },
+    es:{ q:"¿Pueden dos personas registrar juntas una empresa y solicitar ambas el visado de emprendedor?",
+         a:"Sí, constituir una SL con varios socios es totalmente legal. Pero el visado de Emprendedor se concede en base al plan de negocio, no solo a la empresa: cada solicitante debe acreditar ante ENISA y Extranjería su rol de gestión real y efectivo en el proyecto. En expedientes de dos socios, cada uno debe tener una responsabilidad clara y documentada (por ejemplo, uno como CTO técnico y otro como director comercial) para que ambos expedientes se aprueben de forma independiente." }
+  },
+  {
+    fa:{ q:"آیا متراژ فیزیکی دفتر شرکت برای ویزای کارآفرین اهمیت دارد؟",
+         a:"قانون هیچ متراژ ثابتی تعیین نکرده است؛ آنچه اهمیت دارد این است که آدرس ثبتی (Domicilio Social) واقعی، قابل تایید و قادر به دریافت مکاتبات رسمی باشد. آنچه بازرسان بیشتر روی آن حساسند تناسب فضا با نوع فعالیت است — یک استارتاپ نرم‌افزاری با دو نفر نیازی به دفتر بزرگ ندارد، اما یک کسب‌وکار تولیدی باید فضای متناسب با فعالیتش را نشان دهد." },
+    es:{ q:"¿Importa el tamaño físico de la oficina para el visado de emprendedor?",
+         a:"La ley no fija ningún metraje mínimo; lo que importa es que el domicilio social sea real, verificable y capaz de recibir notificaciones oficiales. Lo que sí se valora es la coherencia entre el espacio y la actividad: una startup de software con dos personas no necesita una oficina grande, pero un negocio de producción sí debe mostrar un espacio acorde a su actividad." }
+  },
+  {
+    fa:{ q:"می‌شود آدرس شرکت یک فضای coworking باشد؟",
+         a:"بله، فضاهای coworking برای ثبت آدرس شرکت (domicilio social) کاملاً پذیرفته می‌شوند و در عمل یکی از رایج‌ترین گزینه‌ها برای استارتاپ‌های خارجی در مادرید و بارسلونا هستند. فقط باید از coworking گواهی رسمی «قرارداد دامیسیلیو» یا میز اختصاصی بگیرید تا در پرونده به‌عنوان مدرک ارائه شود." },
+    es:{ q:"¿Puede la dirección de la empresa ser un espacio de coworking?",
+         a:"Sí, los espacios de coworking son totalmente aceptados como domicilio social y, de hecho, son una de las opciones más habituales para startups extranjeras en Madrid y Barcelona. Solo hay que obtener del coworking un certificado oficial de domiciliación o de mesa dedicada para aportarlo como prueba en el expediente." }
+  },
+  {
+    fa:{ q:"سقف مالیات شرکتی (Impuesto de Sociedades) که باید سالانه بپردازیم چقدر است؟",
+         a:"نرخ عمومی مالیات شرکت‌ها در اسپانیا ۲۵٪ سود است. اما شرکت‌های نوپا و نوآور (Empresa Emergente طبق قانون استارتاپ) در دو سال اول سودآوری از نرخ ترجیحی ۱۵٪ بهره‌مند می‌شوند. شرکت‌های کوچک با گردش مالی زیر ۱۰ میلیون یورو هم مشمول نرخ‌های پلکانی کاهش‌یافته (حدود ۲۳-۲۴٪ در سال ۲۰۲۶، با روند کاهشی تا ۲۰۲۹) هستند. رقم دقیق بسته به نوع و اندازه شرکت شما متفاوت است — در مشاوره تلفنی با جزئیات پروژه‌تان محاسبه‌اش می‌کنیم." },
+    es:{ q:"¿Cuál es el tipo máximo de Impuesto de Sociedades que pagaremos cada año?",
+         a:"El tipo general del Impuesto de Sociedades en España es del 25% sobre el beneficio. Sin embargo, las empresas emergentes (bajo la Ley de Startups) disfrutan de un tipo reducido del 15% durante los dos primeros años con beneficios. Las pequeñas empresas con facturación inferior a 10 millones de euros también aplican tipos reducidos escalonados (en torno al 23-24% en 2026, con una tendencia a la baja hasta 2029). La cifra exacta depende del tipo y tamaño de tu empresa — lo calculamos contigo en la llamada según los detalles de tu proyecto." }
+  },
+  {
+    fa:{ q:"برای ویزای کارآفرین چند نفر کارمند اسپانیایی حتماً باید استخدام کنیم؟",
+         a:"هیچ عدد ثابت و اجباری در قانون وجود ندارد — ویزای Emprendedor بر پایه «نوآوری و منافع اقتصادی برای اسپانیا» ارزیابی می‌شود نه تعداد استخدام. اما در عمل، طرح‌هایی که ایجاد اشتغال واقعی (معمولاً ۳ نفر یا بیشتر در میان‌مدت) را نشان می‌دهند، در گزارش ENISA و ارزیابی نهایی امتیاز بسیار بالاتری می‌گیرند. پس استخدام اجباری نیست، ولی برگ برنده‌ی قوی برای تایید سریع‌تر پرونده است." },
+    es:{ q:"¿Cuántos empleados españoles estamos obligados a contratar para el visado de emprendedor?",
+         a:"No existe una cifra fija ni obligatoria por ley — el visado de Emprendedor se evalúa según la innovación y el beneficio económico para España, no según el número de contrataciones. Sin embargo, en la práctica, los proyectos que demuestran creación real de empleo (habitualmente 3 o más puestos a medio plazo) obtienen una puntuación mucho más alta en el informe de ENISA. Así que no es obligatorio, pero es un argumento muy fuerte para una aprobación más rápida." }
+  },
+  {
+    fa:{ q:"با ویزای دیجیتال نومد اسپانیا، می‌توانم به هلند یا کشور دیگر شینگن نقل مکان کنم؟",
+         a:"نه به این شکل. اقامت دیجیتال نومد فقط اقامت در خاک اسپانیا را به شما می‌دهد. با کارت اقامت اسپانیایی (TIE) می‌توانید حداکثر ۹۰ روز در هر بازه ۱۸۰ روزه به‌صورت آزاد به سایر کشورهای شینگن (از جمله هلند) سفر کنید — اما این یعنی «سفر کوتاه»، نه اقامت یا زندگی دائم. اگر بخواهید در هلند زندگی یا کار کنید، باید مستقل از اسپانیا برای اقامت هلند اقدام کنید." },
+    es:{ q:"Con el visado de nómada digital de España, ¿puedo mudarme a Países Bajos o a otro país Schengen?",
+         a:"No de esa forma. La residencia de nómada digital te da derecho a residir en territorio español. Con tu TIE española puedes viajar libremente hasta 90 días dentro de cualquier periodo de 180 días a otros países Schengen (incluidos los Países Bajos) — pero eso es una estancia corta, no una residencia. Si quieres vivir o trabajar en Países Bajos, necesitas solicitar tu propia residencia allí, de forma independiente a España." }
+  },
+  {
+    fa:{ q:"دوست من راننده است (پایه یک و دو) و بین ایران و کشورهای دیگر کار می‌کند؛ چه نوع اقامتی برایش مناسب است؟",
+         a:"این حالت در هیچ‌کدام از پنج مسیر تخصصی بالا نمی‌گنجد، چون ویزای کاری معمولی (Autorización de Residencia y Trabajo por Cuenta Ajena) است که باید توسط یک کارفرمای اسپانیایی درخواست شود، نه خود فرد. نکته خوب این‌جاست که «حمل‌ونقل» یکی از بخش‌هایی است که در سال ۲۰۲۶ در «فهرست مشاغل کمبود نیرو» (Catálogo de Ocupaciones de Difícil Cobertura) قرار دارد و در این حالت کارفرما از نیاز به اثبات نبود نیروی داخلی معاف می‌شود و روند سریع‌تر پیش می‌رود. برای این مسیر باید حتماً یک کارفرمای اسپانیایی مشخص وجود داشته باشد؛ برای بررسی دقیق پرونده و پیدا کردن بهترین راه، تماس بگیرید." },
+    es:{ q:"Mi amigo es conductor profesional (carnés tipo 1 y 2) y trabaja entre Irán y otros países; ¿qué tipo de residencia le conviene?",
+         a:"Este caso no encaja en ninguna de las cinco vías especializadas de arriba, porque se trata de una Autorización de Residencia y Trabajo por Cuenta Ajena, que debe solicitar el empleador español, no el propio trabajador. La buena noticia es que el transporte es uno de los sectores incluidos en 2026 en el Catálogo de Ocupaciones de Difícil Cobertura, lo que exime al empleador de acreditar la falta de candidatos en España y agiliza el trámite. Para esta vía es imprescindible contar con un empleador español concreto; llámanos para revisar el caso a fondo y encontrar el mejor camino." }
+  },
+  {
+    fa:{ q:"آیا می‌توانم خانواده‌ام (همسر، فرزندان، والدین) را همراه خودم بیاورم؟",
+         a:"بله، در تمام پنج مسیر امکان همراه‌آوردن همسر یا شریک زندگی ثبت‌شده، فرزندان تحت تکفل و در برخی موارد والدین تحت تکفل وجود دارد. برای هر همراه، معمولاً باید مقدار اضافه‌ای به تمکن مالی خانواده اضافه شود و مدارک رابطه (سند ازدواج، شناسنامه) لگالایز و ترجمه شوند." },
+    es:{ q:"¿Puedo traer a mi familia (cónyuge, hijos, padres) conmigo?",
+         a:"Sí, en las cinco vías es posible incluir al cónyuge o pareja de hecho registrada, a los hijos dependientes y, en algunos casos, a los padres dependientes. Por cada familiar suele exigirse un importe adicional de solvencia económica, además de traducir y legalizar los documentos que acrediten el parentesco (partida de matrimonio, de nacimiento, etc.)." }
+  },
+  {
+    fa:{ q:"روند رسیدگی به پرونده معمولاً چقدر طول می‌کشد؟",
+         a:"بسته به نوع ویزا و مسیر درخواست فرق می‌کند: بیشتر ویزاهای ملی از طریق سفارت تهران حدود ۱۰ روز تا ۱ ماه کاری زمان می‌برند؛ پرونده‌های UGE-CE (کارآفرین، پژوهشگر، دیجیتال نومد در صورت درخواست داخل اسپانیا) معمولاً حدود ۲۰ روز کاری هستند. این زمان‌ها تقریبی‌اند و ممکن است تغییر کنند؛ زمان دقیق پرونده شما را در تماس تلفنی به شما می‌گوییم." },
+    es:{ q:"¿Cuánto suele tardar la resolución del expediente?",
+         a:"Depende del tipo de visado y de la vía de solicitud: la mayoría de visados nacionales tramitados en el consulado de Teherán tardan entre 10 días y 1 mes; los expedientes de la UGE-CE (emprendedor, investigador, nómada digital si se solicita dentro de España) suelen resolverse en unos 20 días hábiles. Estos plazos son orientativos y pueden cambiar; te damos el tiempo estimado exacto de tu caso en la llamada." }
+  },
+  {
+    fa:{ q:"آیا داشتن سابقه کیفری قدیمی، پرونده را رد می‌کند؟",
+         a:"لزوماً نه. اداره مهاجرت و سفارت هر پرونده را بر اساس نوع، شدت و قدم جرم (و اینکه در استانداردهای اسپانیایی/اروپایی چطور طبقه‌بندی می‌شود) بررسی می‌کنند. مهم‌ترین کار این است که هیچ‌چیزی را پنهان نکنید و مدارک را با ترجمه و لگالایز کامل ارائه دهید. در مشاوره اولیه وضعیت خاص شما را بررسی می‌کنیم." },
+    es:{ q:"¿Un antecedente penal antiguo hace que rechacen el expediente?",
+         a:"No necesariamente. Extranjería y el consulado valoran cada caso según el tipo, la gravedad y la antigüedad del delito (y cómo se clasifica según los estándares españoles/europeos). Lo más importante es no ocultar nada y presentar la documentación con traducción y legalización completas. En la consulta inicial revisamos tu situación concreta." }
+  },
+  {
+    fa:{ q:"آیا می‌شود بعداً نوع اقامتم را عوض کنم (مثلاً از دانشجویی به کاری)؟",
+         a:"در بسیاری موارد بله، از طریق «تغییر وضعیت اقامت» (Modificación de Residencia) — مثلاً دانشجویانی که فارغ‌التحصیل می‌شوند و پیشنهاد کاری می‌گیرند، یا کارآفرینانی که می‌خواهند مسیر را عوض کنند. شرایط دقیق بسته به نوع اقامت فعلی و مقصد فرق می‌کند؛ توجه کنید که برخی مسیرها (مثل تبدیل از No Lucrativo یا اقامت‌های غیرکاری به دیجیتال نومد) دیگر از داخل اسپانیا امکان‌پذیر نیست و باید از خارج دوباره اقدام شود." },
+    es:{ q:"¿Puedo cambiar más adelante mi tipo de residencia (por ejemplo, de estudiante a laboral)?",
+         a:"En muchos casos sí, mediante una Modificación de Residencia — por ejemplo, estudiantes que se gradúan y reciben una oferta de trabajo, o emprendedores que quieren cambiar de vía. Las condiciones exactas dependen del tipo de residencia actual y del destino; ten en cuenta que algunas conversiones (como pasar de No Lucrativo u otras residencias no laborales a nómada digital) ya no se pueden tramitar desde dentro de España y hay que solicitarlas de nuevo desde el extranjero." }
+  }
+];
+
+/* ---------------- Per-visa FAQ ---------------- */
+const VISA_FAQ = {
+  nolucrativo: [
+    { fa:{q:"با اقامت No Lucrativo می‌شود کار کرد؟", a:"خیر، این اقامت به‌طور کامل کار کردن (چه به‌صورت استخدامی و چه آزاد) در اسپانیا را ممنوع می‌کند. اگر قصد کار دارید، باید بعداً از طریق «تغییر وضعیت» به اقامت کاری تبدیل کنید یا از ابتدا مسیر دیگری انتخاب کنید."},
+      es:{q:"¿Se puede trabajar con la residencia No Lucrativa?", a:"No, esta residencia prohíbe totalmente trabajar (por cuenta ajena o propia) en España. Si quieres trabajar, deberás solicitar más adelante una Modificación a una residencia laboral, o elegir otra vía desde el principio."} },
+    { fa:{q:"آیا درآمد اجاره ملک در ایران هم به‌عنوان تمکن مالی قبول می‌شود؟", a:"بله، به شرط آن‌که با اسناد بانکی و رسمی قابل اثبات و ترجمه باشد. سفارت ترجیح می‌دهد درآمد پایدار و مستمر (اجاره، مستمری، سود سرمایه‌گذاری) را ببیند تا صرفاً یک موجودی یک‌باره در حساب."},
+      es:{q:"¿Se acepta el alquiler de una propiedad en Irán como medio económico?", a:"Sí, siempre que se pueda acreditar y traducir mediante documentación bancaria y oficial. El consulado prefiere ver ingresos estables y recurrentes (alquiler, pensión, rendimientos de inversión) antes que un simple saldo puntual en cuenta."} },
+    { fa:{q:"بعد از گرفتن No Lucrativo چقدر طول می‌کشد تا بشود به اقامت کاری تبدیلش کرد؟", a:"طبق اصلاحیه‌های اخیر آیین‌نامه خارجی‌ها، در برخی موارد می‌توان زودتر از پایان سال اول برای تبدیل به اقامت کاری اقدام کرد، اما شرایط دقیق (پیشنهاد کاری معتبر، وضعیت پرونده) باید بررسی شود. توصیه می‌کنیم پیش از تصمیم‌گیری با ما تماس بگیرید تا مسیر بهینه را طراحی کنیم."},
+      es:{q:"¿Cuánto hay que esperar tras obtener la No Lucrativa para modificarla a una residencia laboral?", a:"Con las últimas reformas del Reglamento de Extranjería, en algunos casos es posible solicitar la modificación antes de completar el primer año, pero las condiciones exactas (oferta de trabajo válida, estado del expediente) deben revisarse caso por caso. Te recomendamos llamarnos antes de decidir para diseñar la mejor estrategia."} },
+    { fa:{q:"آیا حتماً باید ملک بخرم یا اجاره‌نامه بلندمدت داشته باشم؟", a:"نه، فقط باید نشانی واقعی محل سکونت در اسپانیا را (اجاره کوتاه‌مدت، هتل آپارتمان یا دعوت‌نامه اقامت) در زمان مراجعه به Padrón ارائه دهید؛ مالکیت ملک الزامی نیست."},
+      es:{q:"¿Es obligatorio comprar una vivienda o tener un contrato de alquiler largo?", a:"No, solo necesitas acreditar un domicilio real en España (alquiler de corta duración, apartahotel o carta de invitación) para el empadronamiento; la propiedad no es obligatoria."} }
+  ],
+  nomada: [
+    { fa:{q:"آیا کارفرمای من باید حتماً سابقه‌ی شرکتی مشخصی داشته باشد؟", a:"بله، شرکت کارفرما باید حداقل ۱ سال از تاسیسش گذشته باشد و فعالیت واقعی داشته باشد؛ همچنین شما باید حداقل ۳ ماه سابقه همکاری با همان کارفرما یا مشتری داشته باشید."},
+      es:{q:"¿Mi empleador debe tener un historial mínimo como empresa?", a:"Sí, la empresa empleadora debe llevar al menos 1 año constituida y tener actividad real; además, tú debes acreditar al menos 3 meses de relación laboral con ese mismo empleador o cliente."} },
+    { fa:{q:"آیا اتونومو (خوداشتغال) هم می‌تواند برای این ویزا اقدام کند؟", a:"بله، فریلنسرها و خوداشتغال‌ها هم واجد شرایط هستند، به شرط آنکه حداکثر ۲۰٪ درآمدشان از مشتریان اسپانیایی باشد و بقیه از مشتریان خارج از اسپانیا."},
+      es:{q:"¿Los autónomos también pueden solicitar este visado?", a:"Sí, los freelancers y autónomos también son elegibles, siempre que como máximo el 20% de sus ingresos provenga de clientes españoles y el resto de clientes fuera de España."} },
+    { fa:{q:"اگر بخواهم بعداً به اقامت دیگری (مثلاً No Lucrativo) تغییر مسیر بدهم چه؟", a:"توجه کنید که مسیر برعکس آن ساده‌تر نیست: طبق قوانین جدید، تبدیل از اقامت‌های غیرکاری (مثل No Lucrativo) به دیجیتال نومد از داخل اسپانیا دیگر امکان‌پذیر نیست و باید دوباره از خارج اقدام کرد؛ پس بهتر است از ابتدا مسیر درستی را با مشورت ما انتخاب کنید."},
+      es:{q:"¿Y si más adelante quiero cambiar a otra residencia (por ejemplo, No Lucrativa)?", a:"Ten en cuenta que el camino inverso no es sencillo: según la normativa vigente, ya no se puede modificar desde dentro de España una residencia no laboral (como la No Lucrativa) hacia el nómada digital; hay que volver a solicitarlo desde fuera. Por eso es mejor elegir bien la vía desde el principio, con nuestro asesoramiento."} },
+    { fa:{q:"مالیات این ویزا چطور است؟ آیا از قانون بکهام استفاده کنم؟", a:"اگر کارمند رسمی (Employee) هستید و ظرف ۶ ماه از ثبت تامین اجتماعی درخواست دهید، می‌توانید از نرخ ثابت ۲۴٪ قانون بکهام استفاده کنید. خوداشتغال‌ها (اتونومو) مشمول این قانون نمی‌شوند و نرخ پلکانی عادی (۱۹٪ تا ۴۷٪) برایشان اعمال می‌شود."},
+      es:{q:"¿Cómo funciona la fiscalidad de este visado? ¿Me conviene la Ley Beckham?", a:"Si eres empleado por cuenta ajena y solicitas dentro de los 6 meses posteriores al alta en la Seguridad Social, puedes optar al tipo fijo del 24% de la Ley Beckham. Los autónomos no pueden acogerse a esta ley y tributan por el IRPF general por tramos (entre el 19% y el 47%)."} }
+  ],
+  emprendedor: [
+    { fa:{q:"آیا دو نفر می‌توانند با هم شریک شوند و هر دو ویزا بگیرند؟", a:"بله، اما هرکدام باید نقش اجرایی مستقل و مستندی در طرح داشته باشند تا هر دو پرونده جدا تایید شود (جزئیات کامل در بخش سوالات عمومی پایین صفحه)."},
+      es:{q:"¿Pueden dos personas asociarse y obtener ambas el visado?", a:"Sí, pero cada una debe tener un rol ejecutivo independiente y documentado en el proyecto para que ambos expedientes se aprueben por separado (más detalles en las preguntas generales al final de la página)."} },
+    { fa:{q:"آیا فضای coworking برای آدرس شرکت قابل قبول است؟", a:"بله، کاملاً پذیرفته می‌شود؛ فقط گواهی رسمی دامیسیلیو یا میز اختصاصی از coworking لازم است."},
+      es:{q:"¿Se acepta un espacio de coworking como domicilio de la empresa?", a:"Sí, se acepta perfectamente; solo se necesita un certificado oficial de domiciliación o de mesa dedicada por parte del coworking."} },
+    { fa:{q:"چند نفر باید استخدام کنیم؟", a:"عدد ثابتی در قانون نیست، اما نشان‌دادن ایجاد اشتغال واقعی (حدود ۳ نفر یا بیشتر) در گزارش ENISA بسیار مثبت ارزیابی می‌شود."},
+      es:{q:"¿A cuántas personas debemos contratar?", a:"No hay una cifra fija en la ley, pero demostrar creación real de empleo (en torno a 3 o más puestos) se valora muy positivamente en el informe de ENISA."} },
+    { fa:{q:"تهیه گزارش مثبت ENISA چقدر طول می‌کشد؟", a:"تدوین طرح کسب‌وکار، ترجمه رسمی مدارک و ثبت در سامانه ENISA معمولاً بین ۳۰ تا ۴۵ روز زمان می‌برد؛ ما در تمام این مراحل همراه‌تان هستیم."},
+      es:{q:"¿Cuánto tarda conseguir el informe favorable de ENISA?", a:"Preparar el plan de negocio, traducir la documentación y registrarla en la plataforma de ENISA suele tardar entre 30 y 45 días; te acompañamos en todo el proceso."} },
+    { fa:{q:"آیا می‌شود از قانون بکهام هم استفاده کرد؟", a:"بله، دارندگان ویزای کارآفرین در صورت واجدشرایط‌بودن (عدم اقامت مالیاتی اسپانیا در ۵ سال اخیر) می‌توانند از رژیم مالیاتی بکهام استفاده کنند."},
+      es:{q:"¿Se puede acoger uno a la Ley Beckham?", a:"Sí, los titulares del visado de emprendedor pueden optar al régimen fiscal Beckham si cumplen los requisitos (no haber sido residente fiscal en España en los últimos 5 años)."} }
+  ],
+  investigador: [
+    { fa:{q:"آیا این مسیر فقط برای اساتید دانشگاه است یا دانشجوی دکتری هم می‌تواند اقدام کند؟", a:"دانشجویان دکتری، پژوهشگران پسادکتری و پرسنل فنی پروژه‌های تحقیقاتی هم مشمول این قانون هستند، به شرط داشتن قرارداد یا توافق‌نامه پذیرش از یک نهاد پژوهشی یا دانشگاه مجاز اسپانیایی."},
+      es:{q:"¿Esta vía es solo para catedráticos o también pueden acceder los doctorandos?", a:"Los doctorandos, investigadores postdoctorales y el personal técnico de proyectos de investigación también están cubiertos por esta ley, siempre que cuenten con un contrato o convenio de acogida de una universidad o centro de investigación español autorizado."} },
+    { fa:{q:"آیا همسر پژوهشگر هم اجازه کار خواهد داشت؟", a:"بله، یکی از مزیت‌های مهم این مسیر این است که همسر (یا شریک زندگی ثبت‌شده) دارنده اقامت پژوهشگر به‌صورت خودکار مجوز کار در اسپانیا را نیز دریافت می‌کند."},
+      es:{q:"¿El cónyuge del investigador también podrá trabajar?", a:"Sí, una de las grandes ventajas de esta vía es que el cónyuge (o pareja de hecho registrada) del titular de la residencia de investigador obtiene automáticamente autorización para trabajar en España."} },
+    { fa:{q:"چه کسی پرونده را ثبت می‌کند، خودم یا دانشگاه؟", a:"روند از طریق UGE-CE و توسط نهاد میزبان (دانشگاه یا مرکز پژوهشی) آغاز می‌شود، اما ما مدارک هویتی، لگالایز و مشاوره کامل شما را در طول مسیر هماهنگ می‌کنیم."},
+      es:{q:"¿Quién presenta el expediente, yo o la universidad?", a:"El trámite se inicia a través de la UGE-CE y lo impulsa la entidad de acogida (universidad o centro de investigación), pero nosotros coordinamos tu documentación identitaria, la legalización y el asesoramiento durante todo el proceso."} }
+  ],
+  estudiante: [
+    { fa:{q:"آیا در طول تحصیل اجازه کار دارم؟", a:"دانشجویان دوره‌های آموزش عالی (دانشگاهی) می‌توانند تا ۳۰ ساعت در هفته کار کنند، به‌شرطی که با برنامه درسی تداخل نداشته باشد."},
+      es:{q:"¿Puedo trabajar mientras estudio?", a:"Los estudiantes de programas de educación superior (universitarios) pueden trabajar hasta 30 horas semanales, siempre que no interfiera con el horario académico."} },
+    { fa:{q:"بعد از فارغ‌التحصیلی چه اتفاقی می‌افتد؟", a:"می‌توانید از طریق «تغییر وضعیت» به اقامت کاری یا کارآفرینی تبدیل شوید، به‌شرط داشتن پیشنهاد کاری معتبر یا طرح کسب‌وکار. جزئیات دقیق بسته به مقطع تحصیلی و زمان فارغ‌التحصیلی متفاوت است."},
+      es:{q:"¿Qué ocurre después de graduarme?", a:"Puedes solicitar una Modificación de Residencia hacia una vía laboral o de emprendimiento, siempre que cuentes con una oferta de trabajo válida o un plan de negocio. Los detalles exactos dependen del nivel de estudios y del momento de la graduación."} },
+    { fa:{q:"آیا کمترین آستانه مالی در میان همه اقامت‌ها همین ویزای دانشجویی است؟", a:"بله، حدود ۶۰۰ یورو در ماه (۱۰۰٪ IPREM) پایین‌ترین رقم در میان پنج مسیر معرفی‌شده است، اما توصیه می‌کنیم برای اطمینان بیشتر رقمی بالاتر (۸,۰۰۰ تا ۱۰,۰۰۰ یورو برای یک سال) نشان دهید."},
+      es:{q:"¿Es la residencia de estudiante la que exige el menor umbral económico?", a:"Sí, unos 600 €/mes (100% del IPREM) es la cifra más baja entre las cinco vías, aunque recomendamos acreditar un importe algo mayor (entre 8.000 y 10.000 € para un curso completo) para mayor seguridad."} }
+  ]
+};
 
 /* ---------------- Rendering ---------------- */
 let activeVisaId = VISAS[0].id;
@@ -466,6 +598,7 @@ function renderVisaTabs(){
 function renderVisaPanel(){
   const v = VISAS.find(x=>x.id===activeVisaId);
   const t = v[currentLang];
+  const faqs = VISA_FAQ[v.id] || [];
   const panel = document.getElementById('visaPanel');
   panel.innerHTML = `
     <div class="visa-head">
@@ -494,7 +627,51 @@ function renderVisaPanel(){
         <ul class="doc-list">${t.renewDocs.map(d=>`<li>${d}</li>`).join('')}</ul>
       </div>
     </div>
+    ${faqs.length ? `
+    <div class="visa-faq">
+      <h4 class="visa-faq-title">${I18N[currentLang].visaFaqTitle}</h4>
+      <div class="accordion">
+        ${faqs.map((f,i)=>`
+          <div class="accordion-item">
+            <button class="accordion-q" data-idx="${i}">
+              <span>${f[currentLang].q}</span>
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-a"><p>${f[currentLang].a}</p></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>` : ''}
   `;
+  wireAccordion(panel);
+}
+
+function wireAccordion(scope){
+  scope.querySelectorAll('.accordion-item').forEach(item=>{
+    const btn = item.querySelector('.accordion-q');
+    btn.addEventListener('click', ()=>{
+      const wasOpen = item.classList.contains('open');
+      item.parentElement.querySelectorAll('.accordion-item.open').forEach(i=>{
+        if(i!==item) i.classList.remove('open');
+      });
+      item.classList.toggle('open', !wasOpen);
+    });
+  });
+}
+
+function renderGeneralFaq(){
+  const list = document.getElementById('generalFaqList');
+  if(!list) return;
+  list.innerHTML = GENERAL_FAQ.map((f,i)=>`
+    <div class="accordion-item">
+      <button class="accordion-q" data-idx="${i}">
+        <span>${f[currentLang].q}</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-a"><p>${f[currentLang].a}</p></div>
+    </div>
+  `).join('');
+  wireAccordion(list.parentElement);
 }
 
 function renderTeam(){
@@ -546,6 +723,28 @@ function setLanguage(lang){
   renderVisaPanel();
   renderTeam();
   renderOffices();
+  renderGeneralFaq();
+  refreshReveal();
+}
+
+/* ---------------- Scroll reveal ---------------- */
+let revealObserver = null;
+function refreshReveal(){
+  if(!revealObserver){
+    if(!('IntersectionObserver' in window)){
+      document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in-view'));
+      return;
+    }
+    revealObserver = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.12, rootMargin:'0px 0px -40px 0px' });
+  }
+  document.querySelectorAll('.reveal:not(.in-view)').forEach(el=>revealObserver.observe(el));
 }
 
 /* ---------------- Init ---------------- */
@@ -558,6 +757,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
   burger.addEventListener('click', ()=>{
     nav.classList.toggle('open');
   });
+  nav.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>nav.classList.remove('open')));
+
+  const topbar = document.querySelector('.topbar');
+  const onScroll = ()=> topbar.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
 
   setLanguage('fa');
 });

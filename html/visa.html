@@ -38,6 +38,7 @@
     <nav class="main-nav" id="mainNav">
       <a href="#services" data-i18n="navServices">خدمات</a>
       <a href="#visas" data-i18n="navVisas">انواع اقامت</a>
+      <a href="#faq" data-i18n="navFaq">سوالات متداول</a>
       <a href="#legal-addon" data-i18n="navLegal">وکالت رسمی</a>
       <a href="#team" data-i18n="navTeam">تیم ما</a>
       <a href="#offices" data-i18n="navContact">تماس و دفاتر</a>
@@ -63,6 +64,8 @@
 
 <!-- ===== HERO ===== -->
 <section class="hero" id="hero">
+  <div class="hero-orb orb-1" aria-hidden="true"></div>
+  <div class="hero-orb orb-2" aria-hidden="true"></div>
   <div class="hero-route" aria-hidden="true">
     <svg viewBox="0 0 1000 260" class="route-svg" preserveAspectRatio="none">
       <path id="routePath" class="route-line" d="M60,190 C 260,60 740,60 940,190" />
@@ -99,7 +102,7 @@
 </div>
 
 <!-- ===== SERVICES ===== -->
-<section class="services" id="services">
+<section class="services reveal" id="services">
   <div class="section-head">
     <p class="eyebrow" data-i18n="servicesEyebrow">همه چیز زیر یک سقف</p>
     <h2 data-i18n="servicesTitle">کاری که ما برای شما انجام می‌دهیم</h2>
@@ -113,7 +116,7 @@
 </div>
 
 <!-- ===== VISAS ===== -->
-<section class="visas" id="visas">
+<section class="visas reveal" id="visas">
   <div class="section-head">
     <p class="eyebrow" data-i18n="visasEyebrow">پنج مسیر اصلی</p>
     <h2 data-i18n="visasTitle">کدام نوع اقامت مناسب شماست؟</h2>
@@ -130,8 +133,22 @@
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0,60 Q 50,0 100,60 T 200,60 T 300,60 T 400,60 T 500,60 T 600,60 T 700,60 T 800,60 T 900,60 T 1000,60 T 1100,60 T 1200,60 Z"/></svg>
 </div>
 
+<div class="arch-divider" aria-hidden="true">
+  <svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0,60 Q 50,0 100,60 T 200,60 T 300,60 T 400,60 T 500,60 T 600,60 T 700,60 T 800,60 T 900,60 T 1000,60 T 1100,60 T 1200,60 Z"/></svg>
+</div>
+
+<!-- ===== GENERAL FAQ ===== -->
+<section class="faq-section reveal" id="faq">
+  <div class="section-head">
+    <p class="eyebrow" data-i18n="faqEyebrow">قبل از تماس بخوانید</p>
+    <h2 data-i18n="faqTitle">سوالات متداول</h2>
+    <p class="section-sub" data-i18n="faqSub">این سوالات را واقعاً از ما پرسیده‌اند — شاید جواب سوال شما هم همین‌جا باشد.</p>
+  </div>
+  <div class="accordion" id="generalFaqList"></div>
+</section>
+
 <!-- ===== LEGAL ADD-ON ===== -->
-<section class="legal-addon" id="legal-addon">
+<section class="legal-addon reveal" id="legal-addon">
   <div class="legal-card">
     <span class="badge" data-i18n="legalBadge">خدمت آپشنال</span>
     <h2 data-i18n="legalTitle">وکیل رسمی اسپانیایی، پشت پرونده‌تان</h2>
@@ -147,7 +164,7 @@
 </section>
 
 <!-- ===== TEAM ===== -->
-<section class="team" id="team">
+<section class="team reveal" id="team">
   <div class="section-head">
     <p class="eyebrow" data-i18n="teamEyebrow">دو کشور، یک تیم</p>
     <h2 data-i18n="teamTitle">با چه کسانی کار می‌کنید</h2>
@@ -156,7 +173,7 @@
 </section>
 
 <!-- ===== OFFICES / CONTACT ===== -->
-<section class="offices" id="offices">
+<section class="offices reveal" id="offices">
   <div class="section-head light">
     <p class="eyebrow" data-i18n="officesEyebrow">دو دفتر، یک مسیر</p>
     <h2 data-i18n="officesTitle">دفاتر ما</h2>
@@ -178,5 +195,6 @@
 </footer>
 
 <script src="../scripts/visa.js"></script>
+<a href="tel:+34645391640" class="fab-call" aria-label="Call now">📞</a>
 </body>
 </html>
