@@ -401,21 +401,21 @@ const TEAM = [
   {
     initials:"ص", color:"var(--terracotta)", img:"../images/sadeqLM.png",
     fa:{ name:"دکتر صادق اسحاق", role:"مهندس هوافضا — مادرید",
-         bio:"دکترای مهندسی هوافضا از دانشگاه پلی‌تکنیک مادرید (UPM)، با بیش از ۱۰ سال تجربه در پهپادها، دینامیک پرواز و سامانه‌های خودران. ساکن و فعال در مادرید و کاملاً مسلط به فرآیندهای اداری و زندگی در اسپانیا." },
+        bio:"دکترای مهندسی هوافضا از دانشگاه پلی‌تکنیک مادرید، با بیش از 7 سال تجربه عملی و مستقیم در فرآیندهای مهاجرت و اقامت اسپانیا، از آماده‌سازی و درخواست ویزا و اقامت از ایران تا تمدید و تغییر نوع اقامت، اقامت تحقیقاتی، کاری، بلندمدت و دریافت پاسپورت اسپانیایی." },
     es:{ name:"Dr. Sadeq", role:"Ingeniero Aeroespacial y de Robótica — Madrid",
-         bio:"Doctor en Ingeniería Aeroespacial y Robótica por la Universidad Politécnica de Madrid (UPM), con más de 10 años de experiencia en drones, dinámica de vuelo y sistemas autónomos. Residente en Madrid y con dominio total de los trámites y la vida en España." }
+        bio:"Doctor en Ingeniería Aeroespacial y Robótica por la Universidad Politécnica de Madrid (UPM), con más de 7 años de experiencia práctica y directa en procesos de inmigración y residencia en España, desde la preparación y tramitación de visados y permisos desde Irán hasta renovaciones, prórrogas, cambios de residencia, residencia de larga duración y obtención de la nacionalidad española." }
   },
   {
     initials:"م", color:"var(--turquoise)", img:"../images/masoumeh.png",
-    fa:{ name:"دکتر معصومه رضایی", role:"دکترای زبان‌شناسی — مادرید",
-         bio:"دکترای زبان از دانشگاه خودمختار مادرید (UAM). متن معرفی تکمیلی به‌زودی اضافه می‌شود." },
+    fa:{ name:"دکتر معصومه رضایی", role:"دکترای علوم زبان — مادرید",
+         bio:"دکترای زبان از دانشگاه خودمختار مادرید، با سابقه چندین ساله در تمدید انواع اقامت تا همراهی و راهنمایی متقاضیان در فرآیندهای اداری." },
     es:{ name:"Dra. Masumeh", role:"Doctora en Lingüística — Madrid",
-         bio:"Doctora en Filología por la Universidad Autónoma de Madrid (UAM). Texto de presentación completo próximamente." }
+         bio:"Doctora en Filología por la Universidad Autónoma de Madrid (UAM), con varios años de experiencia práctica en trámites de inmigración y residencia en España, incluyendo renovaciones de residencia y acompañamiento en diferentes procedimientos administrativos." }
   },
   {
     initials:"ر", color:"var(--gold)", img:"",
     fa:{ name:"رضا رضایی", role:"مسئول امور حضوری — تهران",
-         bio:"مسئول رسیدگی حضوری به پرونده‌ها، هماهنگی وقت سفارت و پیگیری لگالایز مدارک در تهران. متن معرفی تکمیلی به‌زودی اضافه می‌شود." },
+         bio:"مسئول رسیدگی حضوری به پرونده‌ها، هماهنگی وقت سفارت و پیگیری لگالایز مدارک در تهران." },
     es:{ name:"Colaborador en Teherán", role:"Responsable de gestión presencial — Teherán",
          bio:"Encargado de atender los expedientes en persona, coordinar las citas del consulado y la legalización de documentos en Teherán. Texto de presentación completo próximamente." }
   }
