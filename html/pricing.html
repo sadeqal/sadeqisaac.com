@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قیمت‌های داخلی — فقط بین ما سه نفر</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12213B; --ink-soft:#24375A; --ink-2:#1A2C4C;
+  --turquoise:#0E7C7B; --turquoise-l:#37A6A0;
+  --gold:#C9A227; --gold-l:#E4C767;
+  --terracotta:#AB4B3B;
+  --cream:#F6F1E6; --cream-dim:#EFE6D2; --paper:#FBF8F1;
+  --ink-text:#1B2233; --on-dark:#F3EFE3;
+  --line:rgba(18,33,59,0.14);
+  --font: 'Vazirmatn','Inter',sans-serif;
+  --mono: 'JetBrains Mono',monospace;
+  --radius:16px;
+  --shadow: 0 14px 34px -18px rgba(18,33,59,.35);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--paper); color:var(--ink-text);
+  font-family:var(--font); line-height:1.75; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{ color:var(--ink); margin:0 0 .5em; }
+table{ border-collapse:collapse; width:100%; }
+th,td{ padding:.85em 1em; text-align:start; font-size:.94rem; }
+.small{ font-size:.82rem; color:var(--ink-soft); }
+.tag{ display:inline-block; padding:.2em .7em; border-radius:999px; font-size:.74rem; font-weight:700; }
+.tag-gold{ background:rgba(201,162,39,.15); color:#8a6c14; }
+.tag-turq{ background:rgba(14,124,123,.13); color:var(--turquoise); }
+.tag-terra{ background:rgba(171,75,59,.13); color:var(--terracotta); }
+
+/* ---------------- Gate screen ---------------- */
+#gate{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:2rem;
+  background:
+    radial-gradient(900px 500px at 20% -10%, rgba(14,124,123,.14), transparent 60%),
+    radial-gradient(800px 500px at 90% 0%, rgba(201,162,39,.16), transparent 55%),
+    var(--ink);
+}
+.gate-card{
+  background:var(--paper); border-radius:22px; padding:2.6rem 2.2rem;
+  max-width:380px; width:100%; text-align:center; box-shadow:var(--shadow);
+}
+.gate-card h1{ font-size:1.25rem; margin-bottom:.3em; }
+.gate-card p{ color:var(--ink-soft); font-size:.9rem; margin-bottom:1.6em; }
+.gate-card input{
+  width:100%; padding:.9em 1em; border-radius:12px; border:1.5px solid var(--line);
+  font-size:1.1rem; text-align:center; letter-spacing:.3em; font-family:var(--mono);
+  margin-bottom:1em;
+}
+.gate-card input:focus{ outline:none; border-color:var(--turquoise); }
+.gate-card button{
+  width:100%; padding:.85em; border-radius:12px; border:none;
+  background:var(--terracotta); color:#fff; font-family:var(--font);
+  font-size:1rem; font-weight:700; cursor:pointer; transition:background .2s ease;
+}
+.gate-card button:hover{ background:#8f3a2d; }
+#gateError{ color:var(--terracotta); font-size:.85rem; margin-top:.9em; min-height:1.2em; font-weight:600; }
+.gate-note{ margin-top:1.6em; font-size:.74rem; color:rgba(27,34,51,.5); line-height:1.6; }
+
+/* ---------------- Main content ---------------- */
+#content{ display:none; max-width:1000px; margin:0 auto; padding:2.5rem 1.4rem 5rem; }
+.top-row{ display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
+.top-row h1{ font-size:1.5rem; margin:0; }
+.lock-btn{
+  border:1.5px solid var(--line); background:var(--paper); color:var(--ink-soft);
+  padding:.5em 1.1em; border-radius:999px; font-size:.85rem; font-weight:600; cursor:pointer;
+}
+.lock-btn:hover{ border-color:var(--terracotta); color:var(--terracotta); }
+
+.notice{
+  background:var(--cream-dim); border-inline-start:4px solid var(--gold);
+  border-radius:12px; padding:1.1rem 1.3rem; margin-bottom:2.2rem; font-size:.9rem;
+}
+
+section{ margin-bottom:3rem; }
+section h2{ font-size:1.2rem; border-bottom:2px solid var(--line); padding-bottom:.5em; margin-bottom:1.2em; }
+.card-table{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card-table th{ background:var(--ink); color:var(--on-dark); font-size:.85rem; font-weight:700; }
+.card-table tr:nth-child(even) td{ background:rgba(239,230,210,.4); }
+.card-table td{ border-top:1px solid var(--line); vertical-align:top; }
+.price{ font-family:var(--mono); font-weight:700; color:var(--terracotta); white-space:nowrap; }
+.price-turq{ color:var(--turquoise); }
+
+.opinion-box{
+  background:linear-gradient(135deg, var(--ink), var(--ink-2));
+  color:var(--on-dark); border-radius:20px; padding:2rem 2.2rem;
+}
+.opinion-box h2{ color:var(--on-dark); border-bottom-color:rgba(255,255,255,.15); }
+.opinion-box h3{ color:var(--gold-l); font-size:1rem; margin-top:1.4em; }
+.opinion-box p{ font-size:.92rem; color:rgba(243,239,227,.9); }
+.opinion-box ul{ margin:0; padding-inline-start:1.3em; font-size:.92rem; color:rgba(243,239,227,.9); }
+.opinion-box li{ margin-bottom:.5em; }
+
+.package-list{ list-style:none; padding:0; margin:.8em 0 0; font-size:.85rem; color:var(--ink-soft); }
+.package-list li{ padding:.25em 0; }
+.package-list li::before{ content:"— "; color:var(--gold); }
+
+footer.page-footer{ text-align:center; font-size:.78rem; color:rgba(27,34,51,.45); margin-top:3rem; }
+</style>
+</head>
+<body>
+
+<!-- ===== PASSWORD GATE ===== -->
+<div id="gate">
+  <div class="gate-card">
+    <h1>🔒 استفاده داخلی</h1>
+    <p>این صفحه محرمانه است.</p>
+    <input type="password" id="pwInput" inputmode="numeric" maxlength="10" placeholder="رمز عبور">
+    <button id="pwSubmit">ورود</button>
+    <div id="gateError"></div>
+  </div>
+</div>
+
+<!-- ===== MAIN CONTENT (revealed after password) ===== -->
+<div id="content">
+  <div class="top-row">
+    <h1>💶 قیمت‌ها و خدمات — نسخه داخلی</h1>
+    <button class="lock-btn" id="lockBtn">🔒 قفل کردن دوباره</button>
+  </div>
+
+  <div class="notice">
+    این صفحه فقط بین ما سه نفر است. همه اعداد پیشنهادی و قابل تغییرند — نسخه اول برای هماهنگ‌شدن با هم است، نه قیمت نهایی و نه چیزی که به مشتری نشان داده شود. هر وقت چیزی عوض شد، همین فایل را به‌روز کنید.
+  </div>
+
+  <!-- MAIN PACKAGES -->
+  <section>
+    <h2>۱. بسته اصلی هر نوع اقامت (مدیریت کامل پرونده)</h2>
+    <p class="small">شامل: بررسی و آماده‌سازی کامل مدارک، نگارش انگیزه‌نامه، هماهنگی کلی روند، مشاوره تا لحظه مهر نهایی. شامل نمی‌شود: بیمه، ترجمه رسمی، هزینه رسمی سفارت/عوارض دولتی، و وکیل — این‌ها جدا در جدول‌های پایین حساب می‌شوند. ما دنبال دانشگاه، پیشنهاد کاری یا سرمایه برای کسی نمی‌گردیم؛ آن‌ها را خود متقاضی باید داشته باشد یا پیدا کند.</p>
+    <div class="card-table">
+      <table>
+        <thead>
+          <tr><th>نوع اقامت</th><th>بسته کامل از ایران</th><th>تمدید داخل اسپانیا</th><th>نکته</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>No Lucrativo (تمکن مالی)</td>
+            <td class="price">۶٬۰۰۰ €</td>
+            <td class="price price-turq">۹۰۰ €</td>
+            <td class="small">الان در تهران مؤسسات شناخته‌شده ۸,۰۰۰ تا ۱۲,۰۰۰ می‌گیرند؛ ۶,۰۰۰ برای شروع و ساختن اسم است، بعداً قابل افزایش.</td>
+          </tr>
+          <tr>
+            <td>دیجیتال نومد</td>
+            <td class="price">۶٬۵۰۰ €</td>
+            <td class="price price-turq">۹۰۰ €</td>
+            <td class="small">کمی بیشتر از No Lucrativo چون مدارک کارفرما/قرارداد و RETA هم باید بررسی شود.</td>
+          </tr>
+          <tr>
+            <td>کارآفرین (Emprendedor)</td>
+            <td class="price">۸٬۵۰۰ €</td>
+            <td class="price price-turq">۱٬۲۰۰ €</td>
+            <td class="small">شامل کار روی ساختار طرح کسب‌وکار برای تایید ENISA است — سنگین‌ترین پرونده از نظر کار ماست. طرح کسب‌وکار و منابع مالی پروژه را خودِ متقاضی تأمین می‌کند.</td>
+          </tr>
+          <tr>
+            <td>پژوهشگر (Ley 14/2013)</td>
+            <td class="price">۳٬۵۰۰ €</td>
+            <td class="price price-turq">۷۰۰ €</td>
+            <td class="small">چون دانشگاه/مرکز پژوهشی میزبان بخش زیادی از روند (UGE-CE) را خودش پیش می‌برد، کار ما کمتر است. قرارداد پژوهشی را خود متقاضی از دانشگاه می‌گیرد.</td>
+          </tr>
+          <tr>
+            <td>دانشجویی</td>
+            <td class="price">۲٬۸۰۰ €</td>
+            <td class="price price-turq">۶۰۰ €</td>
+            <td class="small">ساده‌ترین پرونده و کمترین آستانه مالی. نامه پذیرش دانشگاه را خود متقاضی می‌گیرد؛ ما فقط مدارک اقامتی را جمع و ارسال می‌کنیم.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ADD-ON SERVICES -->
+  <section>
+    <h2>۲. خدمات جانبی / تک‌خدمتی</h2>
+    <p class="small">این‌ها هزینه‌های واقعی شخص ثالث یا کار اضافه‌اند و جدا از بسته اصلی حساب می‌شوند — چه مشتری بسته کامل گرفته باشد چه فقط یک خدمت تنها بخواهد.</p>
+    <div class="card-table">
+      <table>
+        <thead><tr><th>خدمت</th><th>قیمت تقریبی</th><th>توضیح</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>ترجمه رسمی فارسی ↔ اسپانیایی (هر سند)</td>
+            <td class="price">۷۰ – ۹۰ €</td>
+            <td class="small">مترجم رسمی فارسی در اسپانیا کم است، برای همین گران‌تر از انگلیسی/فرانسه است؛ فوری‌بودن ۳۰-۵۰٪ اضافه دارد.</td>
+          </tr>
+          <tr>
+            <td>هماهنگی کامل لگالایز (دادگستری + خارجه + سفارت، هر سری مدارک)</td>
+            <td class="price">۱۵۰ – ۲۵۰ €</td>
+            <td class="small">این دستمزد هماهنگی رضا در تهران است؛ هزینه رسمی خودِ ادارات را مشتری جدا و مستقیم پرداخت می‌کند.</td>
+          </tr>
+          <tr>
+            <td>رزرو وقت سفارت + پیگیری پرونده در تهران</td>
+            <td class="price">در بسته اصلی است</td>
+            <td class="small">اگر کسی فقط همین خدمت را جدا بخواهد (بدون بسته کامل): ۱۵۰ €</td>
+          </tr>
+          <tr>
+            <td>نگارش انگیزه‌نامه (به‌تنهایی، بدون بسته کامل)</td>
+            <td class="price">۲۵۰ €</td>
+            <td class="small">برای کسانی که خودشان مدارک را جمع می‌کنند و فقط متن حرفه‌ای می‌خواهند.</td>
+          </tr>
+          <tr>
+            <td>مشاوره تلفنی/حضوری یک‌بار (بدون تعهد به ادامه پرونده)</td>
+            <td class="price">رایگان</td>
+            <td class="small">همان چیزی که الان داریم انجام می‌دهیم — رایگان می‌ماند تا اعتماد ساخته شود.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- INSURANCE -->
+  <section>
+    <h2>۳. گزینه‌های بیمه سلامت (بدون فرانشیز / Sin Copago)</h2>
+    <p class="small">حق بیمه مستقیم به شرکت بیمه پرداخت می‌شود، نه به ما — کار ما فقط راهنمایی و انتخاب بهترین گزینه است. رقم دقیق بسته به سن و استان محل سکونت فرق می‌کند؛ این‌ها میانگین بازار اسپانیا برای یک بزرگسال جوان هستند.</p>
+    <div class="card-table">
+      <table>
+        <thead><tr><th>شرکت بیمه</th><th>حق بیمه ماهانه تقریبی</th><th>نکته</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Adeslas Plena Plus (بدون فرانشیز)</td>
+            <td class="price">از ~۵۸ €/ماه</td>
+            <td class="small">بزرگ‌ترین شبکه پزشکی اسپانیا؛ معمولاً ارزان‌ترین گزینه کامل بدون فرانشیز.</td>
+          </tr>
+          <tr>
+            <td>Mapfre Asistencia Sanitaria Supra (بدون فرانشیز)</td>
+            <td class="price">از ~۶۵ €/ماه</td>
+            <td class="small">پوشش کامل و مناسب برای مواردی که نیاز به بستری زودهنگام دارند (کمتر دوره انتظار).</td>
+          </tr>
+          <tr>
+            <td>Sanitas Más Salud (بدون فرانشیز)</td>
+            <td class="price">از ~۹۰ €/ماه</td>
+            <td class="small">گران‌تر ولی شبکه بیمارستانی اختصاصی و دندانپزشکی رایگان دارد — گزینه «پرستیژ» برای کسی که بودجه دارد.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- LAWYER -->
+  <section>
+    <h2>۴. وکیل رسمی اسپانیایی (آپشنال)</h2>
+    <div class="card-table">
+      <table>
+        <thead><tr><th>سطح خدمت</th><th>قیمت تقریبی</th><th>شامل چه چیزی</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>سطح ۱ — بررسی حقوقی پیش از ارسال</td>
+            <td class="price">۵۰۰ – ۶۰۰ €</td>
+            <td class="small">یک بار بررسی پرونده توسط وکیل قبل از تحویل به سفارت/اداره مهاجرت.</td>
+          </tr>
+          <tr>
+            <td>سطح ۲ — پیگیری شکایت اداری (Recurso)</td>
+            <td class="price">۱٬۲۰۰ – ۱٬۸۰۰ €</td>
+            <td class="small">در صورت رد اولیه پرونده، تنظیم و پیگیری Recurso de Reposición / Alzada.</td>
+          </tr>
+          <tr>
+            <td>سطح ۳ — دادگاه اداری (Contencioso-Administrativo)</td>
+            <td class="price">از ۲٬۵۰۰ € به بالا</td>
+            <td class="small">بسته به پیچیدگی پرونده؛ قیمت دقیق را وکیل بعد از دیدن پرونده اعلام می‌کند.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- MY OPINION ON PAYMENT STRUCTURE -->
+  <section>
+    <div class="opinion-box">
+      <h2>۵. نظر من درباره پیش‌پرداخت</h2>
+      <h3>چرا صفر جلوتر ریسک دارد</h3>
+      <ul>
+        <li>کسی که همه مشاوره و بررسی مدارک را رایگان بگیرد، انگیزه مالی برای ادامه با ما را از دست می‌دهد — می‌تواند با همان اطلاعات برود سراغ یک دارالترجمه ارزان‌تر یا خودش اقدام کند.</li>
+        <li>در ایران، قیمت پایین یا نگرفتن پول جلوتر گاهی به‌جای «آدم خوب و منصف» به «آدم ضعیف / بدون مشتری / غیرحرفه‌ای» ترجمه می‌شود.</li>
+      </ul>
+      <h3>چرا صددرصد جلوتر هم برای ما (الان) خطرناک است</h3>
+      <ul>
+        <li>ما هنوز دفتر شناخته‌شده و رزومه عمومی (گوگل، اینستاگرام، نمونه‌کار) در تهران نداریم؛ کسی که تازه از دیوار زنگ می‌زند، به‌راحتی مبلغ زیاد جلوتر نمی‌دهد — و اگر بدهد و بعد پشیمان شود.</li>
+      </ul>
+      <h3>پیشنهاد من: پرداخت مرحله‌ای، نه صفر و نه صد</h3>
+      <ul>
+        <li><strong>هزینه‌های واقعی شخص ثالث</strong> (بیمه، ترجمه رسمی، لگالایز) همیشه جلوتر گرفته شود — این‌ها پول جیب ما نیست، پول یک نفر دیگر است که ما جلوتر پرداخت می‌کنید.</li>
+        <li><strong>دستمزد خودمان</strong> را به دو یا سه قسط بشکنیم: مثلاً ٪۳۰ موقع شروع کار (برای فیلترکردن آدم‌های جدی از کنجکاو)، ٪۴۰ موقع تکمیل و تحویل پرونده به سفارت، ٪۳۰ باقی موقع صدور ویزا.</li>
+        <li>قسط اول را می‌توانیم کوچک و «نمادین» نگه داریم (مثلاً ۵۰۰-۱٬۰۰۰ یورو) — همین کافی است تا هم حس جدیت بدهد، هم آدم‌های واقعاً مصمم را از بقیه جدا کند، بدون این‌که مثل مؤسسات بد معروف به نظر برسیم.</li>
+      </ul>
+      <h3>یک نکته دیگر</h3>
+      <p>تفاوت واقعی ما با رقبا این نیست که ارزان‌تر یا گران‌تر هستیم — این است که ما خودمان تجربه دست‌اول کار اداری اسپانیا (کار، No Lucrativo، اقامت دائم، پاسپورت) را داریم  abogado extranjería بهتر بلدیم، این ترکیب را در تبلیغ دیوار و مکالمه اول تلفنی برجسته کنیم — قیمت وقتی توجیه می‌شود که آدم بفهمد چرا از یک مؤسسه معمولی جداست، نه فقط عدد رویش نوشته شود.</p>
+    </div>
+  </section>
+
+  <footer class="page-footer">فقط بین معصومه، رضا و صادق — لطفاً جایی به‌اشتراک نگذارید.</footer>
+</div>
+
+<script>
+(function(){
+  var CORRECT = "585858";
+  var gate = document.getElementById('gate');
+  var content = document.getElementById('content');
+  var input = document.getElementById('pwInput');
+  var btn = document.getElementById('pwSubmit');
+  var err = document.getElementById('gateError');
+  var lockBtn = document.getElementById('lockBtn');
+
+  function tryUnlock(){
+    if(input.value === CORRECT){
+      gate.style.display = 'none';
+      content.style.display = 'block';
+      err.textContent = '';
+    } else {
+      err.textContent = 'رمز اشتباه است.';
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  btn.addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter') tryUnlock();
+  });
+  lockBtn.addEventListener('click', function(){
+    content.style.display = 'none';
+    gate.style.display = 'flex';
+    input.value = '';
+    input.focus();
+  });
+})();
+</script>
+</body>
+</html>
