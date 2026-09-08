@@ -323,6 +323,10 @@ body {
 
 .plot-box { position: relative; width: 100%; height: 280px; }
 
+.map-legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 12px; }
+.map-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); }
+.map-legend-swatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
 .chart-card {
     margin-bottom: 20px;
     background: var(--card-bg);

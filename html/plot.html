@@ -65,7 +65,8 @@
                 <h3 class="card-title">3. Telemetry Summary</h3>
                 <div class="metrics-grid">
                     <div class="metric-box"><span>Duration</span><strong id="durationStat">—</strong></div>
-                    <div class="metric-box"><span>Max Alt</span><strong id="maxAltStat">—</strong></div>
+                    <div class="metric-box"><span>Max Alt (AGL)</span><strong id="maxAltStat">—</strong></div>
+                    <div class="metric-box"><span>Max Alt (ASL)</span><strong id="maxAltAslStat">—</strong></div>
                     <div class="metric-box"><span>Max Speed</span><strong id="maxSpeedStat">—</strong></div>
                     <div class="metric-box"><span>Firmware</span><strong id="fwVersionStat">—</strong></div>
                     <div class="metric-box"><span>Vehicle</span><strong id="vehicleTypeStat">—</strong></div>
@@ -151,6 +152,15 @@
             
             <!-- High-Res Charts Container -->
             <div class="charts-grid" id="chartsContainer">
+                
+                <!-- Flight Path — Satellite Map -->
+                <div class="card chart-card" id="flightMapPanel" style="display:none;">
+                    <div class="chart-header"><strong>Flight Path — Satellite View</strong><span class="chart-subhead">Trajectory colored by flight mode</span></div>
+                    <div class="plot-box" style="height: 420px;">
+                        <div id="flightMap" style="position:absolute; inset:0; border-radius: 10px; overflow:hidden;"></div>
+                    </div>
+                    <div class="map-legend" id="flightMapLegend"></div>
+                </div>
                 
                 <!-- Baro vs GPS Alt -->
                 <div class="card chart-card" id="baroGpsPanel" style="display:none;">
