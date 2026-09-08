@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VTOL ArduPilot Telemetry Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <!-- Mapbox -->
@@ -14,7 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <!-- Dataflash Parser -->
     <script src="https://cdn.jsdelivr.net/npm/dataflash-parser@1.0.0/dist/dataflash-parser.min.js"></script>
-    <link rel="stylesheet" href="../styles/plot.css" />
+    <link rel="stylesheet" href="../styles/plot.css" /> 
 </head>
 <body>
     <div class="app-header">
@@ -39,6 +41,11 @@
                     <input type="file" id="binFile" accept=".bin,.BIN">
                     <p>📂 Click or drag <b>.bin</b> log here</p>
                 </div>
+                <div class="file-drop-area file-drop-area-secondary">
+                    <input type="file" id="paramFile" accept=".param,.parm,.params,.txt">
+                    <p>📑 Optional: Mission Planner <b>.param</b> / QGC <b>.params</b> file</p>
+                </div>
+                <div class="params-source-banner" id="paramsSourceBanner" style="display:none;"></div>
             </div>
             
             <div class="card">
@@ -147,7 +154,7 @@
                 
                 <!-- Baro vs GPS Alt -->
                 <div class="card chart-card" id="baroGpsPanel" style="display:none;">
-                    <div class="chart-header"><strong>Altitude Analysis (BARO vs GPS)</strong></div>
+                    <div class="chart-header"><strong>Altitude Analysis (BARO vs GPS-AGL)</strong><span class="chart-subhead" id="groundElevNote"></span></div>
                     <div class="plot-box"><canvas id="baroGpsChart"></canvas></div>
                     <textarea class="comment-box" id="commentBaroGps" placeholder="Add engineering notes for Altitude..."></textarea>
                 </div>
@@ -239,6 +246,21 @@
                     <div class="chart-header"><strong>VTOL ESCs — Thermal Status (°C)</strong></div>
                     <div class="plot-box"><canvas id="escTempChart"></canvas></div>
                     <textarea class="comment-box" id="commentEscTemp" placeholder="Add engineering notes for Temperature..."></textarea>
+                </div>
+                
+                <!-- Cross-Analysis / Correlation Charts -->
+                <div class="section-divider"><span>🔍 CROSS-ANALYSIS &amp; CORRELATION</span></div>
+                
+                <div class="card chart-card" id="battMotorsPanel" style="display:none;">
+                    <div class="chart-header"><strong>Battery 1 Current vs Vertical Motors Avg Current (M5-M8)</strong></div>
+                    <div class="plot-box"><canvas id="battMotorsChart"></canvas></div>
+                    <textarea class="comment-box" id="commentBattMotors" placeholder="Add engineering notes for Battery 1 vs lift motors..."></textarea>
+                </div>
+                
+                <div class="card chart-card" id="battThrottlePanel" style="display:none;">
+                    <div class="chart-header"><strong>Battery 2 Current vs Motor 3 Forward Throttle</strong></div>
+                    <div class="plot-box"><canvas id="battThrottleChart"></canvas></div>
+                    <textarea class="comment-box" id="commentBattThrottle" placeholder="Add engineering notes for Battery 2 vs forward throttle..."></textarea>
                 </div>
                 
             </div>

@@ -115,8 +115,74 @@ let flightInfo = {
     duration: 0,
     maxAlt: 0,
     maxSpeed: 0,
-    totalSamples: 0
+    totalSamples: 0,
+    groundElevMSL: NaN
 };
+
+// Curated list of parameters worth tracking on every VTOL flight test.
+// "def" is the ArduPilot reference default; the Actual column is left blank ("—")
+// until real values are recovered from an uploaded .param/.params file or the
+// bin log's own PARM messages — no more made-up placeholder numbers.
+const IMPORTANT_PARAMS = [
+    { name: "THR_FS", def: "1 (Enabled)" },
+    { name: "INS_ACCEL_FILTER", def: "20" },
+    { name: "INS_GYRO_FILTER", def: "20" },
+    { name: "Q_A_ACCEL_P_MAX", def: "40000" },
+    { name: "Q_A_ACCEL_R_MAX", def: "40000" },
+    { name: "Q_A_ACCEL_Y_MAX", def: "10000" },
+    { name: "Q_A_RAT_YAW_P", def: "0.18" },
+    { name: "Q_A_RAT_RLL_FLTD", def: "10" },
+    { name: "Q_A_RAT_RLL_FLTT", def: "10" },
+    { name: "Q_A_RAT_PIT_FLTD", def: "10" },
+    { name: "Q_A_RAT_YAW_FLTT", def: "10" },
+    { name: "Q_M_THST_EXPO", def: "0.65" },
+    { name: "Q_M_THST_HOVER", def: "0.35" },
+    { name: "AHRS_TRIM_Y", def: "0" },
+    { name: "Q_P_ACCZ_I", def: "0.7" },
+    { name: "Q_P_ACCZ_P", def: "0.35" },
+    { name: "Q_ASSIST_ALT", def: "20" },
+    { name: "Q_ASSIST_ANGLE", def: "90" },
+    { name: "Q_ASSIST_DELAY", def: "0.5" },
+    { name: "Q_ASSIST_OPTIONS", def: "0" },
+    { name: "Q_ASSIST_SPEED", def: "32.0" },
+    { name: "AIRSPEED_CRUISE", def: "36.0" },
+    { name: "AIRSPEED_MAX", def: "60" },
+    { name: "AIRSPEED_MIN", def: "35" },
+    { name: "AIRSPEED_STALL", def: "25.0" },
+    { name: "ARSPD_USE", def: "1" },
+    { name: "RLL2SRV_RMAX", def: "90" },
+    { name: "RLL2SRV_TCONST", def: "0.5" },
+    { name: "RLL_RATE_D", def: "0.013" },
+    { name: "RLL_RATE_FF", def: "0.673" },
+    { name: "RLL_RATE_I", def: "0.487" },
+    { name: "RLL_RATE_P", def: "0.487" },
+    { name: "PTCH2SRV_RLL", def: "1.0" },
+    { name: "PTCH2SRV_TCONST", def: "0.5" },
+    { name: "PTCH_LIM_MAX_DEG", def: "20.0" },
+    { name: "PTCH_LIM_MIN_DEG", def: "-25.0" },
+    { name: "PTCH_RATE_D", def: "0.079" },
+    { name: "PTCH_RATE_FF", def: "1.288" },
+    { name: "PTCH_RATE_I", def: "2.213" },
+    { name: "PTCH_RATE_P", def: "2.950" },
+    { name: "PTCH_TRIM_DEG", def: "-2.0", reason: "Pitch trim offset (Note: Level Horizon won't work anymore)" },
+    { name: "TECS_CLMB_MAX", def: "10.0" },
+    { name: "TECS_FLARE_HGT", def: "1.0" },
+    { name: "TECS_HDEM_TCONST", def: "3.0" },
+    { name: "TECS_HGT_OMEGA", def: "3.0" },
+    { name: "TECS_INTEG_GAIN", def: "0.15" },
+    { name: "TECS_PITCH_MAX", def: "15" },
+    { name: "TECS_PITCH_MIN", def: "0" },
+    { name: "TECS_PTCH_DAMP", def: "0.60" },
+    { name: "TECS_SINK_MAX", def: "7.0" },
+    { name: "TECS_SINK_MIN", def: "2.0" },
+    { name: "TECS_SPDWEIGHT", def: "1.5" },
+    { name: "TECS_TIME_CONST", def: "10.0" },
+];
+
+// Real parameter values recovered from an uploaded file / the bin log (never fabricated).
+let paramsFromFile = {};
+let paramsFromBin = {};
+let parsedParams = {};
 
 window.onload = () => {
     // 1. Set Sadeq Isaac as default reporter name
@@ -128,70 +194,10 @@ window.onload = () => {
     // 2. Default Test Objectives
     addObjectiveRow("Elevon & Ruddervator actuator response verification", "High");
     
-    // 3. Updated Parameters List (Default / Actual / Reason)
-    // --- Image / Hardware Base Defaults ---
-    addParamRow("THR_FS", "1 (Enabled)", "1", getParamReason("THR_FS"));
-    addParamRow("INS_ACCEL_FILTER", "20", "15", getParamReason("INS_ACCEL_FILTER"));
-    addParamRow("INS_GYRO_FILTER", "20", "15", getParamReason("INS_GYRO_FILTER"));
-    addParamRow("Q_A_ACCEL_P_MAX", "40000", "15000", getParamReason("Q_A_ACCEL_P_MAX"));
-    addParamRow("Q_A_ACCEL_R_MAX", "40000", "15000", getParamReason("Q_A_ACCEL_R_MAX"));
-    addParamRow("Q_A_ACCEL_Y_MAX", "10000", "1000", getParamReason("Q_A_ACCEL_Y_MAX"));
-    addParamRow("Q_A_RAT_YAW_P", "0.18", "0.11", getParamReason("Q_A_RAT_YAW_P"));
-    addParamRow("Q_A_RAT_RLL_FLTD", "10", "7", getParamReason("Q_A_RAT_RLL_FLTD"));
-    addParamRow("Q_A_RAT_RLL_FLTT", "10", "7", getParamReason("Q_A_RAT_RLL_FLTT"));
-    addParamRow("Q_A_RAT_PIT_FLTD", "10", "7", getParamReason("Q_A_RAT_PIT_FLTD"));
-    addParamRow("Q_A_RAT_YAW_FLTT", "10", "7", getParamReason("Q_A_RAT_YAW_FLTT"));
-    addParamRow("Q_M_THST_EXPO", "0.65", "0.35", getParamReason("Q_M_THST_EXPO"));
-    addParamRow("Q_M_THST_HOVER", "0.35", "0.25", getParamReason("Q_M_THST_HOVER"));
-    addParamRow("AHRS_TRIM_Y", "0", "0", getParamReason("AHRS_TRIM_Y"));
-    addParamRow("Q_P_ACCZ_I", "0.7", "0.5", getParamReason("Q_P_ACCZ_I"));
-    addParamRow("Q_P_ACCZ_P", "0.35", "0.25", getParamReason("Q_P_ACCZ_P"));
-    
-    // --- Q_ASSIST ---
-    addParamRow("Q_ASSIST_ALT", "20", "4", getParamReason("Q_ASSIST_ALT"));
-    addParamRow("Q_ASSIST_ANGLE", "90", "2", getParamReason("Q_ASSIST_ANGLE"));
-    addParamRow("Q_ASSIST_DELAY", "0.5", "9", getParamReason("Q_ASSIST_DELAY"));
-    addParamRow("Q_ASSIST_OPTIONS", "0", "4", getParamReason("Q_ASSIST_OPTIONS"));
-    addParamRow("Q_ASSIST_SPEED", "32.0", "9", getParamReason("Q_ASSIST_SPEED"));
-    
-    // --- AIRSPEED ---
-    addParamRow("AIRSPEED_CRUISE", "36.0", "9", getParamReason("AIRSPEED_CRUISE"));
-    addParamRow("AIRSPEED_MAX", "60", "4", getParamReason("AIRSPEED_MAX"));
-    addParamRow("AIRSPEED_MIN", "35", "4", getParamReason("AIRSPEED_MIN"));
-    addParamRow("AIRSPEED_STALL", "25.0", "9", getParamReason("AIRSPEED_STALL"));
-    addParamRow("ARSPD_USE", "1", "0", "Pitot desactivado; solo usando velocidad de GPS");
-    
-    // --- ROLL & PITCH FIXED WING ---
-    addParamRow("RLL2SRV_RMAX", "90", "4", getParamReason("RLL2SRV_RMAX"));
-    addParamRow("RLL2SRV_TCONST", "0.5", "9", getParamReason("RLL2SRV_TCONST"));
-    addParamRow("RLL_RATE_D", "0.013", "9", getParamReason("RLL_RATE_D"));
-    addParamRow("RLL_RATE_FF", "0.673", "9", getParamReason("RLL_RATE_FF"));
-    addParamRow("RLL_RATE_I", "0.487", "9", getParamReason("RLL_RATE_I"));
-    addParamRow("RLL_RATE_P", "0.487", "9", getParamReason("RLL_RATE_P"));
-    
-    addParamRow("PTCH2SRV_RLL", "1.0", "9", getParamReason("PTCH2SRV_RLL"));
-    addParamRow("PTCH2SRV_TCONST", "0.5", "9", getParamReason("PTCH2SRV_TCONST"));
-    addParamRow("PTCH_LIM_MAX_DEG", "20.0", "9", getParamReason("PTCH_LIM_MAX_DEG"));
-    addParamRow("PTCH_LIM_MIN_DEG", "-25.0", "9", getParamReason("PTCH_LIM_MIN_DEG"));
-    addParamRow("PTCH_RATE_D", "0.079", "9", getParamReason("PTCH_RATE_D"));
-    addParamRow("PTCH_RATE_FF", "1.288", "9", getParamReason("PTCH_RATE_FF"));
-    addParamRow("PTCH_RATE_I", "2.213", "9", getParamReason("PTCH_RATE_I"));
-    addParamRow("PTCH_RATE_P", "2.950", "9", getParamReason("PTCH_RATE_P"));
-    addParamRow("PTCH_TRIM_DEG", "-2.0", "9", "Pitch trim offset (Note: Level Horizon won't work anymore)");
-    
-    // --- TECS ---
-    addParamRow("TECS_CLMB_MAX", "10.0", "9", getParamReason("TECS_CLMB_MAX"));
-    addParamRow("TECS_FLARE_HGT", "1.0", "9", getParamReason("TECS_FLARE_HGT"));
-    addParamRow("TECS_HDEM_TCONST", "3.0", "9", getParamReason("TECS_HDEM_TCONST"));
-    addParamRow("TECS_HGT_OMEGA", "3.0", "9", getParamReason("TECS_HGT_OMEGA"));
-    addParamRow("TECS_INTEG_GAIN", "0.15", "9", getParamReason("TECS_INTEG_GAIN"));
-    addParamRow("TECS_PITCH_MAX", "15", "2", getParamReason("TECS_PITCH_MAX"));
-    addParamRow("TECS_PITCH_MIN", "0", "2", getParamReason("TECS_PITCH_MIN"));
-    addParamRow("TECS_PTCH_DAMP", "0.60", "9", getParamReason("TECS_PTCH_DAMP"));
-    addParamRow("TECS_SINK_MAX", "7.0", "9", getParamReason("TECS_SINK_MAX"));
-    addParamRow("TECS_SINK_MIN", "2.0", "9", getParamReason("TECS_SINK_MIN"));
-    addParamRow("TECS_SPDWEIGHT", "1.5", "9", getParamReason("TECS_SPDWEIGHT"));
-    addParamRow("TECS_TIME_CONST", "10.0", "9", getParamReason("TECS_TIME_CONST"));
+    // 3. Parameter rows — default reference values only; Actual is filled in once
+    // a .param/.params file or the bin log's PARM data is parsed.
+    IMPORTANT_PARAMS.forEach(p => addParamRow(p.name, p.def, "—", getParamReason(p.name, p.reason)));
+    applyRealParamsToTable();
 };
 
 function getParamReason(paramName, customReason) {
@@ -202,19 +208,6 @@ function getParamReason(paramName, customReason) {
     
     // Otherwise fallback to ArduPilot docs lookup table
     return ARDUPILOT_PARAM_REASONS[paramName] || "Modified tuning parameter";
-}
-
-// Example usage when generating HTML rows for your table:
-function buildParamRow(paramName, defaultVal, actualVal, userNote) {
-    const reason = getParamReason(paramName, userNote);
-    return `
-        <tr>
-            <td><strong>${paramName}</strong></td>
-            <td>${defaultVal}</td>
-            <td>${actualVal}</td>
-            <td>${reason}</td>
-        </tr>
-    `;
 }
 
 function addObjectiveRow(desc = "", priority = "Med") {
@@ -238,8 +231,6 @@ function addObjectiveRow(desc = "", priority = "Med") {
 }
 
 // Array to hold data for autoTable export
-const paramRows = [];
-
 function addParamRow(paramName = "", defaultVal = "", actualVal = "", userNote = "") {
     const tbody = document.getElementById('paramsTableBody');
     const tr = document.createElement('tr');
@@ -252,15 +243,109 @@ function addParamRow(paramName = "", defaultVal = "", actualVal = "", userNote =
     tr.innerHTML = `
         <td><input type="text" class="styled-input param-name" value="${escapeAttr(paramName)}" placeholder="e.g. Q_ANGLE_MAX"></td>
         <td><input type="text" class="styled-input param-default" value="${escapeAttr(defaultVal)}" placeholder="Default"></td>
-        <td><input type="text" class="styled-input param-val" value="${escapeAttr(actualVal)}" placeholder="Actual"></td>
+        <td><input type="text" class="styled-input param-val param-missing" value="${escapeAttr(actualVal)}" placeholder="Actual" title="Not found in log or parameter file"></td>
         <td><input type="text" class="styled-input param-reason" value="${escapeAttr(reason)}" placeholder="Reason for change..."></td>
         <td style="text-align: center;"><button class="btn-del" type="button">✕</button></td>
     `;
     
     tr.querySelector('.btn-del').addEventListener('click', () => tr.remove());
+    tr.querySelector('.param-name').addEventListener('change', applyRealParamsToTable);
     
     tbody.appendChild(tr);
 }
+
+// ─── Parameter File Import (Mission Planner .param / QGroundControl .params) ──
+function parseParamFileText(text){
+    const map = {};
+    text.split(/\r?\n/).forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) return;
+        let name, value;
+        if (trimmed.includes(',')) {
+            // Mission Planner style: PARAM_NAME,VALUE
+            const parts = trimmed.split(',');
+            name = (parts[0] || '').trim();
+            value = (parts[1] || '').trim();
+        } else {
+            // QGroundControl style: sysid  compid  PARAM_NAME  VALUE  type
+            const parts = trimmed.split(/\s+/).filter(Boolean);
+            if (parts.length >= 4) {
+                name = parts[2].trim();
+                value = parts[3].trim();
+            } else if (parts.length === 2) {
+                name = parts[0].trim();
+                value = parts[1].trim();
+            }
+        }
+        if (name && value !== undefined && value !== '') {
+            const num = parseFloat(value);
+            map[name.toUpperCase()] = Number.isFinite(num) ? num : value;
+        }
+    });
+    return map;
+}
+
+function recomputeMergedParams(){
+    parsedParams = Object.assign({}, paramsFromBin, paramsFromFile);
+    applyRealParamsToTable();
+}
+
+function formatParamValue(v){
+    if (typeof v !== 'number') return String(v);
+    if (Number.isInteger(v)) return String(v);
+    return String(parseFloat(v.toFixed(4)));
+}
+
+// Fills the Actual Value column with real, sourced data — never invented numbers.
+function applyRealParamsToTable(){
+    let realCount = 0, missingCount = 0;
+    document.querySelectorAll('#paramsTableBody tr').forEach(tr => {
+        const nameInput = tr.querySelector('.param-name');
+        const valInput = tr.querySelector('.param-val');
+        if (!nameInput || !valInput) return;
+        const key = nameInput.value.trim().toUpperCase();
+        if (key && key in parsedParams) {
+            valInput.value = formatParamValue(parsedParams[key]);
+            valInput.classList.add('param-real');
+            valInput.classList.remove('param-missing');
+            valInput.title = (key in paramsFromFile) ? 'Sourced from uploaded parameter file' : 'Sourced from flight log PARM messages';
+            realCount++;
+        } else {
+            valInput.classList.add('param-missing');
+            valInput.classList.remove('param-real');
+            if (!valInput.value.trim()) valInput.value = '—';
+            valInput.title = 'Not found in log or parameter file';
+            missingCount++;
+        }
+    });
+    updateParamsSourceBanner(realCount, missingCount);
+}
+
+function updateParamsSourceBanner(realCount, missingCount){
+    const banner = document.getElementById('paramsSourceBanner');
+    if (!banner) return;
+    if (realCount === 0 && missingCount === 0) { banner.textContent = ''; banner.style.display = 'none'; return; }
+    banner.style.display = '';
+    const fileCount = Object.keys(paramsFromFile).length;
+    const binCount = Object.keys(paramsFromBin).length;
+    let src = [];
+    if (fileCount) src.push(`${fileCount} from uploaded param file`);
+    if (binCount) src.push(`${binCount} recovered from bin log PARM`);
+    banner.innerHTML = `🟢 <b>${realCount}</b> real parameters loaded${src.length ? ' — ' + src.join(', ') : ''} · <span style="color:var(--text-secondary)">${missingCount} not logged</span>`;
+}
+
+document.getElementById('paramFile').addEventListener('change', async function(){
+    if (!this.files.length) return;
+    try {
+        const text = await this.files[0].text();
+        paramsFromFile = parseParamFileText(text);
+        recomputeMergedParams();
+    } catch (err) {
+        console.error("Param file parse error: ", err);
+        const banner = document.getElementById('paramsSourceBanner');
+        if (banner) { banner.style.display = ''; banner.textContent = '❌ Failed to parse parameter file'; }
+    }
+});
 
 // ─── BIN File Parsing & Firmware CRC / Version Recovery ───────────────────────
 document.getElementById('binFile').addEventListener('change', async function() {
@@ -275,6 +360,7 @@ document.getElementById('binFile').addEventListener('change', async function() {
         document.getElementById('fwVersionStat').textContent = flightInfo.firmware;
         document.getElementById('vehicleTypeStat').textContent = flightInfo.vehicle;
         document.getElementById('imuSamplesStat').textContent = flightInfo.totalSamples;
+        updateGroundElevNote();
         
         timeCrop.start = 0;
         timeCrop.end = flightInfo.duration;
@@ -283,6 +369,8 @@ document.getElementById('binFile').addEventListener('change', async function() {
         
         document.getElementById('timeSelectionCard').style.display = 'block';
         renderBaroTimeChart();
+        
+        recomputeMergedParams();
         
         filterTelemetryByTime();
         renderAllCharts();
@@ -301,8 +389,19 @@ async function parseBinFile(file) {
     const buffer = await file.arrayBuffer();
     const parser = new DataflashParser(false);
     const parsed = parser.processData(buffer, [
-        'BARO', 'GPS', 'IMU', 'ARSP', 'ATT', 'CSRV', 'AETR', 'ESC', 'MSG', 'VER'
+        'BARO', 'GPS', 'IMU', 'ARSP', 'ATT', 'CSRV', 'AETR', 'ESC', 'MSG', 'VER', 'PARM', 'BAT', 'RCOU'
     ]);
+    
+    // 0. Recover real parameter values logged at boot / on every change (PARM.Name / PARM.Value)
+    paramsFromBin = {};
+    const parmMsg = parsed?.messages?.PARM;
+    if (parmMsg && parmMsg.Name && parmMsg.Value) {
+        const names = Array.from(parmMsg.Name);
+        const values = Array.from(parmMsg.Value);
+        names.forEach((n, i) => {
+            if (typeof n === 'string' && n.trim()) paramsFromBin[n.trim().toUpperCase()] = Number(values[i]);
+        });
+    }
     
     // 1. Extract Version & Git Hash CRC from MSG packet
     if (parsed?.messages?.MSG?.Message) {
@@ -332,7 +431,6 @@ async function parseBinFile(file) {
     
     rawTelemetry = {
         baroAlt: extractSeries('BARO[0]', 'Alt') || extractSeries('BARO', 'Alt'),
-        gpsAlt: extractSeries('GPS[0]', 'Alt', 0.001) || extractSeries('GPS', 'Alt', 0.001),
         gpsSpd: extractSeries('GPS[0]', 'Spd') || extractSeries('GPS', 'Spd'),
         imuZ: extractSeries('IMU[0]', 'AccZ') || extractSeries('IMU', 'AccZ'),
         airspeed: extractSeries('ARSP[0]', 'Airspeed') || extractSeries('ARSP', 'Airspeed'),
@@ -348,34 +446,136 @@ async function parseBinFile(file) {
         csrv9: extractSeries('CSRV[9]', 'Pos'),
         aetrAil: extractSeries('AETR', 'Ail'),
         aetrElev: extractSeries('AETR', 'Elev'),
+        // VTOL lift motors — SERVO outputs 5,6,7,8 (dataflash ESC instances 4-7)
         escRpm: {
             m5: extractSeries('ESC[4]', 'Rpm'),
-            m2: extractSeries('ESC[5]', 'Rpm'),
-            m3: extractSeries('ESC[6]', 'Rpm'),
-            m4: extractSeries('ESC[7]', 'Rpm')
+            m6: extractSeries('ESC[5]', 'Rpm'),
+            m7: extractSeries('ESC[6]', 'Rpm'),
+            m8: extractSeries('ESC[7]', 'Rpm')
         },
         escCurr: {
             m5: extractSeries('ESC[4]', 'Curr'),
-            m2: extractSeries('ESC[5]', 'Curr'),
-            m3: extractSeries('ESC[6]', 'Curr'),
-            m4: extractSeries('ESC[7]', 'Curr')
+            m6: extractSeries('ESC[5]', 'Curr'),
+            m7: extractSeries('ESC[6]', 'Curr'),
+            m8: extractSeries('ESC[7]', 'Curr')
         },
         escTemp: {
             m5: extractSeries('ESC[4]', 'Temp'),
-            m2: extractSeries('ESC[5]', 'Temp'),
-            m3: extractSeries('ESC[6]', 'Temp'),
-            m4: extractSeries('ESC[7]', 'Temp')
-        }
+            m6: extractSeries('ESC[5]', 'Temp'),
+            m7: extractSeries('ESC[6]', 'Temp'),
+            m8: extractSeries('ESC[7]', 'Temp')
+        },
+        // Battery rails
+        batt1Curr: extractSeries('BAT[0]', 'Curr') || extractSeries('BAT', 'Curr'),
+        batt2Curr: extractSeries('BAT[1]', 'Curr'),
+        // Forward/cruise throttle motor — plane SERVO output channel 3
+        motor3ThrottlePct: extractSeries('RCOU', 'C3').map(p => ({ ...p, value: pwmToPercent(p.value) }))
     };
+    
+    // GPS[0].Alt is MSL (above sea level); BARO[0].Alt is always relative to ground/home.
+    // The dataflash parser already returns GPS.Alt in real meters (no extra mm->m scale needed —
+    // that redundant *0.001 was collapsing ~940m readings down to ~0.9m).
+    const gpsAltMSL = extractSeries('GPS[0]', 'Alt') || extractSeries('GPS', 'Alt');
+    flightInfo.groundElevMSL = findTakeoffElevation(gpsAltMSL, rawTelemetry.baroAlt);
+    rawTelemetry.gpsAlt = gpsAltMSL.map(p => ({ ...p, value: p.value - flightInfo.groundElevMSL }));
+    
+    // Cross-analysis series: avg current of the 4 vertical lift motors (M5-M8)
+    rawTelemetry.vertMotorsAvgCurr = averageSeriesByTime([
+        rawTelemetry.escCurr.m5, rawTelemetry.escCurr.m6, rawTelemetry.escCurr.m7, rawTelemetry.escCurr.m8
+    ]);
+    // Fallback when there's no ESC current telemetry logged: use commanded throttle (RCOU C5-C8)
+    // for the same 4 vertical motors as a proxy for lift-motor activity.
+    rawTelemetry.vertMotorsAvgThrottlePct = averageSeriesByTime([
+        extractSeries('RCOU', 'C5').map(p => ({ ...p, value: pwmToPercent(p.value) })),
+        extractSeries('RCOU', 'C6').map(p => ({ ...p, value: pwmToPercent(p.value) })),
+        extractSeries('RCOU', 'C7').map(p => ({ ...p, value: pwmToPercent(p.value) })),
+        extractSeries('RCOU', 'C8').map(p => ({ ...p, value: pwmToPercent(p.value) }))
+    ]);
     
     if (rawTelemetry.baroAlt.length) {
         flightInfo.duration = rawTelemetry.baroAlt[rawTelemetry.baroAlt.length - 1].time;
-        flightInfo.maxAlt = Math.max(...rawTelemetry.baroAlt.map(p => p.value));
+        flightInfo.maxAlt = seriesMax(rawTelemetry.baroAlt);
     }
     if (rawTelemetry.gpsSpd.length) {
-        flightInfo.maxSpeed = Math.max(...rawTelemetry.gpsSpd.map(p => p.value));
+        flightInfo.maxSpeed = seriesMax(rawTelemetry.gpsSpd);
     }
     flightInfo.totalSamples = rawTelemetry.imuZ.length || rawTelemetry.baroAlt.length || 0;
+}
+
+// Normalizes a servo PWM (µs) to an approximate 0-100% throttle output.
+function pwmToPercent(pwm){
+    return Math.max(0, Math.min(100, (pwm - 1000) / 10));
+}
+
+// Reference ground elevation = GPS altitude at the takeoff point, not an arbitrary early average.
+// Detected as the last GPS sample at/before BARO.Alt first climbs >2m above its resting value.
+function findTakeoffElevation(gpsAltMSL, baroAlt){
+    if (!gpsAltMSL.length) return NaN;
+    if (baroAlt && baroAlt.length){
+        const restingAlt = baroAlt[0].value;
+        const climb = baroAlt.find(p => (p.value - restingAlt) > 2);
+        if (climb){
+            let candidate = gpsAltMSL[0];
+            for (const p of gpsAltMSL){
+                if (p.time <= climb.time) candidate = p; else break;
+            }
+            return candidate.value;
+        }
+    }
+    // Fallback: average of the first ~3s on the ground before a valid climb is detected.
+    const groundSamples = gpsAltMSL.filter(p => p.time <= 3).map(p => p.value);
+    return groundSamples.length ? groundSamples.reduce((a, b) => a + b, 0) / groundSamples.length : gpsAltMSL[0].value;
+}
+
+function updateGroundElevNote(){
+    const note = document.getElementById('groundElevNote');
+    if (!note) return;
+    note.textContent = Number.isFinite(flightInfo.groundElevMSL)
+        ? ` — Ref. ground elevation (MSL): ${flightInfo.groundElevMSL.toFixed(1)} m (GPS altitude shown as AGL)`
+        : '';
+}
+
+// Precision-aware axis label formatting so gridlines read exact values instead of round multiples.
+function formatAxisNumber(v){
+    const n = Number(v);
+    if (!Number.isFinite(n)) return '';
+    if (Math.abs(n) >= 1000) return n.toFixed(0);
+    if (Math.abs(n) >= 100) return n.toFixed(1);
+    return n.toFixed(2);
+}
+
+// Elapsed flight time as mm:ss (or hh:mm:ss past 1 hour), optionally with milliseconds.
+function formatElapsedClock(seconds, withMs = false){
+    if (!Number.isFinite(seconds)) return '';
+    const neg = seconds < 0;
+    let s = Math.abs(seconds);
+    const h = Math.floor(s / 3600); s -= h * 3600;
+    const m = Math.floor(s / 60); s -= m * 60;
+    const whole = Math.floor(s);
+    const ms = Math.round((s - whole) * 1000);
+    const pad = (n) => String(n).padStart(2, '0');
+    let out = h > 0 ? `${pad(h)}:${pad(m)}:${pad(whole)}` : `${pad(m)}:${pad(whole)}`;
+    if (withMs) out += '.' + String(ms).padStart(3, '0');
+    return (neg ? '-' : '') + out;
+}
+
+// Merges multiple time series by bucketing samples into shared time windows and averaging
+// whichever series have data in that window — used to combine motors that log independently.
+function averageSeriesByTime(seriesList, bucketSize = 0.2){
+    const buckets = new Map();
+    seriesList.forEach(series => {
+        (series || []).forEach(p => {
+            const b = Math.round(p.time / bucketSize);
+            if (!buckets.has(b)) buckets.set(b, { sum: 0, count: 0, timeSum: 0 });
+            const bucket = buckets.get(b);
+            bucket.sum += p.value;
+            bucket.count += 1;
+            bucket.timeSum += p.time;
+        });
+    });
+    return Array.from(buckets.entries())
+        .sort((a, b) => a[0] - b[0])
+        .map(([, b]) => ({ time: b.timeSum / b.count, value: b.sum / b.count }));
 }
 
 // ─── Time Crop Logic ──────────────────────────────────────────────────────────
@@ -423,53 +623,77 @@ function filterTelemetryByTime() {
         aetrElev: crop(rawTelemetry.aetrElev),
         escRpm: {
             m5: crop(rawTelemetry.escRpm?.m5),
-            m2: crop(rawTelemetry.escRpm?.m2),
-            m3: crop(rawTelemetry.escRpm?.m3),
-            m4: crop(rawTelemetry.escRpm?.m4)
+            m6: crop(rawTelemetry.escRpm?.m6),
+            m7: crop(rawTelemetry.escRpm?.m7),
+            m8: crop(rawTelemetry.escRpm?.m8)
         },
         escCurr: {
             m5: crop(rawTelemetry.escCurr?.m5),
-            m2: crop(rawTelemetry.escCurr?.m2),
-            m3: crop(rawTelemetry.escCurr?.m3),
-            m4: crop(rawTelemetry.escCurr?.m4)
+            m6: crop(rawTelemetry.escCurr?.m6),
+            m7: crop(rawTelemetry.escCurr?.m7),
+            m8: crop(rawTelemetry.escCurr?.m8)
         },
         escTemp: {
             m5: crop(rawTelemetry.escTemp?.m5),
-            m2: crop(rawTelemetry.escTemp?.m2),
-            m3: crop(rawTelemetry.escTemp?.m3),
-            m4: crop(rawTelemetry.escTemp?.m4)
-        }
+            m6: crop(rawTelemetry.escTemp?.m6),
+            m7: crop(rawTelemetry.escTemp?.m7),
+            m8: crop(rawTelemetry.escTemp?.m8)
+        },
+        batt1Curr: crop(rawTelemetry.batt1Curr),
+        batt2Curr: crop(rawTelemetry.batt2Curr),
+        motor3ThrottlePct: crop(rawTelemetry.motor3ThrottlePct),
+        vertMotorsAvgCurr: crop(rawTelemetry.vertMotorsAvgCurr),
+        vertMotorsAvgThrottlePct: crop(rawTelemetry.vertMotorsAvgThrottlePct)
     };
 }
 
 // ─── Pro Chart Rendering Configuration ───────────────────────────────────────
-function getProChartOptions(yTitle = "") {
-    return {
+function getProChartOptions(yTitle = "", y1Title = "") {
+    const opts = {
         responsive: true,
         maintainAspectRatio: false,
         animation: false,
+        interaction: { mode: 'nearest', axis: 'x', intersect: false },
         layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
         plugins: {
             legend: {
                 display: true,
                 position: 'top',
                 labels: { color: '#f8fafc', font: { family: 'Inter', size: 12, weight: 'bold' } }
+            },
+            tooltip: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false,
+                callbacks: {
+                    label: (ctx) => `${ctx.dataset.label}: ${formatAxisNumber(ctx.parsed.y)}`,
+                    title: (items) => items.length ? `t = ${formatElapsedClock(items[0].parsed.x, true)}` : ''
+                }
             }
         },
         scales: {
             x: {
                 type: 'linear',
-                title: { display: true, text: 'Time (seconds)', color: '#94a3b8', font: { size: 11 } },
-                ticks: { color: '#cbd5e1' },
-                grid: { color: 'rgba(255, 255, 255, 0.08)' }
+                title: { display: true, text: 'Elapsed Time (hh:mm:ss)', color: '#94a3b8', font: { size: 11 } },
+                ticks: { color: '#cbd5e1', maxTicksLimit: 10, callback: (v) => formatElapsedClock(v) },
+                grid: { color: 'rgba(148, 163, 184, 0.14)' }
             },
             y: {
                 title: { display: !!yTitle, text: yTitle, color: '#94a3b8', font: { size: 11 } },
-                ticks: { color: '#cbd5e1' },
-                grid: { color: 'rgba(255, 255, 255, 0.08)' }
+                ticks: { color: '#cbd5e1', maxTicksLimit: 10, callback: (v) => formatAxisNumber(v) },
+                grid: { color: 'rgba(148, 163, 184, 0.16)' }
             }
         }
     };
+    if (y1Title) {
+        opts.scales.y1 = {
+            position: 'right',
+            title: { display: true, text: y1Title, color: '#94a3b8', font: { size: 11 } },
+            ticks: { color: '#cbd5e1', maxTicksLimit: 10, callback: (v) => formatAxisNumber(v) },
+            grid: { display: false }
+        };
+    }
+    return opts;
 }
 
 function renderBaroTimeChart() {
@@ -490,87 +714,144 @@ function renderBaroTimeChart() {
     });
 }
 
-function renderAllCharts() {
-    buildLineChart('baroGpsChart', 'baroGpsPanel', [
-        { label: 'Baro[0].Alt', data: filteredTelemetry.baroAlt, color: '#38bdf8' },
-        { label: 'GPS[0].Alt', data: filteredTelemetry.gpsAlt, color: '#f59e0b' }
-    ], 'Altitude (m)');
+// Single source of truth for every chart — shared by the on-screen Chart.js
+// rendering and the vector PDF export, so both always show identical data.
+function getChartDefinitions() {
+    const hasVertMotorCurr = filteredTelemetry.vertMotorsAvgCurr && filteredTelemetry.vertMotorsAvgCurr.length > 0;
+    const battMotorsDef = hasVertMotorCurr
+        ? { id: 'battMotorsChart', panel: 'battMotorsPanel', commentId: 'commentBattMotors',
+            title: 'Battery 1 Current vs Vertical Motors Avg Current (M5-M8)', yTitle: 'Current (A)',
+            series: [
+                { label: 'BAT[0].Curr (Battery 1)', data: filteredTelemetry.batt1Curr, color: '#f43f5e' },
+                { label: 'Avg(M5,M6,M7,M8) Current', data: filteredTelemetry.vertMotorsAvgCurr, color: '#22d3ee' }
+            ] }
+        : { id: 'battMotorsChart', panel: 'battMotorsPanel', commentId: 'commentBattMotors',
+            title: 'Battery 1 Current vs Vertical Motors Avg Throttle (M5-M8)', yTitle: 'Current (A)', y1Title: 'Throttle (%)',
+            note: 'No ESC current telemetry logged — using commanded throttle (RCOU C5-C8) as a motor-activity proxy.',
+            series: [
+                { label: 'BAT[0].Curr (Battery 1)', data: filteredTelemetry.batt1Curr, color: '#f43f5e', axis: 'y' },
+                { label: 'Avg(C5,C6,C7,C8) Throttle %', data: filteredTelemetry.vertMotorsAvgThrottlePct, color: '#22d3ee', dash: [4, 4], axis: 'y1' }
+            ] };
     
-    buildLineChart('imuChart', 'imuPanel', [
-        { label: 'IMU[0].AccZ', data: filteredTelemetry.imuZ, color: '#a855f7' }
-    ], 'Acc (m/s²)');
-    
-    buildLineChart('airspeedChart', 'airspeedPanel', [
-        { label: 'ARSP[0].Airspeed', data: filteredTelemetry.airspeed, color: '#22c55e' },
-        { label: 'GPS[0].Spd', data: filteredTelemetry.gpsSpd, color: '#ec4899' }
-    ], 'Speed (m/s)');
-    
-    buildLineChart('rollChart', 'rollPanel', [
-        { label: 'Roll', data: filteredTelemetry.roll, color: '#38bdf8' },
-        { label: 'DesRoll', data: filteredTelemetry.desRoll, color: '#ef4444', dash: [4, 4] }
-    ], 'Angle (deg)');
-    
-    buildLineChart('pitchChart', 'pitchPanel', [
-        { label: 'Pitch', data: filteredTelemetry.pitch, color: '#38bdf8' },
-        { label: 'DesPitch', data: filteredTelemetry.desPitch, color: '#ef4444', dash: [4, 4] }
-    ], 'Angle (deg)');
-    
-    buildLineChart('yawChart', 'yawPanel', [
-        { label: 'Yaw', data: filteredTelemetry.yaw, color: '#38bdf8' },
-        { label: 'DesYaw', data: filteredTelemetry.desYaw, color: '#ef4444', dash: [4, 4] }
-    ], 'Angle (deg)');
-    
-    // 1. Left Aileron Plot
-    buildLineChart('leftAilChart', 'leftAilPanel', [
-        { label: 'CSRV[1].Pos (Left Ail Servo)', data: filteredTelemetry.csrv1, color: '#3b82f6' },
-        { label: 'AETR.Ail (Aileron Cmd)', data: filteredTelemetry.aetrAil, color: '#93c5fd', dash: [3, 3] }
-    ], 'PWM / Position');
-    
-    // 2. Right Aileron Plot
-    buildLineChart('rightAilChart', 'rightAilPanel', [
-        { label: 'CSRV[9].Pos (Right Ail Servo)', data: filteredTelemetry.csrv9, color: '#60a5fa' },
-        { label: 'AETR.Ail (Aileron Cmd)', data: filteredTelemetry.aetrAil, color: '#93c5fd', dash: [3, 3] }
-    ], 'PWM / Position');
-    
-    // 3. Left Ruddervator Plot
-    buildLineChart('leftRudChart', 'leftRudPanel', [
-        { label: 'CSRV[2].Pos (Left Rud Servo)', data: filteredTelemetry.csrv2, color: '#10b981' },
-        { label: 'AETR.Elev (Elevator Cmd)', data: filteredTelemetry.aetrElev, color: '#a7f3d0', dash: [3, 3] }
-    ], 'PWM / Position');
-    
-    // 4. Right Ruddervator Plot
-    buildLineChart('rightRudChart', 'rightRudPanel', [
-        { label: 'CSRV[4].Pos (Right Rud Servo)', data: filteredTelemetry.csrv4, color: '#34d399' },
-        { label: 'AETR.Elev (Elevator Cmd)', data: filteredTelemetry.aetrElev, color: '#a7f3d0', dash: [3, 3] }
-    ], 'PWM / Position');
-    
-    buildLineChart('escRpmChart', 'escRpmPanel', [
-        { label: 'Motor 5 / A (ESC 4)', data: filteredTelemetry.escRpm?.m5, color: '#a855f7' },
-        { label: 'Motor 2 / C (ESC 5)', data: filteredTelemetry.escRpm?.m2, color: '#c084fc' },
-        { label: 'Motor 3 / D (ESC 6)', data: filteredTelemetry.escRpm?.m3, color: '#06b6d4' },
-        { label: 'Motor 4 / B (ESC 7)', data: filteredTelemetry.escRpm?.m4, color: '#22d3ee' }
-    ], 'RPM');
-    
-    buildLineChart('escCurrChart', 'escCurrPanel', [
-        { label: 'Motor 5 / A (ESC 4)', data: filteredTelemetry.escCurr?.m5, color: '#a855f7' },
-        { label: 'Motor 2 / C (ESC 5)', data: filteredTelemetry.escCurr?.m2, color: '#c084fc' },
-        { label: 'Motor 3 / D (ESC 6)', data: filteredTelemetry.escCurr?.m3, color: '#06b6d4' },
-        { label: 'Motor 4 / B (ESC 7)', data: filteredTelemetry.escCurr?.m4, color: '#22d3ee' }
-    ], 'Current (A)');
-    
-    buildLineChart('escTempChart', 'escTempPanel', [
-        { label: 'Motor 5 / A (ESC 4)', data: filteredTelemetry.escTemp?.m5, color: '#a855f7' },
-        { label: 'Motor 2 / C (ESC 5)', data: filteredTelemetry.escTemp?.m2, color: '#c084fc' },
-        { label: 'Motor 3 / D (ESC 6)', data: filteredTelemetry.escTemp?.m3, color: '#06b6d4' },
-        { label: 'Motor 4 / B (ESC 7)', data: filteredTelemetry.escTemp?.m4, color: '#22d3ee' }
-    ], 'Temperature (°C)');
+    return [
+        { id: 'baroGpsChart', panel: 'baroGpsPanel', commentId: 'commentBaroGps',
+          title: 'Altitude Performance (BARO vs GPS-AGL)',
+          note: Number.isFinite(flightInfo.groundElevMSL) ? `Ref. ground elevation (MSL): ${flightInfo.groundElevMSL.toFixed(1)} m — GPS altitude re-based to AGL for a fair comparison` : '',
+          yTitle: 'Altitude (m)',
+          series: [
+              { label: 'Baro[0].Alt', data: filteredTelemetry.baroAlt, color: '#38bdf8' },
+              { label: 'GPS[0].Alt (AGL)', data: filteredTelemetry.gpsAlt, color: '#f59e0b' }
+          ] },
+        { id: 'imuChart', panel: 'imuPanel', commentId: 'commentImu',
+          title: 'Vertical Dynamic Acceleration (IMU AccZ)', yTitle: 'Acc (m/s²)',
+          series: [{ label: 'IMU[0].AccZ', data: filteredTelemetry.imuZ, color: '#a855f7' }] },
+        { id: 'airspeedChart', panel: 'airspeedPanel', commentId: 'commentAirspeed',
+          title: 'Airspeed vs Ground Speed (Pitot vs GPS)', yTitle: 'Speed (m/s)',
+          series: [
+              { label: 'ARSP[0].Airspeed (Pitot)', data: filteredTelemetry.airspeed, color: '#22c55e' },
+              { label: 'GPS[0].Spd (GPS Ground Speed)', data: filteredTelemetry.gpsSpd, color: '#ec4899' }
+          ] },
+        { id: 'rollChart', panel: 'rollPanel', commentId: 'commentRoll',
+          title: 'Roll Attitude Response (Actual vs Desired)', yTitle: 'Angle (deg)',
+          series: [
+              { label: 'Roll', data: filteredTelemetry.roll, color: '#38bdf8' },
+              { label: 'DesRoll', data: filteredTelemetry.desRoll, color: '#ef4444', dash: [4, 4] }
+          ] },
+        { id: 'pitchChart', panel: 'pitchPanel', commentId: 'commentPitch',
+          title: 'Pitch Attitude Response (Actual vs Desired)', yTitle: 'Angle (deg)',
+          series: [
+              { label: 'Pitch', data: filteredTelemetry.pitch, color: '#38bdf8' },
+              { label: 'DesPitch', data: filteredTelemetry.desPitch, color: '#ef4444', dash: [4, 4] }
+          ] },
+        { id: 'yawChart', panel: 'yawPanel', commentId: 'commentYaw',
+          title: 'Yaw Attitude Response (Actual vs Desired)', yTitle: 'Angle (deg)',
+          series: [
+              { label: 'Yaw', data: filteredTelemetry.yaw, color: '#38bdf8' },
+              { label: 'DesYaw', data: filteredTelemetry.desYaw, color: '#ef4444', dash: [4, 4] }
+          ] },
+        { id: 'leftAilChart', panel: 'leftAilPanel', commentId: 'commentLeftAil',
+          title: 'Left Aileron Servo Feedback & Command', yTitle: 'PWM / Position',
+          series: [
+              { label: 'CSRV[1].Pos (Left Ail Servo)', data: filteredTelemetry.csrv1, color: '#3b82f6' },
+              { label: 'AETR.Ail (Aileron Cmd)', data: filteredTelemetry.aetrAil, color: '#93c5fd', dash: [3, 3] }
+          ] },
+        { id: 'rightAilChart', panel: 'rightAilPanel', commentId: 'commentRightAil',
+          title: 'Right Aileron Servo Feedback & Command', yTitle: 'PWM / Position',
+          series: [
+              { label: 'CSRV[9].Pos (Right Ail Servo)', data: filteredTelemetry.csrv9, color: '#60a5fa' },
+              { label: 'AETR.Ail (Aileron Cmd)', data: filteredTelemetry.aetrAil, color: '#93c5fd', dash: [3, 3] }
+          ] },
+        { id: 'leftRudChart', panel: 'leftRudPanel', commentId: 'commentLeftRud',
+          title: 'Left Ruddervator Servo Feedback & Command', yTitle: 'PWM / Position',
+          series: [
+              { label: 'CSRV[2].Pos (Left Rud Servo)', data: filteredTelemetry.csrv2, color: '#10b981' },
+              { label: 'AETR.Elev (Elevator Cmd)', data: filteredTelemetry.aetrElev, color: '#a7f3d0', dash: [3, 3] }
+          ] },
+        { id: 'rightRudChart', panel: 'rightRudPanel', commentId: 'commentRightRud',
+          title: 'Right Ruddervator Servo Feedback & Command', yTitle: 'PWM / Position',
+          series: [
+              { label: 'CSRV[4].Pos (Right Rud Servo)', data: filteredTelemetry.csrv4, color: '#34d399' },
+              { label: 'AETR.Elev (Elevator Cmd)', data: filteredTelemetry.aetrElev, color: '#a7f3d0', dash: [3, 3] }
+          ] },
+        { id: 'escRpmChart', panel: 'escRpmPanel', commentId: 'commentEscRpm',
+          title: 'VTOL Lift Motors — RPM Dynamics (M5-M8)', yTitle: 'RPM',
+          series: [
+              { label: 'Motor 5 (ESC 4)', data: filteredTelemetry.escRpm?.m5, color: '#a855f7' },
+              { label: 'Motor 6 (ESC 5)', data: filteredTelemetry.escRpm?.m6, color: '#c084fc' },
+              { label: 'Motor 7 (ESC 6)', data: filteredTelemetry.escRpm?.m7, color: '#06b6d4' },
+              { label: 'Motor 8 (ESC 7)', data: filteredTelemetry.escRpm?.m8, color: '#22d3ee' }
+          ] },
+        { id: 'escCurrChart', panel: 'escCurrPanel', commentId: 'commentEscCurr',
+          title: 'VTOL Lift Motors — Current Consumption (M5-M8)', yTitle: 'Current (A)',
+          series: [
+              { label: 'Motor 5 (ESC 4)', data: filteredTelemetry.escCurr?.m5, color: '#a855f7' },
+              { label: 'Motor 6 (ESC 5)', data: filteredTelemetry.escCurr?.m6, color: '#c084fc' },
+              { label: 'Motor 7 (ESC 6)', data: filteredTelemetry.escCurr?.m7, color: '#06b6d4' },
+              { label: 'Motor 8 (ESC 7)', data: filteredTelemetry.escCurr?.m8, color: '#22d3ee' }
+          ] },
+        { id: 'escTempChart', panel: 'escTempPanel', commentId: 'commentEscTemp',
+          title: 'VTOL Lift Motors — Thermal Status (M5-M8)', yTitle: 'Temperature (°C)',
+          series: [
+              { label: 'Motor 5 (ESC 4)', data: filteredTelemetry.escTemp?.m5, color: '#a855f7' },
+              { label: 'Motor 6 (ESC 5)', data: filteredTelemetry.escTemp?.m6, color: '#c084fc' },
+              { label: 'Motor 7 (ESC 6)', data: filteredTelemetry.escTemp?.m7, color: '#06b6d4' },
+              { label: 'Motor 8 (ESC 7)', data: filteredTelemetry.escTemp?.m8, color: '#22d3ee' }
+          ] },
+        // ── Cross-analysis / correlation charts ─────────────────────────
+        battMotorsDef,
+        { id: 'battThrottleChart', panel: 'battThrottlePanel', commentId: 'commentBattThrottle',
+          title: 'Battery 2 Current vs Motor 3 Forward Throttle', yTitle: 'Current (A)', y1Title: 'Throttle (%)',
+          series: [
+              { label: 'BAT[1].Curr (Battery 2)', data: filteredTelemetry.batt2Curr, color: '#f59e0b', axis: 'y' },
+              { label: 'Motor 3 Throttle %', data: filteredTelemetry.motor3ThrottlePct, color: '#38bdf8', dash: [4, 4], axis: 'y1' }
+          ] },
+    ];
 }
 
-function buildLineChart(canvasId, panelId, seriesList, yTitle) {
+function renderAllCharts() {
+    getChartDefinitions().forEach(def => buildLineChart(def.id, def.panel, def.series, def.yTitle, def.y1Title, def.note));
+}
+
+function buildLineChart(canvasId, panelId, seriesList, yTitle, y1Title, note) {
     const validSeries = seriesList.filter(s => s.data && s.data.length > 0);
     if (!validSeries.length) return;
     
-    document.getElementById(panelId).style.display = 'block';
+    const panel = document.getElementById(panelId);
+    panel.style.display = 'block';
+    
+    if (note !== undefined) {
+        const header = panel.querySelector('.chart-header');
+        if (header) {
+            let sub = header.querySelector('.chart-subhead');
+            if (!sub) {
+                sub = document.createElement('span');
+                sub.className = 'chart-subhead';
+                header.appendChild(sub);
+            }
+            sub.textContent = note ? ` — ${note}` : '';
+        }
+    }
+    
     const ctx = document.getElementById(canvasId).getContext('2d');
     if (charts[canvasId]) charts[canvasId].destroy();
     
@@ -583,59 +864,138 @@ function buildLineChart(canvasId, panelId, seriesList, yTitle) {
                 borderColor: s.color,
                 borderWidth: 2,
                 borderDash: s.dash || [],
-                pointRadius: 0
+                pointRadius: 0,
+                yAxisID: s.axis || 'y'
             }))
         },
-        options: getProChartOptions(yTitle)
+        options: getProChartOptions(yTitle, y1Title)
     });
 }
 
-// ─── Image Loader Helper (Fixes CORS and Relative Path Loading) ───────────────
-function loadImageAsDataURL(src) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            resolve({ dataUrl: canvas.toDataURL('image/png'), width: img.naturalWidth, height: img.naturalHeight });
-        };
-        img.onerror = () => reject(new Error(`Failed to load image at ${src}`));
-        img.src = src;
-    });
+// ─── Vector Chart Rendering (native jsPDF paths — no rasterized chart images) ──
+function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
-// ─── Unstretched High-Res Chart Export ────────────────────────────────────────
-function renderChartToHighResImage(chartInstance) {
-    const srcCanvas = chartInstance.canvas;
-    
-    // 1. Get the actual rendered display size (CSS pixels)
-    const rect = srcCanvas.getBoundingClientRect();
-    const displayWidth = rect.width || srcCanvas.offsetWidth || 800;
-    const displayHeight = rect.height || srcCanvas.offsetHeight || 400;
-    
-    // 2. Apply high-res scaling factor based on display size
-    const scale = 2.5; 
-    const offCanvas = document.createElement('canvas');
-    offCanvas.width = displayWidth * scale;
-    offCanvas.height = displayHeight * scale;
-    
-    const ctx = offCanvas.getContext('2d');
-    
-    // 3. Fill dark background
-    ctx.fillStyle = '#0b132b'; 
-    ctx.fillRect(0, 0, offCanvas.width, offCanvas.height);
-    
-    // 4. Draw source canvas stretched cleanly to match exact scaled proportions
-    ctx.drawImage(srcCanvas, 0, 0, offCanvas.width, offCanvas.height);
-    
-    return offCanvas.toDataURL('image/png', 1.0);
+function downsampleSeries(data, maxPoints = 400) {
+    if (data.length <= maxPoints) return data;
+    const step = Math.ceil(data.length / maxPoints);
+    const out = [];
+    for (let i = 0; i < data.length; i += step) out.push(data[i]);
+    return out;
+}
+
+// Draws a fully vector line chart (grid, axes, legend, polylines) straight onto the PDF canvas.
+function drawVectorChart(pdf, def, x, y, width, height) {
+    const validSeries = (def.series || []).filter(s => s.data && s.data.length > 1);
+    if (!validSeries.length) return false;
+
+    const primary = validSeries.filter(s => (s.axis || 'y') === 'y');
+    const secondary = validSeries.filter(s => s.axis === 'y1');
+
+    const domainOf = (list) => {
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        list.forEach(s => s.data.forEach(p => {
+            if (p.time < minX) minX = p.time;
+            if (p.time > maxX) maxX = p.time;
+            if (p.value < minY) minY = p.value;
+            if (p.value > maxY) maxY = p.value;
+        }));
+        if (minY === maxY) { minY -= 1; maxY += 1; }
+        const pad = (maxY - minY) * 0.08;
+        return { minX, maxX, minY: minY - pad, maxY: maxY + pad };
+    };
+
+    let minX = Infinity, maxX = -Infinity;
+    validSeries.forEach(s => s.data.forEach(p => { if (p.time < minX) minX = p.time; if (p.time > maxX) maxX = p.time; }));
+    if (minX === maxX) maxX = minX + 1;
+
+    const dPrimary = primary.length ? domainOf(primary) : null;
+    const dSecondary = secondary.length ? domainOf(secondary) : null;
+
+    const plotLeft = x + 16;
+    const plotRight = x + width - (dSecondary ? 16 : 4);
+    const plotTop = y + 5;
+    const plotH = height - 18;
+    const plotW = plotRight - plotLeft;
+
+    const sx = t => plotLeft + ((t - minX) / (maxX - minX)) * plotW;
+    const syFor = (v, d) => plotTop + plotH - ((v - d.minY) / (d.maxY - d.minY)) * plotH;
+
+    // panel background
+    pdf.setFillColor(248, 250, 252);
+    pdf.roundedRect(x, y, width, height, 2, 2, 'F');
+    pdf.setDrawColor(226, 232, 240);
+    pdf.setLineWidth(0.15);
+    pdf.roundedRect(x, y, width, height, 2, 2, 'D');
+
+    // gridlines + primary y-axis labels
+    pdf.setFontSize(6.5);
+    pdf.setTextColor(100, 116, 139);
+    const DIVS = 6;
+    for (let i = 0; i <= DIVS; i++) {
+        const yy = plotTop + (plotH * i) / DIVS;
+        pdf.setDrawColor(226, 232, 240);
+        pdf.setLineWidth(0.1);
+        pdf.line(plotLeft, yy, plotRight, yy);
+        if (dPrimary) {
+            const v = dPrimary.maxY - ((dPrimary.maxY - dPrimary.minY) * i) / DIVS;
+            pdf.text(formatAxisNumber(v), plotLeft - 2, yy + 1, { align: 'right' });
+        }
+        if (dSecondary) {
+            const v1 = dSecondary.maxY - ((dSecondary.maxY - dSecondary.minY) * i) / DIVS;
+            pdf.text(formatAxisNumber(v1), plotRight + 2, yy + 1, { align: 'left' });
+        }
+    }
+    // x-axis labels
+    for (let i = 0; i <= DIVS; i++) {
+        const t = minX + ((maxX - minX) * i) / DIVS;
+        pdf.text(formatElapsedClock(t), sx(t), plotTop + plotH + 5, { align: 'center' });
+    }
+
+    const plotSeries = (s, d) => {
+        const [r, g, b] = hexToRgb(s.color);
+        pdf.setDrawColor(r, g, b);
+        pdf.setLineWidth(0.35);
+        pdf.setLineDashPattern(s.dash ? [1.2, 1] : [], 0);
+        const data = downsampleSeries(s.data);
+        for (let i = 1; i < data.length; i++) {
+            pdf.line(sx(data[i - 1].time), syFor(data[i - 1].value, d), sx(data[i].time), syFor(data[i].value, d));
+        }
+    };
+    primary.forEach(s => plotSeries(s, dPrimary));
+    secondary.forEach(s => plotSeries(s, dSecondary));
+    pdf.setLineDashPattern([], 0);
+
+    // legend
+    let legendX = plotLeft;
+    const legendY = y + height + 4;
+    pdf.setFontSize(7.2);
+    validSeries.forEach(s => {
+        const [r, g, b] = hexToRgb(s.color);
+        pdf.setFillColor(r, g, b);
+        pdf.rect(legendX, legendY - 2.4, 3, 3, 'F');
+        pdf.setTextColor(51, 65, 85);
+        pdf.text(s.label, legendX + 4.5, legendY);
+        legendX += pdf.getTextWidth(s.label) + 12;
+    });
+
+    return true;
 }
 
 // ─── PDF Generation Engine ───────────────────────────────────────────────────
+function seriesMax(series, useAbs = false){
+    if (!series || !series.length) return null;
+    let max = -Infinity;
+    for (const p of series) {
+        const v = useAbs ? Math.abs(p.value) : p.value;
+        if (v > max) max = v;
+    }
+    return max;
+}
+
 async function generatePDF() {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -679,10 +1039,19 @@ async function generatePDF() {
     pdf.line(margin, y + 2, pageWidth - margin, y + 2);
     
     y += 6;
+    const maxAirspeed = seriesMax(rawTelemetry.airspeed);
+    const maxVertAccel = seriesMax(rawTelemetry.imuZ, true);
+    const batt1MaxCurr = seriesMax(rawTelemetry.batt1Curr);
+    const batt2MaxCurr = seriesMax(rawTelemetry.batt2Curr);
+    const fmtN = (v, unit, dec = 1) => Number.isFinite(v) ? `${v.toFixed(dec)} ${unit}` : 'N/A';
+    
     const summaryData = [
-        ['Firmware Version', flightInfo.firmware, 'Max Altitude', `${flightInfo.maxAlt.toFixed(1)} m`],
-        ['Git Hash / CRC', flightInfo.gitHash, 'Max Speed', `${flightInfo.maxSpeed.toFixed(1)} m/s`],
-        ['Flight Duration', `${flightInfo.duration.toFixed(1)} s`, 'Total Samples', `${flightInfo.totalSamples}`]
+        ['Firmware Version', flightInfo.firmware, 'Vehicle Type', flightInfo.vehicle],
+        ['Git Hash / CRC', flightInfo.gitHash, 'Total Samples', `${flightInfo.totalSamples}`],
+        ['Flight Duration', `${formatElapsedClock(flightInfo.duration)} (${flightInfo.duration.toFixed(1)} s)`, 'Ground Elevation (MSL)', fmtN(flightInfo.groundElevMSL, 'm')],
+        ['Max Altitude (AGL)', `${flightInfo.maxAlt.toFixed(1)} m`, 'Max Speed (GPS)', `${flightInfo.maxSpeed.toFixed(1)} m/s (${(flightInfo.maxSpeed * 3.6).toFixed(1)} km/h)`],
+        ['Max Airspeed (Pitot)', maxAirspeed !== null ? `${maxAirspeed.toFixed(1)} m/s (${(maxAirspeed * 3.6).toFixed(1)} km/h)` : 'N/A', 'Max Vertical Accel (IMU)', fmtN(maxVertAccel, 'm/s²', 2)],
+        ['Battery 1 Max Current', fmtN(batt1MaxCurr, 'A'), 'Battery 2 Max Current', fmtN(batt2MaxCurr, 'A')]
     ];
     
     pdf.autoTable({
@@ -714,7 +1083,7 @@ async function generatePDF() {
     }
     
     // PAGE 2: OBJECTIVES & PARAMETERS
-    pdf.addPage();
+    pdf.addPage('a4', 'portrait');
     y = 20;
     
     pdf.setFont("helvetica", "bold");
@@ -792,7 +1161,7 @@ async function generatePDF() {
     
     // Page break check
     if (nextY > pdf.internal.pageSize.height - 50) {
-        pdf.addPage();
+        pdf.addPage('a4', 'portrait');
         nextY = 20;
     }
     
@@ -845,7 +1214,7 @@ async function generatePDF() {
     }
     
     // PAGE 3: PROPULSION DIAGRAM (PROPERLY LOADED & PROPORTIONED)
-    pdf.addPage();
+    pdf.addPage('a4', 'portrait');
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(13);
     pdf.setTextColor(15, 23, 42);
@@ -878,49 +1247,55 @@ async function generatePDF() {
         pdf.text("Note: Propulsion schematic diagram Base64 data could not be rendered.", margin, 35);
     }
     
-    // SUBSEQUENT PAGES: UNSTRETCHED HIGH-RES CHARTS
-    const chartPanels = [
-        { id: 'baroGpsChart', title: 'Altitude Performance (BARO vs GPS)', commentId: 'commentBaroGps' },
-        { id: 'imuChart', title: 'Vertical Dynamic Acceleration (IMU AccZ)', commentId: 'commentImu' },
-        { id: 'airspeedChart', title: 'Airspeed vs Ground Speed (ARSP vs GPS)', commentId: 'commentAirspeed' },
-        { id: 'rollChart', title: 'Roll Attitude Response (Actual vs Desired)', commentId: 'commentRoll' },
-        { id: 'pitchChart', title: 'Pitch Attitude Response (Actual vs Desired)', commentId: 'commentPitch' },
-        { id: 'yawChart', title: 'Yaw Attitude Response (Actual vs Desired)', commentId: 'commentYaw' },
-        { id: 'leftAilChart', title: 'Left Aileron Servo Feedback & Command', commentId: 'commentLeftAil' },
-        { id: 'rightAilChart', title: 'Right Aileron Servo Feedback & Command', commentId: 'commentRightAil' },
-        { id: 'leftRudChart', title: 'Left Ruddervator Servo Feedback & Command', commentId: 'commentLeftRud' },
-        { id: 'rightRudChart', title: 'Right Ruddervator Servo Feedback & Command', commentId: 'commentRightRud' },
-        { id: 'escRpmChart', title: 'VTOL Quad Motors — RPM Dynamics', commentId: 'commentEscRpm' },
-        { id: 'escCurrChart', title: 'VTOL Quad Motors — Current Consumption', commentId: 'commentEscCurr' },
-        { id: 'escTempChart', title: 'VTOL Quad Motors — Thermal Status', commentId: 'commentEscTemp' }
-    ];
+    // SUBSEQUENT PAGES: NATIVE VECTOR CHARTS (drawn as real PDF paths, not raster images)
+    // These pages are landscape so each chart fills the full page — data pages stay portrait.
+    const chartPanels = getChartDefinitions();
     
     for (const panel of chartPanels) {
         if (!charts[panel.id]) continue;
         
-        pdf.addPage();
+        pdf.addPage('a4', 'landscape');
+        const lw = pdf.internal.pageSize.getWidth();
+        const lh = pdf.internal.pageSize.getHeight();
+        
         pdf.setTextColor(15, 23, 42);
         pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(12);
-        pdf.text(panel.title, margin, 18);
-        pdf.line(margin, 21, pageWidth - margin, 21);
+        pdf.setFontSize(13);
+        pdf.text(panel.title, margin, 14);
+        pdf.line(margin, 17, lw - margin, 17);
         
-        const highResDataUrl = renderChartToHighResImage(charts[panel.id]);
+        let chartY = 21;
+        if (panel.note) {
+            pdf.setFont("helvetica", "italic");
+            pdf.setFontSize(8);
+            pdf.setTextColor(100, 116, 139);
+            pdf.text(pdf.splitTextToSize(panel.note, lw - margin * 2), margin, 20);
+            chartY = 25;
+        }
         
-        // Fixed dimensions to preserve 16:9 widescreen plot aspect ratio (174mm x 90mm)
-        const pdfPlotW = pageWidth - (margin * 2);
-        const pdfPlotH = 90;
-        
-        pdf.addImage(highResDataUrl, 'PNG', margin, 26, pdfPlotW, pdfPlotH);
-        
-        // Comment Box Placement Directly Below Plot
+        // Chart claims the full remaining landscape page, leaving room only for a
+        // comment box (if the reviewer wrote one) and the legend row beneath the plot.
         const comment = document.getElementById(panel.commentId)?.value.trim();
+        const commentBoxH = comment ? 30 : 0;
+        const commentGap = comment ? 10 : 0;
+        const bottomMargin = 8;
+        const pdfPlotW = lw - (margin * 2);
+        const pdfPlotH = lh - chartY - commentBoxH - commentGap - bottomMargin;
+        
+        const drew = drawVectorChart(pdf, panel, margin, chartY, pdfPlotW, pdfPlotH);
+        if (!drew) {
+            pdf.setFont("helvetica", "italic");
+            pdf.setFontSize(10);
+            pdf.setTextColor(148, 163, 184);
+            pdf.text("No telemetry samples available for this chart in the selected time window.", margin, chartY + 34);
+        }
+        
         if (comment) {
-            const commentY = 124;
+            const commentY = chartY + pdfPlotH + commentGap;
             pdf.setFillColor(248, 250, 252);
-            pdf.rect(margin, commentY, pdfPlotW, 35, 'F');
+            pdf.rect(margin, commentY, pdfPlotW, commentBoxH, 'F');
             pdf.setDrawColor(203, 213, 225);
-            pdf.rect(margin, commentY, pdfPlotW, 35, 'D');
+            pdf.rect(margin, commentY, pdfPlotW, commentBoxH, 'D');
             
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(9.5);
