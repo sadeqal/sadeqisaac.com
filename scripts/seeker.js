@@ -8,6 +8,9 @@ const BASE = { lat: 40.2085, lng: -3.7792 };   // CONTAINER-01 location
 const MAX_RANGE_KM = 8;
 const INTERCEPT_THRESHOLD_KM = 0.12;
 const RTB_THRESHOLD_KM = 0.05;
+const TERMINAL_RANGE_KM = 2.4;   // seeker lock range — holds for pilot confirmation (opens the feed earlier in the run)
+const ATTACK_STEP_KM = 0.9;      // per-tick closure once weapons release is confirmed
+const CRUISE_STEP_KM = 0.65;     // per-tick closure while inbound, pre-lock
 const TICK_MS = 1000;
 const AUTO_CONTACT_MIN_MS = 13000;
 const AUTO_CONTACT_MAX_MS = 22000;
@@ -40,6 +43,13 @@ let baseMarker = null;
 const droneMarkers = new Map();   // id -> {marker, el, popup}
 const targetMarkers = new Map();  // id -> marker
 
+// seeker / nose-camera feed state
+let seekerActive = null;   // { droneId, objId, phase, lockT, engageStartRange, closureLast, shake, designateT, designateX, designateY, pingAt }
+let seekerQueue = [];       // [{droneId, objId}] pending locks while feed is busy
+let seekerRAF = null;
+let seekerFrameT = 0;
+let sctx = null;
+
 // -------- DOM refs --------------------------------------------------
 const el = {
     fleetGrid: document.getElementById('fleetGrid'),
@@ -57,6 +67,26 @@ const el = {
     missionsList: document.getElementById('missionsList'),
     consoleLog: document.getElementById('consoleLog'),
     tooltip: document.getElementById('unitTooltip'),
+
+    seekerOverlay: document.getElementById('seekerOverlay'),
+    seekerCanvas: document.getElementById('seekerCanvas'),
+    seekerViewport: document.getElementById('seekerViewport'),
+    seekerFlash: document.getElementById('seekerFlash'),
+    seekerDroneId: document.getElementById('seekerDroneId'),
+    seekerMode: document.getElementById('seekerMode'),
+    seekerStatusLine: document.getElementById('seekerStatusLine'),
+    seekerControls: document.getElementById('seekerControls'),
+    seekerConfirmText: document.getElementById('seekerConfirmText'),
+    seekerEngageBtn: document.getElementById('seekerEngageBtn'),
+    seekerAbortBtn: document.getElementById('seekerAbortBtn'),
+    hudReticle: document.getElementById('hudReticle'),
+    reticleBox: document.getElementById('reticleBox'),
+    hudCompass: document.getElementById('hudCompass'),
+    hudAlt: document.getElementById('hudAlt'),
+    hudSpd: document.getElementById('hudSpd'),
+    hudRng: document.getElementById('hudRng'),
+    hudClsr: document.getElementById('hudClsr'),
+    hudTgt: document.getElementById('hudTgt'),
 };
 
 // -------- GEO HELPERS -------------------------------------------------
@@ -87,6 +117,14 @@ function destPoint(lat, lng, distKm, bearingDeg){
         const dLng = toRad(lng - BASE.lng);
         const y = Math.sin(dLng) * Math.cos(lat2);
         const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+        return (toDeg(Math.atan2(y, x)) + 360) % 360;
+    }
+
+    function bearingTo(lat1, lng1, lat2, lng2){
+        const la1 = toRad(lat1), la2 = toRad(lat2);
+        const dLng = toRad(lng2 - lng1);
+        const y = Math.sin(dLng) * Math.cos(la2);
+        const x = Math.cos(la1) * Math.sin(la2) - Math.sin(la1) * Math.cos(la2) * Math.cos(dLng);
         return (toDeg(Math.atan2(y, x)) + 360) % 360;
     }
     
@@ -150,8 +188,9 @@ function destPoint(lat, lng, distKm, bearingDeg){
         fleet.forEach(d => {
             const cell = el.fleetGrid.querySelector(`.unit[data-id="${d.id}"]`);
             if (!cell) return;
-            cell.classList.remove('op', 'fault', 'flying', 'returning');
-            if (d.state === 'enroute' || d.state === 'armed') cell.classList.add('flying');
+            cell.classList.remove('op', 'fault', 'flying', 'returning', 'engaging');
+            if (d.state === 'terminal') cell.classList.add('engaging');
+            else if (d.state === 'enroute' || d.state === 'armed') cell.classList.add('flying');
             else if (d.state === 'returning') cell.classList.add('returning');
             else cell.classList.add(d.status === 'operational' ? 'op' : 'fault');
         });
@@ -374,7 +413,316 @@ function destPoint(lat, lng, distKm, bearingDeg){
                 el.radarHint.textContent = `tracking ${objectives.length}`;
             }
         }
-        
+
+        // ==========================================================
+        // SEEKER / NOSE CAMERA FEED
+        // simulated EO/IR video (procedural canvas) — no real camera source,
+        // so the feed is generated: scrolling horizon/terrain, grain, and a
+        // tracked target box that tightens into a lock, then a confirmed
+        // terminal attack run with zoom + shake before impact.
+        // ==========================================================
+        function initSeekerCanvas(){
+            sctx = el.seekerCanvas.getContext('2d');
+        }
+
+        function queueSeekerLock(drone, obj){
+            seekerQueue.push({ droneId: drone.id, objId: obj.id });
+            logLine('arm', `SEEKER FEED BUSY — INT-${pad2(drone.id)} lock queued`);
+        }
+
+        function processSeekerQueue(){
+            if (seekerActive || seekerQueue.length === 0) return;
+            const next = seekerQueue.shift();
+            const drone = fleet.find(d => d.id === next.droneId);
+            const obj = objectives.find(o => o.id === next.objId);
+            if (!drone || !obj || drone.state !== 'terminal'){ processSeekerQueue(); return; }
+            openSeekerFeed(drone, obj);
+        }
+
+        function openSeekerFeed(drone, obj){
+            seekerActive = {
+                droneId: drone.id,
+                objId: obj.id,
+                phase: 'locking',      // locking -> tracking -> awaiting -> engaged -> impact
+                lockT: 0,
+                engageStartRange: null,
+                closureLast: null,
+                zoom: 1,
+                shake: 0,
+                designateT: 0,
+                designateX: 0,
+                designateY: 0,
+                pingAt: null,
+            };
+            seekerFrameT = 0;
+            el.seekerDroneId.textContent = `INT-${pad2(drone.id)}`;
+            el.seekerOverlay.classList.add('show');
+            el.seekerViewport.classList.add('designatable');
+            el.seekerControls.style.display = '';
+            el.seekerEngageBtn.disabled = true;
+            el.seekerAbortBtn.disabled = false;
+            el.seekerMode.textContent = 'ACQUIRING';
+            el.seekerMode.className = 'seeker-mode';
+            el.seekerStatusLine.textContent = 'ACQUIRING TARGET LOCK...';
+            el.seekerStatusLine.classList.remove('locked');
+            el.seekerConfirmText.textContent = 'CLICK FEED TO ASSIST TRACKING — STAND BY';
+            el.reticleBox.classList.remove('locked', 'engaged');
+            el.hudReticle.style.left = '50%';
+            el.hudReticle.style.top = '50%';
+            el.seekerCanvas.style.transform = 'scale(1)';
+            logLine('arm', `SEEKER FEED ONLINE → INT-${pad2(drone.id)} nose camera streaming, tracking CT-${pad2(obj.id)}`);
+            if (!seekerRAF) seekerLoop();
+        }
+
+        function closeSeekerFeed(){
+            el.seekerOverlay.classList.remove('show');
+            el.seekerViewport.classList.remove('designatable');
+            el.seekerFlash.classList.remove('hit');
+            el.seekerCanvas.style.transform = 'scale(1)';
+            seekerActive = null;
+            processSeekerQueue();
+        }
+
+        function confirmEngage(){
+            if (!seekerActive || seekerActive.phase !== 'awaiting') return;
+            const drone = fleet.find(d => d.id === seekerActive.droneId);
+            const obj = objectives.find(o => o.id === seekerActive.objId);
+            if (!drone || !obj) return;
+            drone.confirmed = true;
+            drone.attackRun = true;
+            drone.state = 'enroute';
+            seekerActive.phase = 'engaged';
+            seekerActive.engageStartRange = distanceKm(drone.lat, drone.lng, obj.lat, obj.lng);
+            el.seekerMode.textContent = 'ENGAGED';
+            el.seekerMode.className = 'seeker-mode engaged';
+            el.reticleBox.classList.add('engaged');
+            el.seekerStatusLine.textContent = 'WEAPONS RELEASED — TERMINAL ATTACK RUN';
+            el.seekerConfirmText.textContent = 'TERMINAL ATTACK RUN IN PROGRESS';
+            el.seekerEngageBtn.disabled = true;
+            el.seekerViewport.classList.remove('designatable');
+            logLine('hit', `WEAPONS RELEASE AUTHORIZED → INT-${pad2(drone.id)} executing terminal attack on CT-${pad2(obj.id)}`);
+            refreshUnitClasses();
+        }
+
+        function triggerImpact(){
+            if (!seekerActive) return;
+            seekerActive.phase = 'impact';
+            el.seekerFlash.classList.add('hit');
+            el.seekerMode.textContent = 'IMPACT';
+            el.seekerStatusLine.textContent = 'TARGET NEUTRALIZED';
+            el.seekerControls.style.display = 'none';
+            setTimeout(() => { closeSeekerFeed(); }, 1500);
+        }
+
+        function updateSeekerPhase(){
+            const s = seekerActive;
+            if (s.phase === 'locking'){
+                s.lockT++;
+                if (s.lockT >= 35){
+                    s.phase = 'tracking';
+                    el.seekerMode.textContent = 'TRACKING';
+                    el.seekerMode.className = 'seeker-mode tracking';
+                    el.seekerStatusLine.textContent = 'TRACKING CONTACT — REFINING LOCK...';
+                }
+            } else if (s.phase === 'tracking'){
+                s.lockT++;
+                if (s.lockT >= 85){
+                    s.phase = 'awaiting';
+                    el.seekerMode.textContent = 'LOCKED';
+                    el.seekerMode.className = 'seeker-mode locked';
+                    el.seekerStatusLine.textContent = 'TARGET LOCKED — CONFIRM WEAPONS RELEASE';
+                    el.seekerStatusLine.classList.add('locked');
+                    el.seekerConfirmText.textContent = 'WEAPONS HOLD — PILOT CONFIRMATION REQUIRED TO ENGAGE';
+                    el.reticleBox.classList.add('locked');
+                    el.seekerEngageBtn.disabled = false;
+                    el.seekerViewport.classList.remove('designatable');
+                    const drone = fleet.find(d => d.id === s.droneId);
+                    const obj = objectives.find(o => o.id === s.objId);
+                    if (drone && obj) logLine('arm', `TARGET LOCK ESTABLISHED → CT-${pad2(obj.id)} — awaiting pilot confirmation`);
+                }
+            }
+        }
+
+        function drawSeekerNoise(w, h){
+            sctx.fillStyle = 'rgba(255,255,255,0.035)';
+            for (let i = 0; i < 70; i++){
+                sctx.fillRect(Math.random() * w, Math.random() * h, 1, 1);
+            }
+            const vg = sctx.createRadialGradient(w/2, h/2, h*0.22, w/2, h/2, h*0.75);
+            vg.addColorStop(0, 'rgba(0,0,0,0)');
+            vg.addColorStop(1, 'rgba(0,0,0,0.55)');
+            sctx.fillStyle = vg;
+            sctx.fillRect(0, 0, w, h);
+        }
+
+        function drawSeekerMountains(w, h, cy, t){
+            // two semi-transparent parallax ridgelines along the horizon, so the feed reads as a real aerial view
+            const step = 14;
+            const layers = [
+                { speed: 0.15, base: 20, amp: [14, 8, 4], freq: [0.010, 0.023, 0.051], phase: [0, 1.7, 4.1], color: 'rgba(50,80,76,0.32)' },
+                { speed: 0.34, base: 8,  amp: [10, 5],     freq: [0.016, 0.037],        phase: [2.2, 0.6],      color: 'rgba(18,38,36,0.45)' },
+            ];
+            layers.forEach(L => {
+                const parallax = (t * L.speed) % w;
+                sctx.beginPath();
+                sctx.moveTo(-20, cy);
+                for (let x = -20; x <= w + 20; x += step){
+                    const sx = x + parallax;
+                    let ridge = 0;
+                    for (let i = 0; i < L.amp.length; i++) ridge += Math.sin(sx * L.freq[i] + L.phase[i]) * L.amp[i];
+                    sctx.lineTo(x, cy - L.base - ridge);
+                }
+                sctx.lineTo(w + 20, cy);
+                sctx.closePath();
+                sctx.fillStyle = L.color;
+                sctx.fill();
+            });
+        }
+
+        function drawSeekerFrame(){
+            const s = seekerActive;
+            if (s.phase === 'impact') return; // freeze last frame under the flash/impact text
+
+            const drone = fleet.find(d => d.id === s.droneId);
+            const obj = objectives.find(o => o.id === s.objId);
+            if (!drone || !obj){ closeSeekerFeed(); return; }
+
+            const w = el.seekerCanvas.width, h = el.seekerCanvas.height;
+            const cx = w / 2, cy = h / 2;
+            const range = distanceKm(drone.lat, drone.lng, obj.lat, obj.lng);
+            const t = seekerFrameT++;
+
+            // zoom/shake ramps up during the confirmed terminal attack run
+            let zoomFrac = 0;
+            if (s.phase === 'engaged' && s.engageStartRange){
+                const span = Math.max(0.01, s.engageStartRange - INTERCEPT_THRESHOLD_KM);
+                zoomFrac = Math.max(0, Math.min(1, (s.engageStartRange - range) / span));
+            }
+            const zoom = 1 + zoomFrac * 0.9;
+            s.shake = zoomFrac * 7;
+            el.seekerCanvas.style.transform = `scale(${zoom.toFixed(3)})`;
+
+            const roll = Math.sin(t / 140) * 2 + (s.shake ? rand(-s.shake, s.shake) : 0);
+            sctx.save();
+            sctx.clearRect(0, 0, w, h);
+            sctx.translate(cx, cy);
+            sctx.rotate(toRad(roll));
+            sctx.translate(-cx, -cy);
+
+            const grad = sctx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, '#1a2e33');
+            grad.addColorStop(0.48, '#243b3f');
+            grad.addColorStop(0.5, '#0d1a12');
+            grad.addColorStop(1, '#050b07');
+            sctx.fillStyle = grad;
+            sctx.fillRect(-60, -60, w + 120, h + 120);
+
+            drawSeekerMountains(w, h, cy, t);
+
+            // scrolling ground grid — speed tied to interceptor airspeed
+            const spd = drone.speedKmh || 260;
+            const scroll = (t * (spd / 260) * 2) % 40;
+            sctx.strokeStyle = 'rgba(70,224,196,0.10)';
+            sctx.lineWidth = 1;
+            for (let gy = cy + scroll; gy < h + 40; gy += 40){
+                sctx.beginPath(); sctx.moveTo(0, gy); sctx.lineTo(w, gy); sctx.stroke();
+            }
+            for (let gx = -w; gx < w * 2; gx += 60){
+                sctx.beginPath();
+                sctx.moveTo(cx + (gx - cx) * 0.2, cy);
+                sctx.lineTo(gx, h);
+                sctx.stroke();
+            }
+
+            // drifting haze puffs
+            for (let i = 0; i < 5; i++){
+                const px = ((t * 0.3 + i * 160) % (w + 200)) - 100;
+                const py = 60 + i * 22 + Math.sin(t / 200 + i) * 6;
+                sctx.fillStyle = 'rgba(255,255,255,0.03)';
+                sctx.beginPath(); sctx.ellipse(px, py, 70, 14, 0, 0, Math.PI * 2); sctx.fill();
+            }
+            sctx.restore();
+
+            // target: jitters toward screen center as lock quality improves
+            const lockProgress = Math.min(1, s.lockT / 90);
+            const jitter = (1 - lockProgress) * 36;
+            let tx = cx + Math.sin(t / 17) * jitter * 0.6 + Math.sin(t / 9) * jitter * 0.3;
+            let ty = cy + Math.cos(t / 15) * jitter * 0.5;
+
+            // manual designate: operator click pulls the seeker box onto the target directly
+            if (s.designateT > 0){
+                const blend = s.designateT / 45;
+                tx = tx * (1 - blend) + s.designateX * blend;
+                ty = ty * (1 - blend) + s.designateY * blend;
+                s.designateT--;
+            }
+
+            sctx.save();
+            sctx.translate(tx, ty);
+            sctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            sctx.fillStyle = 'rgba(8,16,15,0.9)';
+            sctx.beginPath(); sctx.ellipse(0, 0, 10, 3, 0, 0, Math.PI * 2); sctx.fill(); sctx.stroke();
+            sctx.restore();
+
+            if (s.pingAt){
+                s.pingAt.t++;
+                const p = s.pingAt.t / 20;
+                if (p <= 1){
+                    sctx.strokeStyle = `rgba(70,224,196,${1 - p})`;
+                    sctx.lineWidth = 2;
+                    sctx.beginPath();
+                    sctx.arc(s.pingAt.x, s.pingAt.y, 10 + p * 30, 0, Math.PI * 2);
+                    sctx.stroke();
+                } else {
+                    s.pingAt = null;
+                }
+            }
+
+            drawSeekerNoise(w, h);
+
+            // reticle box: tightens while acquiring lock, holds while awaiting confirm — always centered on the target
+            const boxSize = s.phase === 'engaged' || s.phase === 'impact'
+                ? 90
+                : Math.max(90, 240 - lockProgress * 150);
+            el.reticleBox.style.width = boxSize + 'px';
+            el.reticleBox.style.height = boxSize + 'px';
+            el.hudReticle.style.left = (tx / w * 100) + '%';
+            el.hudReticle.style.top = (ty / h * 100) + '%';
+
+            updateSeekerPhase();
+
+            if (t % 12 === 0){
+                const closure = s.closureLast != null ? (s.closureLast - range) : 0;
+                s.closureLast = range;
+                el.hudAlt.textContent = (drone.state === 'returning' ? randInt(35, 60) : randInt(60, 120)) + 'm';
+                el.hudSpd.textContent = (drone.speedKmh || 260) + 'km/h';
+                el.hudRng.textContent = range.toFixed(2) + 'km';
+                el.hudClsr.textContent = (closure >= 0 ? '-' : '+') + Math.abs(Math.round(closure * 1000)) + 'm/s';
+                el.hudTgt.textContent = 'CT-' + pad2(obj.id);
+                el.hudCompass.textContent = 'HDG ' + Math.round(bearingTo(drone.lat, drone.lng, obj.lat, obj.lng)) + '°';
+            }
+        }
+
+        function seekerLoop(){
+            if (!seekerActive){ seekerRAF = null; return; }
+            drawSeekerFrame();
+            seekerRAF = requestAnimationFrame(seekerLoop);
+        }
+
+        el.seekerViewport.addEventListener('click', (e) => {
+            if (!seekerActive || (seekerActive.phase !== 'locking' && seekerActive.phase !== 'tracking')) return;
+            const rect = el.seekerCanvas.getBoundingClientRect();
+            const w = el.seekerCanvas.width, h = el.seekerCanvas.height;
+            const x = (e.clientX - rect.left) / rect.width * w;
+            const y = (e.clientY - rect.top) / rect.height * h;
+            seekerActive.designateT = 45;
+            seekerActive.designateX = x;
+            seekerActive.designateY = y;
+            seekerActive.lockT = Math.min(seekerActive.lockT + 25, 84);
+            seekerActive.pingAt = { x, y, t: 0 };
+            el.seekerStatusLine.textContent = 'MANUAL DESIGNATE — RE-SLAVING SEEKER...';
+        });
+
         // ==========================================================
         // MISSIONS / OBJECTIVES
         // ==========================================================
@@ -416,6 +764,8 @@ function destPoint(lat, lng, distKm, bearingDeg){
                 drone.missionId = missionSeq++;
                 drone.battery = randInt(78, 97);
                 drone.speedKmh = randInt(240, 360);
+                drone.confirmed = false;
+                drone.attackRun = false;
                 obj.assignedDroneId = drone.id;
                 obj.missionId = drone.missionId;
                 
@@ -434,9 +784,13 @@ function destPoint(lat, lng, distKm, bearingDeg){
         
         function abortMission(droneId){
             const drone = fleet.find(d => d.id === droneId);
-            if (!drone || (drone.state !== 'enroute' && drone.state !== 'armed')) return;
+            if (!drone || !['enroute', 'armed', 'terminal'].includes(drone.state)) return;
             const obj = objectives.find(o => o.assignedDroneId === droneId);
             drone.state = 'returning';
+            drone.confirmed = false;
+            drone.attackRun = false;
+            seekerQueue = seekerQueue.filter(q => q.droneId !== droneId);
+            if (seekerActive && seekerActive.droneId === droneId) closeSeekerFeed();
             logLine('abort', `ABORT CMD → INT-${pad2(drone.id)} (operator) — RTL issued`);
             if (obj){
                 obj.assignedDroneId = null;
@@ -469,7 +823,19 @@ function destPoint(lat, lng, distKm, bearingDeg){
             fleet.filter(d => d.state === 'enroute').forEach(d => {
                 const obj = objectives.find(o => o.assignedDroneId === d.id);
                 if (!obj){ d.state = 'returning'; return; }
-                const stepKm = 0.45;
+
+                const preDist = distanceKm(d.lat, d.lng, obj.lat, obj.lng);
+
+                // seeker lock range reached — hold position, stream nose camera, await pilot confirmation
+                if (!d.confirmed && preDist <= TERMINAL_RANGE_KM){
+                    d.state = 'terminal';
+                    logLine('arm', `SEEKER LOCK RANGE → INT-${pad2(d.id)} holding, nose camera streaming CT-${pad2(obj.id)}`);
+                    if (seekerActive) queueSeekerLock(d, obj); else openSeekerFeed(d, obj);
+                    refreshUnitClasses();
+                    return;
+                }
+
+                const stepKm = d.attackRun ? ATTACK_STEP_KM : CRUISE_STEP_KM;
                 const p = moveToward(d.lat, d.lng, obj.lat, obj.lng, stepKm);
                 d.lat = p.lat; d.lng = p.lng;
                 const rec = droneMarkers.get(d.id);
@@ -480,6 +846,9 @@ function destPoint(lat, lng, distKm, bearingDeg){
                     logLine('hit', `INTERCEPT CONFIRMED → CT-${pad2(obj.id)} neutralized by INT-${pad2(d.id)} (range ${dist.toFixed(2)}km)`);
                     obj.status = 'intercepted';
                     d.state = 'returning';
+                    d.confirmed = false;
+                    d.attackRun = false;
+                    if (seekerActive && seekerActive.droneId === d.id) triggerImpact();
                 }
                 if (rec && rec.popup.isOpen()) updateDronePopup(d, obj);
             });
@@ -518,7 +887,7 @@ function destPoint(lat, lng, distKm, bearingDeg){
         // MISSIONS PANEL
         // ==========================================================
         function renderMissions(){
-            const active = fleet.filter(d => d.state === 'enroute' || d.state === 'armed' || d.state === 'returning');
+            const active = fleet.filter(d => d.state === 'enroute' || d.state === 'armed' || d.state === 'returning' || d.state === 'terminal');
             if (active.length === 0){
                 el.missionsList.innerHTML = '<div class="missions-empty">No active intercepts</div>';
                 return;
@@ -526,6 +895,7 @@ function destPoint(lat, lng, distKm, bearingDeg){
             el.missionsList.innerHTML = active.map(d => {
                 const obj = objectives.find(o => o.assignedDroneId === d.id);
                 const label = d.state === 'returning' ? 'RETURNING TO BASE' :
+                d.state === 'terminal' ? 'SEEKER LOCK — AWAITING PILOT CONFIRM' :
                 d.state === 'armed' ? 'ARMING' :
                 obj ? `INTERCEPT CT-${pad2(obj.id)}` : 'ENROUTE';
                 const dist = obj ? distanceKm(d.lat, d.lng, obj.lat, obj.lng) : 0;
@@ -534,7 +904,7 @@ function destPoint(lat, lng, distKm, bearingDeg){
       <div class="mission-row">
         <div class="mr-top">
           <span class="mr-title">INT-${pad2(d.id)}</span>
-          ${(d.state === 'enroute' || d.state === 'armed') ? `<button class="mr-cancel" data-abort-id="${d.id}">ABORT</button>` : ''}
+          ${(d.state === 'enroute' || d.state === 'armed' || d.state === 'terminal') ? `<button class="mr-cancel" data-abort-id="${d.id}">ABORT</button>` : ''}
         </div>
         <div class="mr-line"><span>Status</span><span>${label}</span></div>
         ${obj ? `<div class="mr-line"><span>Contact coord</span><span>${obj.lat.toFixed(4)}, ${obj.lng.toFixed(4)}</span></div>
@@ -559,7 +929,7 @@ function destPoint(lat, lng, distKm, bearingDeg){
         // ==========================================================
         function updateStats(){
             el.statOperational.textContent = fleet.filter(d => d.status === 'operational').length;
-            el.statFlying.textContent = fleet.filter(d => d.state === 'enroute' || d.state === 'armed' || d.state === 'returning').length;
+            el.statFlying.textContent = fleet.filter(d => d.state === 'enroute' || d.state === 'armed' || d.state === 'returning' || d.state === 'terminal').length;
             el.statIssues.textContent = fleet.filter(d => d.status === 'fault').length;
             el.statContacts.textContent = objectives.length;
         }
@@ -610,6 +980,8 @@ function destPoint(lat, lng, distKm, bearingDeg){
             el.radarSweep.classList.remove('live');
             clearInterval(tickTimer);
             clearTimeout(autoContactTimer);
+            seekerQueue = [];
+            if (seekerActive) closeSeekerFeed();
             logLine('sys', 'SYSTEM STANDBY — simulation paused');
             updateRadarReadout();
         }
@@ -620,6 +992,12 @@ function destPoint(lat, lng, distKm, bearingDeg){
             spawnObjective();
             assignMissions();
         });
+
+        el.seekerEngageBtn.addEventListener('click', confirmEngage);
+        el.seekerAbortBtn.addEventListener('click', () => {
+            if (!seekerActive) return;
+            abortMission(seekerActive.droneId);
+        });
         
         // ==========================================================
         // INIT
@@ -629,6 +1007,7 @@ function destPoint(lat, lng, distKm, bearingDeg){
             renderFleetGrid();
             updateStats();
             initMap();
+            initSeekerCanvas();
             drawRadar();
             updateRadarReadout();
             tickClock();

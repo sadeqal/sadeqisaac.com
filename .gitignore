@@ -7,6 +7,10 @@ scripts/token.json
 scripts/analyticsCredentials.js
 scripts/analyticsTracking.js
 
+html/temp.html
+styles/temp.css
+scripts/temp.js
+
 # Ignore Python cache
 __pycache__/
 *.pyc

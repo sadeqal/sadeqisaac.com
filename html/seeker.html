@@ -14,7 +14,7 @@
 <div class="scanlines"></div>
 <div class="vignette"></div>
 
-<header class="hud-bar">
+<header class="hud-bar"> 
   <div class="hud-left">
     <div class="brand">
       <span class="brand-mark">◈</span>
@@ -115,6 +115,51 @@
 </footer>
 
 <div class="tooltip" id="unitTooltip"></div>
+
+<!-- SEEKER / NOSE CAMERA FEED -->
+<div class="seeker-overlay" id="seekerOverlay">
+  <div class="seeker-window">
+    <div class="seeker-titlebar">
+      <span class="seeker-title">EO/IR SEEKER — NOSE CAM // <span id="seekerDroneId">INT-00</span></span>
+      <span class="seeker-mode" id="seekerMode">STANDBY</span>
+    </div>
+    <div class="seeker-viewport" id="seekerViewport">
+      <canvas id="seekerCanvas" width="640" height="400"></canvas>
+      <div class="seeker-flash" id="seekerFlash"></div>
+      <div class="seeker-hud">
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+        <div class="hud-compass" id="hudCompass">HDG ---°</div>
+        <div class="hud-reticle" id="hudReticle">
+          <div class="reticle-box" id="reticleBox"></div>
+          <div class="reticle-cross"></div>
+        </div>
+        <div class="hud-left-col">
+          <div class="hud-readout"><span>ALT</span><b id="hudAlt">--</b></div>
+          <div class="hud-readout"><span>SPD</span><b id="hudSpd">--</b></div>
+          <div class="hud-readout"><span>RNG</span><b id="hudRng">--</b></div>
+        </div>
+        <div class="hud-right-col">
+          <div class="hud-readout"><span>CLSR</span><b id="hudClsr">--</b></div>
+          <div class="hud-readout"><span>TGT</span><b id="hudTgt">--</b></div>
+          <div class="hud-readout"><span>FEED</span><b id="hudFeedMode">EO</b></div>
+        </div>
+        <div class="hud-bottom">
+          <div class="seeker-status-line" id="seekerStatusLine">ACQUIRING TARGET LOCK...</div>
+        </div>
+      </div>
+    </div>
+    <div class="seeker-controls" id="seekerControls">
+      <div class="seeker-confirm-text" id="seekerConfirmText">WEAPONS HOLD — PILOT CONFIRMATION REQUIRED TO ENGAGE</div>
+      <div class="seeker-btns">
+        <button class="btn btn-abort-eng" id="seekerAbortBtn">ABORT / RTB</button>
+        <button class="btn btn-engage" id="seekerEngageBtn" disabled>CONFIRM ENGAGE</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
 <script src="../scripts/seeker.js"></script>
