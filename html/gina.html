@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clínica Dental SIRO — Concepto de rediseño digital</title>
+<meta name="description" content="Clínica Dental SIRO — odontología de precisión en Navalcarnero y Barrio del Pilar. Ortodoncia invisible, implantes y estética dental con 25 años de experiencia.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%230d2b26'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='26' fill='%23cda86b' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/gina.css">
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- Custom cursor (desktop only, purely decorative) -->
+<div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+<!-- Announcement bar -->
+<div class="announce">
+  <p><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Primera consulta y diagnóstico digital 3D — <strong>gratis</strong> este mes <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></p>
+</div>
+
+<!-- Navbar -->
+<header class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="#top" class="brand">
+      <img class="brand-mark" src="../images/siro.png" alt="SIRO">
+      <span class="brand-text">SIRO <em>clínica dental</em></span>
+    </a>
+    <nav class="nav-links" id="nav-menu">
+      <a href="gina-tratamientos.html">Tratamientos</a>
+      <a href="gina-nosotros.html">Nosotros</a>
+      <div class="nav-item-dropdown" id="nav-ubicaciones">
+        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">Ubicaciones <i class="fa-solid fa-chevron-down caret" aria-hidden="true"></i></button>
+        <div class="nav-dropdown">
+          <a href="gina-navalcarnero.html"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Navalcarnero</a>
+          <a href="gina-pilar.html"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Barrio del Pilar</a>
+        </div>
+      </div>
+      <a href="#opiniones">Opiniones</a>
+      <a href="gina-contacto.html">Contacto</a>
+    </nav>
+    <div class="navbar-actions">
+      <a href="tel:+34622758727" class="nav-phone"><i class="fa-solid fa-phone" aria-hidden="true"></i> 622 75 87 27</a>
+      <a href="gina-contacto.html" class="btn btn-gold btn-sm">Reserva tu cita</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-blob blob-1" aria-hidden="true"></div>
+    <div class="hero-blob blob-2" aria-hidden="true"></div>
+    <div class="hero-grid" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <div class="hero-text" data-reveal>
+        <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Concepto de nueva imagen digital para SIRO</span>
+        <h1>Sonrisas que <span class="italic">se notan</span>. Cuidado que <span class="italic">se siente</span>.</h1>
+        <p class="hero-sub">
+          Clínica Dental SIRO lleva 25 años cuidando sonrisas en Navalcarnero y Barrio del Pilar.
+          Esta es la propuesta de una experiencia digital a la altura de ese cuidado: diagnóstico 3D,
+          ortodoncia invisible SureSmile® y estética dental sin franquicias ni frialdad.
+        </p>
+        <div class="hero-cta">
+          <a href="gina-contacto.html" class="btn btn-gold btn-lg">Reserva tu cita gratis <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          <a href="gina-tratamientos.html" class="btn btn-ghost btn-lg">Ver tratamientos</a>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-item">
+            <div class="stars" aria-hidden="true"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <span>Excelente en Google · Navalcarnero &amp; Barrio del Pilar</span>
+          </div>
+          <div class="trust-divider" aria-hidden="true"></div>
+          <div class="trust-item"><strong>25</strong> años cuidando sonrisas</div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-reveal>
+        <div class="glass-card card-main">
+          <div class="card-top">
+            <span class="pill pill-live"><i class="fa-solid fa-circle" aria-hidden="true"></i> Diagnóstico en vivo</span>
+            <i class="fa-solid fa-cube" aria-hidden="true"></i>
+          </div>
+          <div class="smile-score">
+            <svg viewBox="0 0 120 120" class="score-ring">
+              <circle cx="60" cy="60" r="52" class="ring-bg"/>
+              <circle cx="60" cy="60" r="52" class="ring-fg"/>
+            </svg>
+            <div class="score-value"><span class="counter" data-target="98">0</span><span>%</span></div>
+          </div>
+          <p class="card-caption">Salud bucal proyectada tras tu plan personalizado</p>
+        </div>
+
+        <div class="glass-card card-float card-float-1">
+          <i class="fa-solid fa-teeth" aria-hidden="true"></i>
+          <div><strong>Ortodoncia invisible</strong><span>Resultados en 6 meses</span></div>
+        </div>
+        <div class="glass-card card-float card-float-2">
+          <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
+          <div><strong>Sedación consciente</strong><span>Cero ansiedad, cero dolor</span></div>
+        </div>
+        <div class="glass-card card-float card-float-3">
+          <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+          <div><strong>Cita en 24h</strong><span>Agenda 100% online</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-cue" aria-hidden="true"><span></span> Desliza</div>
+  </section>
+
+  <!-- MARQUEE -->
+  <section class="marquee-wrap" aria-hidden="true">
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>ORTODONCIA INVISIBLE</span><span>·</span>
+        <span>IMPLANTES DENTALES</span><span>·</span>
+        <span>BLANQUEAMIENTO LED</span><span>·</span>
+        <span>CARILLAS DE PORCELANA</span><span>·</span>
+        <span>ODONTOPEDIATRÍA</span><span>·</span>
+        <span>ESTÉTICA FACIAL</span><span>·</span>
+        <span>ORTODONCIA INVISIBLE</span><span>·</span>
+        <span>IMPLANTES DENTALES</span><span>·</span>
+        <span>BLANQUEAMIENTO LED</span><span>·</span>
+        <span>CARILLAS DE PORCELANA</span><span>·</span>
+        <span>ODONTOPEDIATRÍA</span><span>·</span>
+        <span>ESTÉTICA FACIAL</span><span>·</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stat" data-reveal>
+      <span class="counter" data-target="25">0</span><span class="suffix">+</span>
+      <p>Años de experiencia</p>
+    </div>
+    <div class="stat" data-reveal>
+      <span class="counter" data-target="6400">0</span><span class="suffix">+</span>
+      <p>Sonrisas transformadas</p>
+    </div>
+    <div class="stat" data-reveal>
+      <span class="counter" data-target="4">0</span><span class="suffix">.9★</span>
+      <p>Valoración media</p>
+    </div>
+    <div class="stat" data-reveal>
+      <span class="counter" data-target="12">0</span><span class="suffix">min</span>
+      <p>Tiempo medio de espera</p>
+    </div>
+  </section>
+
+  <!-- TREATMENTS -->
+  <section class="section" id="tratamientos">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow"><i class="fa-solid fa-tooth" aria-hidden="true"></i> Tratamientos</span>
+      <h2>El cuidado que buscas, elevado a otro nivel</h2>
+      <p>Desde la primera limpieza hasta la sonrisa de tus sueños, cada tratamiento está diseñado
+      alrededor de ti, con tecnología digital y un equipo que te acompaña en cada paso.</p>
+    </div>
+
+    <div class="grid-cards">
+      <article class="card-treat" data-reveal>
+        <i class="fa-solid fa-teeth-open" aria-hidden="true"></i>
+        <h3>Ortodoncia invisible</h3>
+        <p>Alinea tu sonrisa sin que nadie lo note, con seguimiento digital 3D en cada cita.</p>
+        <a href="gina-tratamiento.html?t=ortodoncia-invisible">Descubrir <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </article>
+      <article class="card-treat" data-reveal>
+        <i class="fa-solid fa-sun" aria-hidden="true"></i>
+        <h3>Blanqueamiento dental</h3>
+        <p>Hasta varios tonos más blancos en una sola sesión, con protocolo de baja sensibilidad.</p>
+        <a href="gina-tratamiento.html?t=blanqueamiento-dental">Descubrir <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </article>
+      <article class="card-treat" data-reveal>
+        <i class="fa-solid fa-gem" aria-hidden="true"></i>
+        <h3>Carillas dentales</h3>
+        <p>Diseño de sonrisa digital: verás el resultado antes de empezar el tratamiento.</p>
+        <a href="gina-tratamiento.html?t=carillas-dentales">Descubrir <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </article>
+      <article class="card-treat" data-reveal>
+        <i class="fa-solid fa-bone" aria-hidden="true"></i>
+        <h3>Implantes dentales</h3>
+        <p>Cirugía guiada por ordenador para una precisión milimétrica y cicatrización más rápida.</p>
+        <a href="gina-tratamiento.html?t=implantes-dentales">Descubrir <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </article>
+      <article class="card-treat" data-reveal>
+        <i class="fa-solid fa-child-reaching" aria-hidden="true"></i>
+        <h3>Odontopediatría</h3>
+        <p>La primera visita al dentista, convertida en una experiencia divertida y sin miedo.</p>
+        <a href="gina-tratamiento.html?t=odontopediatria">Descubrir <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </article>
+      <article class="card-treat" data-reveal>
+        <i class="fa-solid fa-spa" aria-hidden="true"></i>
+        <h3>Armonización orofacial</h3>
+        <p>Estética facial para realzar tu sonrisa dentro del conjunto de tu rostro.</p>
+        <a href="gina-tratamiento.html?t=armonizacion-orofacial">Descubrir <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </article>
+    </div>
+
+    <div style="text-align:center;margin-top:44px;" data-reveal>
+      <a href="gina-tratamientos.html" class="btn btn-ghost btn-lg">Ver los 17 tratamientos <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section class="partners-row" data-reveal aria-label="Tecnología y partners">
+    <div class="partner-badge"><i class="fa-solid fa-teeth-open" aria-hidden="true"></i> SureSmile® Ortodoncia digital</div>
+    <div class="partner-badge"><i class="fa-solid fa-cube" aria-hidden="true"></i> Dentsply Sirona</div>
+    <div class="partner-badge"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> 25 años de confianza</div>
+  </section>
+
+  <!-- WHY US / ABOUT -->
+  <section class="section section-why" id="nosotros">
+    <div class="why-visual" data-reveal>
+      <div class="why-frame">
+        <img class="why-photo" src="../images/farZhina.jpg" alt="Farshid y Zhina, odontólogos de Clínica Dental SIRO">
+        <div class="why-badge"><i class="fa-solid fa-award" aria-hidden="true"></i> Farshid &amp; Zhina · Odontólogos</div>
+      </div>
+      <div class="glass-card why-float">
+        <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+        <div><strong>"Nunca pensé que ir al dentista pudiera ser tan agradable."</strong><span>— Paciente de SIRO</span></div>
+      </div>
+    </div>
+
+    <div class="why-text" data-reveal>
+      <span class="eyebrow"><i class="fa-solid fa-heart" aria-hidden="true"></i> Por qué SIRO</span>
+      <h2>Odontología de precisión con alma de boutique</h2>
+      <p class="lead">No somos una franquicia más. Somos un equipo pequeño, cercano y obsesionado
+      con los detalles — desde el trato cercano en cada visita hasta el seguimiento digital de tu
+      tratamiento. 25 años en Navalcarnero y más de 10 en Barrio del Pilar avalan esa forma de trabajar.</p>
+
+      <ul class="feature-list">
+        <li><i class="fa-solid fa-cube" aria-hidden="true"></i><div><strong>Diagnóstico 3D en tiempo real</strong><span>Ves tu boca y tu plan de tratamiento en pantalla, sin sorpresas.</span></div></li>
+        <li><i class="fa-solid fa-user-doctor" aria-hidden="true"></i><div><strong>Trato cercano y personalizado</strong><span>El mismo equipo te acompaña de principio a fin.</span></div></li>
+        <li><i class="fa-solid fa-shield-heart" aria-hidden="true"></i><div><strong>Cero ansiedad</strong><span>Sedación consciente y un ambiente pensado para relajarte.</span></div></li>
+        <li><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i><div><strong>Todo digital</strong><span>Agenda, recordatorios y seguimiento desde tu móvil.</span></div></li>
+      </ul>
+      <a href="gina-nosotros.html" class="btn btn-ghost btn-lg" style="margin-top:10px;">Conoce al equipo <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section section-process" id="experiencia">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow"><i class="fa-solid fa-route" aria-hidden="true"></i> Tu experiencia</span>
+      <h2>Cuatro pasos hacia tu mejor sonrisa</h2>
+    </div>
+    <div class="process-track">
+      <div class="process-step" data-reveal>
+        <span class="step-num">01</span>
+        <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+        <h3>Reserva online</h3>
+        <p>Elige el horario que mejor te venga en menos de un minuto.</p>
+      </div>
+      <div class="process-step" data-reveal>
+        <span class="step-num">02</span>
+        <i class="fa-solid fa-cube" aria-hidden="true"></i>
+        <h3>Diagnóstico 3D</h3>
+        <p>Escaneamos tu sonrisa y diseñamos tu plan a medida, sin compromiso.</p>
+      </div>
+      <div class="process-step" data-reveal>
+        <span class="step-num">03</span>
+        <i class="fa-solid fa-teeth" aria-hidden="true"></i>
+        <h3>Tratamiento a medida</h3>
+        <p>Ejecutamos el plan con seguimiento digital en cada visita.</p>
+      </div>
+      <div class="process-step" data-reveal>
+        <span class="step-num">04</span>
+        <i class="fa-solid fa-face-smile-beam" aria-hidden="true"></i>
+        <h3>Sonrisa SIRO</h3>
+        <p>Disfruta del resultado — y del mantenimiento sin complicaciones.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- UBICACIONES -->
+  <section class="section" id="ubicaciones">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Ubicaciones</span>
+      <h2>Dos clínicas, la misma cercanía de siempre</h2>
+      <p>25 años en Navalcarnero y más de 10 en Barrio del Pilar. Ven a visitarnos o resuelve tu duda por teléfono o WhatsApp.</p>
+    </div>
+
+    <div class="location-grid">
+      <article class="location-card" data-reveal>
+        <iframe class="location-map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=Calle+de+la+Constituci%C3%B3n+140+Navalcarnero+Madrid&output=embed"
+          title="Mapa Clínica Dental SIRO Navalcarnero"></iframe>
+        <div class="location-body">
+          <h3>SIRO Navalcarnero</h3>
+          <div class="location-detail"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><div><strong>Dirección</strong><span>Calle de la Constitución, 140 · 28600 Navalcarnero</span></div></div>
+          <div class="location-detail"><i class="fa-solid fa-phone" aria-hidden="true"></i><div><strong>Teléfono &amp; WhatsApp</strong><span>+34 622 75 87 27</span></div></div>
+          <div class="location-detail"><i class="fa-solid fa-clock" aria-hidden="true"></i><div><strong>Horario</strong><span>Lun–Jue 9:30–13:30 y 16:00–20:00 · Vie 9:30–13:30</span></div></div>
+          <div class="location-actions">
+            <a href="gina-navalcarnero.html" class="btn btn-ghost btn-sm">Ver clínica <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <a href="tel:+34622758727" class="btn btn-gold btn-sm">Llamar</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="location-card" data-reveal>
+        <iframe class="location-map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=Avenida+el+Ferrol+1+Madrid&output=embed"
+          title="Mapa Clínica Dental SIRO Barrio del Pilar"></iframe>
+        <div class="location-body">
+          <h3>SIRO Barrio del Pilar</h3>
+          <div class="location-detail"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><div><strong>Dirección</strong><span>Avenida el Ferrol, 1 · 28029 Madrid</span></div></div>
+          <div class="location-detail"><i class="fa-solid fa-phone" aria-hidden="true"></i><div><strong>Teléfono &amp; WhatsApp</strong><span>+34 681 94 18 29</span></div></div>
+          <div class="location-detail"><i class="fa-solid fa-clock" aria-hidden="true"></i><div><strong>Horario</strong><span>Lun–Jue 9:30–13:30 y 16:00–20:00 · Vie 9:30–13:30</span></div></div>
+          <div class="location-actions">
+            <a href="gina-pilar.html" class="btn btn-ghost btn-sm">Ver clínica <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <a href="tel:+34681941829" class="btn btn-gold btn-sm">Llamar</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section section-dark" id="opiniones">
+    <div class="section-head light" data-reveal>
+      <span class="eyebrow"><i class="fa-solid fa-quote-left" aria-hidden="true"></i> Opiniones</span>
+      <h2>Lo que dicen quienes ya confiaron en nosotros</h2>
+    </div>
+
+    <div class="testimonial-wrap" data-reveal>
+      <button class="test-arrow test-prev" id="test-prev" aria-label="Anterior"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+
+      <div class="testimonial-viewport">
+        <div class="testimonial-track" id="testimonial-track">
+          <blockquote class="testimonial">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p>"Cambié de clínica solo por la experiencia digital. Vi mi sonrisa final antes de empezar el tratamiento y el resultado fue exactamente ese."</p>
+            <footer>— Laura M.</footer>
+          </blockquote>
+          <blockquote class="testimonial">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p>"Siempre le tuve miedo al dentista. Aquí, por primera vez, salí sonriendo de verdad."</p>
+            <footer>— Alex R.</footer>
+          </blockquote>
+          <blockquote class="testimonial">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p>"Trato exquisito, tecnología de otro nivel y resultados que se notan a la primera semana."</p>
+            <footer>— Miriam D.</footer>
+          </blockquote>
+          <blockquote class="testimonial">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p>"Mis hijos ahora piden ir al dentista. Eso lo dice todo sobre el equipo de SIRO."</p>
+            <footer>— Carmen S.</footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <button class="test-arrow test-next" id="test-next" aria-label="Siguiente"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+    </div>
+    <div class="testimonial-dots" id="testimonial-dots"></div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner" data-reveal>
+    <div class="cta-blob" aria-hidden="true"></div>
+    <h2>Tu sonrisa merece este cambio.</h2>
+    <p>Reserva hoy tu diagnóstico digital gratuito y descubre tu plan de tratamiento a medida.</p>
+    <div class="hero-cta">
+      <a href="gina-contacto.html" class="btn btn-gold btn-lg">Reserva tu cita gratis</a>
+      <a href="https://wa.me/34622758727" target="_blank" rel="noopener" class="btn btn-outline-light btn-lg"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp directo</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-faq">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> Preguntas frecuentes</span>
+      <h2>Todo lo que quieras saber antes de venir</h2>
+    </div>
+    <div class="faq-list" data-reveal>
+      <div class="faq-item">
+        <button class="faq-q">¿La primera consulta es realmente gratuita? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-a"><p>Sí. Incluye diagnóstico digital 3D, valoración clínica y propuesta de tratamiento sin ningún compromiso.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Ofrecéis financiación? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-a"><p>Sí, adaptamos cada plan de pago a tu situación, con cuotas desde 0% de interés según el tratamiento.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Cuánto dura un tratamiento de ortodoncia invisible? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-a"><p>De media entre 6 y 12 meses, dependiendo de tu caso. Lo verás reflejado en tu simulación 3D desde el primer día.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Atendéis urgencias? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-a"><p>Sí, disponemos de agenda prioritaria para urgencias dentro de las 24 horas siguientes a tu llamada.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section section-contact" id="contacto">
+    <div class="contact-info" data-reveal>
+      <span class="eyebrow"><i class="fa-solid fa-comments" aria-hidden="true"></i> Contacto</span>
+      <h2>Hablemos de tu sonrisa</h2>
+      <p class="lead">Escríbenos, llámanos o pásate a tomar un café. Estamos deseando conocerte.</p>
+
+      <ul class="contact-list">
+        <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><div><strong>Navalcarnero</strong><span>Calle de la Constitución, 140 · +34 622 75 87 27</span></div></li>
+        <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><div><strong>Barrio del Pilar</strong><span>Avenida el Ferrol, 1 · +34 681 94 18 29</span></div></li>
+        <li><i class="fa-solid fa-envelope" aria-hidden="true"></i><div><strong>Email</strong><span>info@clinicadentalsiro.es</span></div></li>
+        <li><i class="fa-solid fa-clock" aria-hidden="true"></i><div><strong>Horario</strong><span>Lun–Jue 9:30–13:30 y 16:00–20:00 · Vie 9:30–13:30</span></div></li>
+      </ul>
+
+      <div class="social-row">
+        <a href="https://www.instagram.com/clinicasiro/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.facebook.com/clinicadentalsiro/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
+        <a href="https://wa.me/34622758727" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+
+    <form class="contact-form" id="contact-form" data-reveal>
+      <div class="form-row">
+        <div class="field">
+          <label for="f-name">Nombre</label>
+          <input id="f-name" name="name" type="text" placeholder="Tu nombre" required>
+        </div>
+        <div class="field">
+          <label for="f-phone">Teléfono</label>
+          <input id="f-phone" name="phone" type="tel" placeholder="600 000 000" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-treat">Tratamiento de interés</label>
+        <select id="f-treat" name="treatment">
+          <option>Ortodoncia invisible</option>
+          <option>Blanqueamiento dental</option>
+          <option>Carillas de porcelana</option>
+          <option>Implantes dentales</option>
+          <option>Odontopediatría</option>
+          <option>Otro / no lo sé aún</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-msg">Mensaje (opcional)</label>
+        <textarea id="f-msg" name="message" rows="3" placeholder="Cuéntanos qué buscas..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-gold btn-lg btn-block">Enviar solicitud <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
+      <p class="form-note" id="form-note" role="status"></p>
+    </form>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-top">
+    <a href="#top" class="brand">
+      <img class="brand-mark" src="../images/siro.png" alt="SIRO">
+      <span class="brand-text">SIRO <em>clínica dental</em></span>
+    </a>
+    <nav class="footer-nav">
+      <a href="gina-tratamientos.html">Tratamientos</a>
+      <a href="gina-nosotros.html">Nosotros</a>
+      <a href="gina-navalcarnero.html">Navalcarnero</a>
+      <a href="gina-pilar.html">Barrio del Pilar</a>
+      <a href="gina-contacto.html">Contacto</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Clínica Dental SIRO · Todos los derechos reservados</p>
+    <p class="footer-credit"><i class="fa-solid fa-heart" aria-hidden="true"></i> Concepto de rediseño hecho con cariño para Gina</p>
+  </div>
+</footer>
+
+<button class="back-to-top" id="back-to-top" aria-label="Volver arriba"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
+<a href="https://wa.me/34622758727" target="_blank" rel="noopener" class="whatsapp-fab" aria-label="Escríbenos por WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<script src="../scripts/gina.js"></script>
+</body>
+</html>
