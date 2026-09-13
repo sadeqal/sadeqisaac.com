@@ -4,6 +4,39 @@
 (() => {
   "use strict";
 
+  /* ---------- Theme switcher ---------- */
+  const THEME_KEY = "gina-theme";
+  const themeToggle = document.getElementById("theme-toggle");
+  const themePanel = document.getElementById("theme-panel");
+  const themeSwatches = document.querySelectorAll(".theme-swatch");
+
+  const markActiveSwatch = () => {
+    const current = localStorage.getItem(THEME_KEY) || "esmeralda";
+    themeSwatches.forEach((sw) => sw.classList.toggle("active", sw.dataset.theme === current));
+  };
+  markActiveSwatch();
+
+  themeToggle?.addEventListener("click", () => {
+    const isOpen = themePanel.classList.toggle("open");
+    themeToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+  document.addEventListener("click", (e) => {
+    if (themePanel?.classList.contains("open") && !e.target.closest(".theme-switcher")) {
+      themePanel.classList.remove("open");
+      themeToggle?.setAttribute("aria-expanded", "false");
+    }
+  });
+  themeSwatches.forEach((sw) => {
+    sw.addEventListener("click", () => {
+      const theme = sw.dataset.theme;
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem(THEME_KEY, theme);
+      markActiveSwatch();
+      themePanel.classList.remove("open");
+      themeToggle?.setAttribute("aria-expanded", "false");
+    });
+  });
+
   /* ---------- Scroll progress bar ---------- */
   const progressBar = document.getElementById("scroll-progress");
   const navbar = document.getElementById("navbar");

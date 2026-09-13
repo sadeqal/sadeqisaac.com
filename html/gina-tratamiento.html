@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('gina-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tratamiento — Clínica Dental SIRO</title>
 <meta name="description" content="Descubre en detalle este tratamiento de Clínica Dental SIRO: en qué consiste, sus beneficios y qué esperar de tu visita.">
@@ -43,6 +44,21 @@
     <div class="navbar-actions">
       <a href="tel:+34622758727" class="nav-phone"><i class="fa-solid fa-phone" aria-hidden="true"></i> 622 75 87 27</a>
       <a href="gina-contacto.html" class="btn btn-gold btn-sm">Reserva tu cita</a>
+      <div class="theme-switcher">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-expanded="false">
+          <i class="fa-solid fa-palette" aria-hidden="true"></i>
+        </button>
+        <div class="theme-panel" id="theme-panel">
+          <p class="theme-panel-title">Elige un estilo</p>
+          <div class="theme-options">
+            <button class="theme-swatch" data-theme="esmeralda"><span class="swatch-dot swatch-esmeralda" aria-hidden="true"></span>Esmeralda</button>
+            <button class="theme-swatch" data-theme="colorido"><span class="swatch-dot swatch-colorido" aria-hidden="true"></span>Colorido</button>
+            <button class="theme-swatch" data-theme="elegante"><span class="swatch-dot swatch-elegante" aria-hidden="true"></span>Elegante</button>
+            <button class="theme-swatch" data-theme="verde-oscuro"><span class="swatch-dot swatch-verde-oscuro" aria-hidden="true"></span>Verde oscuro</button>
+            <button class="theme-swatch" data-theme="beige"><span class="swatch-dot swatch-beige" aria-hidden="true"></span>Beige</button>
+          </div>
+        </div>
+      </div>
       <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -78,7 +94,7 @@
       <span class="eyebrow"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> También te puede interesar</span>
       <h2>Otros tratamientos relacionados</h2>
     </div>
-    <div class="grid-cards" id="t-related" style="grid-template-columns:repeat(3,1fr);"></div>
+    <div class="grid-cards" id="t-related"></div>
   </section>
 </main>
 
