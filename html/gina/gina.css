@@ -267,9 +267,9 @@ button { font: inherit; border: none; background: none; cursor: pointer; color: 
 .card-float i { font-size: 1.3rem; color: var(--gold); }
 .card-float strong { display: block; font-size: 0.9rem; }
 .card-float span { color: var(--text-muted-light); font-size: 0.78rem; }
-.card-float-1 { top: 6%; left: -6%; animation-delay: 0s; }
-.card-float-2 { bottom: 18%; left: -10%; animation-delay: -2s; }
-.card-float-3 { bottom: -4%; right: 8%; animation-delay: -4s; }
+.card-float-1 { top: 15%; left: -6%; animation-delay: 0s; }
+.card-float-2 { bottom: 14%; left: -10%; animation-delay: -2s; }
+.card-float-3 { bottom: 5%; right: 8%; animation-delay: -4s; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 .scroll-cue {
@@ -679,9 +679,9 @@ button { font: inherit; border: none; background: none; cursor: pointer; color: 
   .hero-visual { padding: 0 30px; }
   .card-float { max-width: 200px; padding: 12px 14px; font-size: 0.78rem; }
   .card-float i { font-size: 1.1rem; }
-  .card-float-1 { top: 2%; left: 0; }
-  .card-float-2 { bottom: 16%; left: 0; }
-  .card-float-3 { bottom: -2%; right: 0; }
+  .card-float-1 { top: -10%; left: 0; }
+  .card-float-2 { bottom: 30%; left: 55%; }
+  .card-float-3 { bottom: -2%; left: 0; }
   .back-to-top, .whatsapp-fab { right: 16px; }
 }
 

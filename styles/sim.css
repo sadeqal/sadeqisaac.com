@@ -5,6 +5,7 @@
     --accent-glow: rgba(6, 182, 212, 0.35);
     --text-main: #f8fafc;
     --text-muted: #64748b;
+    --topbar-h: 64px; /* kept in sync with the real top-status-bar height by sim.js */
 }
 
 body, html {
@@ -33,6 +34,7 @@ body, html {
     transition: border-color 0.3s;
 }
 .upload-box:hover { border-color: var(--accent); }
+.upload-brand-logo { height: 34px; margin-bottom: 1.25rem; filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.35)); }
 .upload-box h2 { margin: 0 0 0.5rem 0; font-size: 1.75rem; letter-spacing: -0.025em; font-weight: 700; }
 .upload-box p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5; }
 
@@ -58,41 +60,17 @@ input[type="file"] { display: none; }
     position: relative; width: 100vw; height: 100vh;
 }
 
-/* Top Center View Controller Switcher */
-.view-switcher {
-    position: absolute; top: 1.5rem; left: 50%; transform: translateX(-50%);
-    z-index: 10; display: flex; gap: 0.25rem;
-    background: var(--glass-bg); 
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 4px; border-radius: 12px; border: 1px solid var(--glass-border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
-.view-btn {
-    background: transparent; border: none; color: #94a3b8;
-    padding: 0.5rem 1.25rem; font-size: 0.85rem; font-weight: 600;
-    border-radius: 8px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    white-space: nowrap;
-}
-.view-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
-.view-btn.active { background: rgba(255, 255, 255, 0.12); color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.sim-map { width: 100%; height: 100vh; }
 
-/* Hint shown only in the orbital / third-eye view */
-.orbit-hint {
-    position: absolute; top: 5rem; left: 50%; transform: translateX(-50%);
-    z-index: 10; background: var(--glass-bg); backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border); padding: 0.4rem 1rem;
-    border-radius: 0.6rem; font-size: 0.78rem; color: #cbd5e1;
-    pointer-events: none; white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+/* Soft dark vignette around the edges so glass panels stay legible over bright satellite imagery */
+.map-vignette {
+    position: absolute; inset: 0; z-index: 5; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(2,6,23,0) 45%, rgba(2,6,23,0.55) 100%);
 }
 
 /* --- THE CYBERPUNK HUD CONTAINER --- */
 .pfd-overlay-container {
-    position: absolute; 
-    right: 2rem; 
-    top: 50%; 
-    transform: translateY(-50%);
+    position: relative; 
     z-index: 10; 
     
     /* Elegant Dark Glass Plate */
@@ -102,13 +80,16 @@ input[type="file"] { display: none; }
     
     /* Razor thin borders and dual-shadow layers for depth */
     border: 1px solid rgba(6, 182, 212, 0.15); 
-    padding: 20px 16px 16px 16px; 
+    padding: 10px 10px 8px 10px; 
     border-radius: 12px;
     box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.75),
                 0 0 30px rgba(6, 182, 212, 0.05),
                 inset 0 1px 1px rgba(255, 255, 255, 0.05);
     
-    width: 200px;
+    width: 156px;
+    margin: 0 auto;
+    flex-shrink: 0;
+    box-sizing: border-box;
     transition: all 0.3s ease;
     user-select: none;
 }
@@ -129,29 +110,35 @@ input[type="file"] { display: none; }
 /* Small tech header text */
 .hud-header {
     font-family: 'SFMono-Regular', Consolas, monospace;
-    font-size: 8px;
+    font-size: 7px;
     color: var(--text-muted);
     letter-spacing: 1.5px;
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
 }
 
 /* Framed Canvas Container */
 .pfd-canvas-wrapper {
     position: relative;
+    width: 130px; height: 130px;
+    margin: 0 auto;
     border-radius: 10px;
     overflow: hidden;
     background: #090d16;
     border: 1px solid rgba(255, 255, 255, 0.06);
     padding: 2px;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+    box-sizing: border-box;
 }
 
+/* Canvas attribute resolution (240x240, see sim.html) is supersampled down to this
+   small display size, which is what keeps the dial crisp instead of blurry. */
 #pfdCanvas {
     display: block;
     background: #0d1321;
     border-radius: 8px;
-    width: 100%;
+    width: 126px;
+    height: 126px;
 }
 
 /* Redesigned Minimal Stats Block */
@@ -159,8 +146,8 @@ input[type="file"] { display: none; }
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    margin-top: 14px;
-    padding-top: 8px;
+    margin-top: 8px;
+    padding-top: 6px;
     border-top: 1px dashed rgba(255, 255, 255, 0.08);
 }
 
@@ -192,7 +179,7 @@ input[type="file"] { display: none; }
 }
 
 .stat-val {
-    font-size: 1.15rem;
+    font-size: 0.92rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
@@ -217,7 +204,7 @@ input[type="file"] { display: none; }
 /* Vertical divider between altitude and heading values */
 .hud-divider {
     width: 1px;
-    height: 24px;
+    height: 18px;
     background: rgba(255, 255, 255, 0.1);
     margin: 0 8px;
 }
@@ -235,6 +222,12 @@ input[type="file"] { display: none; }
     display: flex; align-items: center; gap: 1rem;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
                 inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+/* Video-player style auto-hide: fades and drops out of the way, still in the DOM
+   so a mousemove/touch can instantly bring it back (see setupAutoHideToolbar in sim.js) */
+.playback-timeline-toolbar.toolbar-hidden {
+    opacity: 0; transform: translate(-50%, 14px); pointer-events: none;
 }
 
 /* --- HIGH-END PLAY/PAUSE BUTTON --- */
@@ -386,9 +379,241 @@ input[type="file"] { display: none; }
     font-weight: 700;
 }
 
-/* Cursor states for the orbit (third-eye) camera control */
-#simMap.orbit-mode { cursor: grab; }
-#simMap.orbit-mode:active { cursor: grabbing; }
+/* ═══════════════════════════════════════════════════════════════════════════
+   NEW: Top status bar, side dashboard panels, propulsion / power / servo cards
+   and the live aircraft glyph — the redesigned "mission replay" dashboard.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Top Status Bar ─── */
+.top-status-bar {
+    position: absolute; top: 1rem; left: 50%; transform: translateX(-50%);
+    z-index: 10; display: flex; align-items: center; justify-content: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px; padding: 0.55rem 1.3rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+}
+
+.brand-block { display: flex; align-items: center; gap: 0.7rem; flex-shrink: 0; }
+.brand-logo { height: 28px; width: auto; object-fit: contain; filter: drop-shadow(0 0 6px rgba(6,182,212,0.25)); }
+.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-title { font-size: 0.82rem; font-weight: 800; letter-spacing: 0.06em; color: var(--text-main); }
+.brand-sub { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.05em; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+
+.live-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+    box-shadow: 0 0 6px rgba(34,197,94,0.9);
+    animation: liveDotPulse 1.4s ease-in-out infinite;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.live-dot.signal-lost { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.9); }
+.brand-sub:has(.signal-lost) #signalText { color: #f87171; }
+@keyframes liveDotPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.75); } }
+
+/* Floating icon-only button, independent of the centered brand bar */
+.recenter-btn {
+    position: absolute; top: 1rem; right: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; flex-shrink: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main); border-radius: 12px; cursor: pointer; transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+}
+.recenter-btn svg { width: 16px; height: 16px; }
+.recenter-btn:hover { background: var(--accent); color: #041014; border-color: var(--accent); box-shadow: 0 0 14px var(--accent-glow); }
+
+/* Vertical live-telemetry list stacked below the PFD */
+.stats-list { display: flex; flex-direction: column; }
+.stat-row {
+    display: flex; align-items: center; gap: 8px; padding: 5px 2px;
+    border-bottom: 1px dashed rgba(255,255,255,0.07);
+}
+.stat-row:last-child { border-bottom: none; }
+.stat-row-icon { width: 13px; height: 13px; flex-shrink: 0; color: var(--accent); opacity: 0.85; }
+.stat-row-lbl { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); flex: 1; }
+.stat-row-val { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.74rem; font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; text-align: right; }
+.stat-row-val small { font-size: 0.58rem; font-weight: 500; color: rgba(255,255,255,0.45); }
+.stat-row:first-child .stat-row-val { color: var(--accent); text-shadow: 0 0 8px rgba(6,182,212,0.3); }
+
+/* ─── Side Columns ─── */
+.side-column {
+    position: absolute; top: calc(var(--topbar-h) + 0.7rem); bottom: 1.1rem;
+    z-index: 10; width: 264px;
+    display: flex; flex-direction: column; gap: 0.6rem;
+    overflow-y: auto; overflow-x: hidden;
+    scrollbar-width: thin; scrollbar-color: rgba(6,182,212,0.4) transparent;
+}
+.side-column::-webkit-scrollbar { width: 5px; }
+.side-column::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.35); border-radius: 4px; }
+.side-column.left-column { left: 1rem; }
+.side-column.right-column { right: 1rem; }
+
+.side-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px; padding: 10px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+    flex-shrink: 0;
+}
+
+.panel-title {
+    font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; color: var(--accent);
+    margin-bottom: 8px; padding-bottom: 6px;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    text-shadow: 0 0 10px rgba(6,182,212,0.2);
+}
+
+.empty-note { font-size: 0.75rem; color: var(--text-muted); text-align: center; padding: 1rem 0; }
+
+/* ─── Propulsion: realistic 5-node network (4 lift motors + tail pusher) ─── */
+.motor-network {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "fl fr"
+        "tail tail"
+        "bl br";
+    gap: 2px;
+    padding: 2px 0;
+}
+.motor-network-lines {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+}
+.motor-network-lines line {
+    stroke: rgba(6, 182, 212, 0.15); stroke-width: 0.6; stroke-dasharray: 2 2;
+}
+.motor-node {
+    position: relative; z-index: 1;
+    background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; width: 100px; height: auto; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    text-align: center; padding: 6px; box-sizing: border-box;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.35);
+    gap: 3px;
+}
+.motor-node-dot {
+    position: absolute; top: 7px; width: 5px; height: 5px; border-radius: 50%;
+    background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.8);
+}
+.motor-node-dot.warn { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.9); animation: liveDotPulse 1s ease-in-out infinite; }
+.motor-node-label { font-size: 0.42rem; font-weight: 800; letter-spacing: 0.02em; color: var(--text-muted); margin-top: 3px; }
+.motor-node-rpm { 
+    font-family: 'SFMono-Regular', Consolas, monospace; 
+    font-size: 0.65rem; font-weight: 800; color: #06b6d4; 
+    text-shadow: 0 0 8px rgba(6,182,212,0.5); 
+    line-height: 1.1;
+    border: 1.5px solid rgba(6, 182, 212, 0.4);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.05), transparent);
+}
+.motor-node-sub { 
+    font-family: 'SFMono-Regular', Consolas, monospace; 
+    font-size: 0.52rem;
+    font-weight: 800;
+    color: #cbd5e1; 
+    margin-top: 0px;
+    line-height: 1.3;
+    width: 100%;
+}
+
+.motor-node.tail-node-motor {
+    grid-area: tail; width: 68px; height: 68px;
+    border-color: rgba(245, 158, 11, 0.35); background: rgba(245, 158, 11, 0.06);
+}
+.motor-node.tail-node-motor .motor-node-label { color: #f59e0b; }
+
+/* ─── Power System / Battery Cards ─── */
+.battery-grid { display: flex; flex-direction: column; gap: 7px; }
+.battery-card {
+    background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 9px; padding: 7px 9px;
+}
+.battery-card.tail-node { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.06); }
+.battery-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.battery-name { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.02em; color: #f1f5f9; }
+.battery-card.tail-node .battery-name { color: #34d399; }
+.battery-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.8); flex-shrink: 0; }
+.battery-dot.warn { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.9); animation: liveDotPulse 1s ease-in-out infinite; }
+.battery-metrics { display: flex; justify-content: space-between; gap: 6px; }
+.metric { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; font-family: 'SFMono-Regular', Consolas, monospace; }
+.metric-lbl { color: var(--text-muted); font-size: 0.52rem; letter-spacing: 0.03em; }
+.metric-val { color: #f8fafc; font-weight: 700; font-size: 0.66rem; }
+.battery-bar-track { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.battery-bar-fill {
+    height: 100%;
+    background: #10b981;
+    border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s ease;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+/* ─── Control Surfaces / Servo Cards ─── */
+.servo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.servo-card {
+    background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 9px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.servo-dial {
+    width: 28px; height: 28px; border-radius: 50%; position: relative;
+    background: radial-gradient(circle at 50% 50%, #0d1321 55%, #0a0f1a 100%);
+    border: 2px solid rgba(255,255,255,0.12);
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
+}
+.servo-needle {
+    position: absolute; left: 50%; top: 50%; width: 2px; height: 11px;
+    background: linear-gradient(#38bdf8, #0ea5e9); border-radius: 2px;
+    transform-origin: top center; transform: translateX(-50%) rotate(0deg);
+    transition: transform 0.15s linear;
+}
+.servo-dial::after {
+    content: ''; position: absolute; left: 50%; top: 50%; width: 3px; height: 3px;
+    background: #38bdf8; border-radius: 50%; transform: translate(-50%, -50%);
+    box-shadow: 0 0 5px rgba(56,189,248,0.8);
+}
+.servo-info { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+.servo-name { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.01em; color: #f1f5f9; line-height: 1.2; }
+.servo-name small { display: block; font-size: 0.42rem; font-weight: 600; color: var(--text-muted); }
+.servo-metrics { display: flex; flex-direction: column; align-items: center; gap: 1px; font-size: 0.52rem; color: #cbd5e1; }
+.servo-metrics em { font-style: normal; color: var(--text-muted); margin-right: 2px; }
+
+/* ─── Live Aircraft Glyph on the Map ─── */
+.aircraft-marker { position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+.aircraft-pulse {
+    position: absolute; width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(34,211,238,0.35);
+    animation: aircraftPulse 1.8s ease-out infinite;
+}
+@keyframes aircraftPulse {
+    0% { transform: scale(0.5); opacity: 0.8; }
+    100% { transform: scale(2.6); opacity: 0; }
+}
+.aircraft-icon-rotator {
+    position: relative; z-index: 1; transition: transform 0.1s linear;
+    filter: drop-shadow(0 0 6px rgba(34,211,238,0.9));
+}
+
+@media (max-width: 1100px) {
+    .side-column { width: 240px; }
+}
+@media (max-width: 640px) {
+    .status-chip-group { display: none; }
+}
 
 /* Instantly hide Mapbox branding logo and copyright text */
 .mapboxgl-ctrl-logo,
