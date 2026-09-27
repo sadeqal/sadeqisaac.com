@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sadeq Isaac - Academic CV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/academicCV.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- Export Button -->
+    <div class="export-dropdown">
+        <button class="export-btn" id="exportBtn">
+            <i class="fas fa-file-download"></i> Export PDF <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-content" id="dropdownContent">
+            <a href="#" onclick="exportCV(); return false;"><span class="lang-tag">EN</span> English PDF</a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div id="cv-content">
+        <!-- Header -->
+        <div class="cv-header">
+            <div class="header-container">
+                <div class="profile-image">
+                    <div class="instrument-badge" aria-hidden="true">
+                        <svg viewBox="0 0 142 142">
+                            <circle cx="71" cy="71" r="66" class="ring-track"></circle>
+                            <circle cx="71" cy="71" r="66" class="ring-ticks"></circle>
+                            <path d="M71 4 L65 17 L77 17 Z" class="ring-index"></path>
+                        </svg>
+                    </div>
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 110'%3E%3Crect fill='%23121a24' width='110' height='110'/%3E%3C/svg%3E" alt="Sadeq Isaac" id="profile-img">
+                </div>
+                <div class="header-text">
+                    <h1>Sadeq Isaac, PhD</h1>
+                    <p class="role">Aerospace &amp; Robotics Engineer</p>
+                    <p class="status">
+                        Madrid, Spain • sadeqisaac.com
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Education Section -->
+        <section class="cv-section">
+            <span class="eyebrow">Sec. A</span>
+            <h2><i class="fas fa-graduation-cap"></i> Education</h2>
+            <div class="education-list">
+                <div class="education-item execution-focus">
+                    <div class="date">Sep 2019 – Oct 2024</div>
+                    <div class="content">
+                        <h3>PhD in Automation &amp; Robotics Engineering</h3>
+                        <div class="edu-row"><i>🎓</i>Polytechnic University of Madrid (UPM), Spain</div>
+                        <div class="edu-row"><i>◆</i><strong>Thesis:</strong> Control of a Multi-Ducted Fan UAV Using Thrust Vectoring</div>
+                        <div class="edu-row"><i>👨‍🏫</i><strong>Supervisor:</strong> Prof. Pascual Campoy</div>
+                        <div class="edu-row"><i>⭐</i><strong>Grade:</strong> Sobresaliente (Excellent)</div>
+                        <div class="edu-row"><i>🔬</i><strong>Specialization:</strong> Flight Dynamics, Control Systems &amp; Robotics Algorithms</div>
+                    </div>
+                </div>
+                
+                <div class="education-item">
+                    <div class="date">Sep 2016 – Mar 2019</div>
+                    <div class="content">
+                        <h3>MS in Aerospace Engineering</h3>
+                        <div class="edu-row"><i>🎓</i>Amir Kabir University of Technology (Polytechnic), Tehran, Iran</div>
+                        <div class="edu-row"><i>◆</i><strong>Thesis:</strong> Simulation and Implementation of the Landing Phase of a Quadcopter on a Moving Platform</div>
+                        <div class="edu-row"><i>👨‍🏫</i><strong>Supervisor:</strong> Dr. Naghash</div>
+                        <div class="edu-row"><i>⭐</i><strong>GPA:</strong> 3.6/4.0</div>
+                        <div class="edu-row"><i>🔬</i><strong>Specialization:</strong> Flight Dynamics &amp; Control</div>
+                    </div>
+                </div>
+                
+                <div class="education-item">
+                    <div class="date">Sep 2011 – Sep 2015</div>
+                    <div class="content">
+                        <h3>BS in Aerospace Engineering</h3>
+                        <div class="edu-row"><i>🎓</i>Khajeh Nasir University of Technology, Tehran, Iran</div>
+                        <div class="edu-row"><i>◆</i><strong>Thesis:</strong> Autopilot Code Programming for a Flying Robot Using C#</div>
+                        <div class="edu-row"><i>👨‍🏫</i><strong>Supervisor:</strong> Prof. Roshanian</div>
+                        <div class="edu-row"><i>⭐</i><strong>GPA:</strong> 3.5/4.0</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Publications Section -->
+        <section class="cv-section">
+            <span class="eyebrow">Sec. B</span>
+            <h2><i class="fas fa-book"></i> Publications (14 Total)</h2>
+            
+            <h3 class="pub-subsection">Journal Articles</h3>
+            <div class="publications-list">
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Feb 2025</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Unmanned Aerial Vehicle-Based Hyperspectral Imaging and Soil Texture Mapping with Robust AI Algorithms</p>
+                        <p class="pub-details"><strong>Drones</strong>, 2025, 9(2), 129</p>
+                        <p class="pub-authors">P. Flores Peña, M.S. Ale Isaac, D. Gîfu, E.M. Pechlivani, A.R. Ragab</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Sep 2024</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Advanced Control Strategies for Securing UAV Systems: A Cyber-Physical Approach</p>
+                        <p class="pub-details"><strong>Applied System Innovation</strong>, 2024, 7(5), 83</p>
+                        <p class="pub-authors">M.S. Ale Isaac, P. Flores Peña, D. Gîfu, A.R. Ragab</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Jun 2024</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Sensing and Control Integration for Thrust Vectoring in Heavy UAVs: Real-World Implementation and Performance Analysis</p>
+                        <p class="pub-details"><strong>Unmanned Systems</strong>, 2024, 1-23</p>
+                        <p class="pub-authors">M.S.A Isaac, P.F. Peña, M.A. Luna, A.R. Ragab, P. Campoy</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Jun 2023</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Thrust Vectoring Control for Heavy UAVs, Employing a Redundant Communication System</p>
+                        <p class="pub-details"><strong>Sensors</strong>, 2023, 23(12), 5561</p>
+                        <p class="pub-authors">M.S. Ale Isaac, A.R. Ragab, M.A. Luna, M.M. Ale Eshagh Khoeini, P. Campoy</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Nov 2022</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">A Proposed System for Multi-UAVs in Remote Sensing Operations</p>
+                        <p class="pub-details"><strong>Sensors</strong>, 2022, 22(23), 9180</p>
+                        <p class="pub-authors">P. Flores Peña, M.A. Luna, A.R. Ragab, M.S. Ale Isaac, A. Elmenshawy, K. Martín Gómez, P. Campoy, M. Molina</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Sep 2022</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Medium-Scale UAVs: A Practical Control System Considering Aerodynamics Analysis</p>
+                        <p class="pub-details"><strong>Drones</strong>, 2022, 6(9), 244</p>
+                        <p class="pub-authors">M.S. Ale Isaac, M.A. Luna, A.R. Ragab, M.M. Ale Eshagh Khoeini, R. Kalra, P. Campoy, M. Molina</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Jun 2022</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Wild Hopper: A Heavy-Duty UAV for Day and Night Firefighting Operations</p>
+                        <p class="pub-details"><strong>Heliyon</strong>, 2022, 8(6)</p>
+                        <p class="pub-authors">P.F. Peña, A.R. Ragab, M.A. Luna, M.S.A. Isaac, P. Campoy</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Mar 2022</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Fast Multi-UAV Path Planning for Optimal Area Coverage in Aerial Sensing Applications</p>
+                        <p class="pub-details"><strong>Sensors</strong>, 2022, 22(6), 2297</p>
+                        <p class="pub-authors">M.A. Luna, M.S. Ale Isaac, A.R. Ragab, P. Campoy, P. Flores Peña, M. Molina</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Jan 2022</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Systemic Integrated Unmanned Aerial System</p>
+                        <p class="pub-details"><strong>International Journal of Online &amp; Biomedical Engineering (iJOE)</strong>, 2022, 18(01)</p>
+                        <p class="pub-authors">P. Flores Peña, A.R. Ragab, M.A. Luna, M.S. Ale Isaac</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Nov 2021</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Mathematical Modeling and Designing a Heavy Hybrid-Electric Quadcopter, Controlled by Flaps</p>
+                        <p class="pub-details"><strong>Unmanned Systems</strong>, 2022, 10(03), 241-253</p>
+                        <p class="pub-authors">M.S. Ale Isaac, A.R. Ragab, E.C. Garcés, M.A. Luna, P.F. Peña, P.C. Cervera</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Sep 2021</span>
+                        <span class="pub-type journal">Journal</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">WILD HOPPER Prototype for Forest Firefighting</p>
+                        <p class="pub-details"><strong>International Journal of Online and Biomedical Engineering (iJOE)</strong>, 2021, 17(09)</p>
+                        <p class="pub-authors">A.R. Ragab, M.S. Ale Isaac, M.A. Luna, P. Flores Peña</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="pub-subsection">Conference Papers</h3>
+            <div class="publications-list">
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Jun 2023</span>
+                        <span class="pub-type conference">Conference</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Spiral Coverage Path Planning for Multi-UAV Photovoltaic Panel Inspection Applications</p>
+                        <p class="pub-details"><strong>2023 International Conference on Unmanned Aircraft Systems (ICUAS)</strong></p>
+                        <p class="pub-authors">M.A. Luna, M.S. Ale Isaac, M. Fernandez-Cortizas, C. Santos, A.R. Ragab, M. Molina, P. Campoy</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Oct 2021</span>
+                        <span class="pub-type conference">Conference</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Unmanned Aerial Vehicle Swarming</p>
+                        <p class="pub-details"><strong>2021 International Conference on Engineering and Emerging Technologies (ICEET)</strong></p>
+                        <p class="pub-authors">A.R. Ragab, M.S. Ale Isaac, M.A. Luna, P. Flores Peña</p>
+                    </div>
+                </div>
+                
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Sep 2019</span>
+                        <span class="pub-type conference">Conference</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Control and Guidance of an Autonomous Quadcopter Landing Phase on a Moving Platform</p>
+                        <p class="pub-details"><strong>11th International Micro Air Vehicle Competition and Conference</strong></p>
+                        <p class="pub-authors">M.S. Ale Isaac, A. Naghash, S. Mirtajedini</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="pub-subsection">Books &amp; Book Chapters</h3>
+            <div class="publications-list">
+                <div class="publication-item">
+                    <div class="pub-meta">
+                        <span class="pub-date">Sep 2017</span>
+                        <span class="pub-type book">Book</span>
+                    </div>
+                    <div class="pub-content">
+                        <p class="pub-title">Aerospace Engineering, Graduate Exams with Comprehensive Answers</p>
+                        <p class="pub-details"><strong>Nasir Publication</strong>, 2017</p>
+                        <p class="pub-authors">M.S. Ale Isaac, A. Navizi, N. Abdol-Mohammadi, I. Sepahvand, I. Sabahi</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Professional Experience Section -->
+        <section class="cv-section">
+            <span class="eyebrow">Sec. C</span>
+            <h2><i class="fas fa-briefcase"></i> Professional Experience</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="date">2022 – Present</div>
+                    <div class="content">
+                        <h3>Wake Engineering S.L., Madrid, Spain</h3>
+                        <p class="role-title">VTOL UAV Systems Engineer</p>
+                        <ul>
+                            <li>Developed advanced VTOL solutions for military Fulmar UAV platform</li>
+                            <li>Engineered resilient Serial/Ethernet communication systems integrating avionics, GCS devices, antennas, and UAV using Silvus and Wavenet Radios</li>
+                            <li>Led EUREKA SW project for maritime ship targeting using UAV Gimbals</li>
+                            <li>Developed Avionics Plugin in collaboration with UAV Navigation for Visionair software integration</li>
+                        </ul>
+                        <p class="skills-tag"><strong>Skills:</strong> VTOL UAV, Communication Systems, Gimbals, Avionics Integration</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="date">2023 – Present</div>
+                    <div class="content">
+                        <h3>Ahyres Engineering S.L., Madrid, Spain</h3>
+                        <p class="role-title">GCS Software Engineer</p>
+                        <ul>
+                            <li>Designed and programmed user-friendly GCS interface based on QGroundControl</li>
+                            <li>Developed efficient control systems for swarm UAV applications</li>
+                            <li>Enhanced communication and coordination between multiple autonomous UAVs</li>
+                        </ul>
+                        <p class="skills-tag"><strong>Skills:</strong> Swarm UAV, QGroundControl, GCS Interfaces, Multi-Agent Coordination</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="date">2020 – 2022</div>
+                    <div class="content">
+                        <h3>Drone-Hopper S.L., Madrid, Spain</h3>
+                        <p class="role-title">UAV Control Systems Engineer</p>
+                        <ul>
+                            <li>Designed and implemented full flight controller for heavy hexa-ducted fan WILD-HOPPER UAV using flaps and Electric Ducted Fans (EDFs)</li>
+                            <li>Developed hybrid-propulsion control theory for QUAD-HOPPER platform</li>
+                            <li>Created user interface platform for swarm applications using Qt for FASTER2020 project</li>
+                        </ul>
+                        <p class="skills-tag"><strong>Skills:</strong> UAV Development, Firefighting Operations, Control Systems, Qt Programming</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="date">2019 – 2023</div>
+                    <div class="content">
+                        <h3>CAR Research Lab, Polytechnic University of Madrid (UPM), Spain</h3>
+                        <p class="role-title">Research Engineer / PhD Researcher</p>
+                        <ul>
+                            <li>Developed Adaptive Unscented Kalman Filter (AUKF) for UAV Lemniscate trajectory estimation in MBZIRC 2020 challenge</li>
+                            <li>Implemented Model Predictive Control (MPC) on small drones using Aerostack platform</li>
+                            <li>Enhanced flight control performance through advanced sensor fusion and estimation techniques</li>
+                        </ul>
+                        <p class="skills-tag"><strong>Skills:</strong> Kalman Filtering, Model Predictive Control, UAV Control, Research Development</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section class="cv-section">
+            <span class="eyebrow">Sec. D</span>
+            <h2><i class="fas fa-link"></i> Contact &amp; Online Presence</h2>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <span class="contact-label">Email:</span>
+                    <a href="mailto:sadeqalisaac@gmail.com">sadeqalisaac@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">Website:</span>
+                    <a href="https://sadeqisaac.com" target="_blank">sadeqisaac.com</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">LinkedIn:</span>
+                    <a href="https://www.linkedin.com/in/sadeq-isaac" target="_blank">/in/sadeq-isaac</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">GitHub:</span>
+                    <a href="https://github.com/sadeqal" target="_blank">github.com/sadeqal</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">Google Scholar:</span>
+                    <a href="https://scholar.google.com/citations?user=FClYx9AAAAAJ&hl=en" target="_blank">FClYx9AAAAAJ</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">ORCID:</span>
+                    <a href="https://orcid.org/0000-0001-8773-7184" target="_blank">0000-0001-8773-7184</a>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- PDF Export Template (Off-screen) -->
+    <div id="pdf-export-container" style="display: none;"></div>
+    
+    <script src="../scripts/academicCV.js"></script>
+</body>
+</html>
