@@ -76,45 +76,124 @@
   /* ------------------------------------------------------------------ */
   /* CONEXIONES · equipo ↔ autopiloto (para el diagrama SVG de cada capítulo) */
   /* ------------------------------------------------------------------ */
-  const CONN_LINKS = {
-    receptor: [{ label: 'RC IN (21) · SBUS', color: '#1e88e5' }],
-    gnss: [{ label: 'CAN1 · puerto 1 (04) · CAN_H', color: '#f9a825' }, { label: 'CAN1 · puerto 1 (04) · CAN_L', color: '#2e7d32' }],
-    pitot: [{ label: 'CAN1 · puerto 2 (05) · CAN_H', color: '#f9a825' }, { label: 'CAN1 · puerto 2 (05) · CAN_L', color: '#2e7d32' }],
-    servos: [{ label: 'M1 / M2 / M4 / M9 · PWM', color: '#1e88e5' }, { label: 'CAN2 · puerto 09 · DroneCAN', color: '#f9a825' }],
-    'esc-vertical': [{ label: 'M5 · M6 · M7 · M8 · PWM', color: '#1e88e5' }, { label: 'CAN2 · puerto 09 · DroneCAN', color: '#f9a825' }],
-    'motor-cola': [{ label: 'M3 · PWM', color: '#1e88e5' }],
-    'pmu-cola': [{ label: 'CAN1 · puerto 3 (06) · DroneCAN', color: '#f9a825' }],
-    'pmu-avionica': [{ label: 'POWER C1 (22) · 15 V', color: '#d32f2f' }, { label: 'CAN1 · DroneCAN', color: '#f9a825' }],
-    video: [{ label: 'TELEM1 (01) · TX FC → RX O3', color: '#8e24aa' }, { label: 'TELEM1 (01) · RX FC ← TX O3', color: '#00acc1' }, { label: 'M13 · relé (GPIO 62)', color: '#1e88e5', dash: '3 3' }],
-    radio: [{ label: 'ETH (03) · TX±', color: '#ef6c00' }, { label: 'ETH (03) · RX±', color: '#6d4c41' }],
-    can: [{ label: 'CAN1 · GNSS · Pitot · PMU cola', color: '#f9a825' }, { label: 'CAN2 · 8 nodos servos/ESC', color: '#2e7d32' }]
+  /* Colores de cable idénticos a la leyenda del esquema general (Rev. 4) */
+  const WC = {
+    pos: ['#e53935', 'Positivo'], gnd: ['#212121', 'GND'], h: ['#f9c000', 'CAN_H'], l: ['#2e9d44', 'CAN_L'],
+    pwm: ['#1e6fd9', 'PWM (señal S)'], tx: ['#8e24aa', 'UART TX del FC'], rx: ['#00acc1', 'UART RX del FC'],
+    sbus: ['#d81b60', 'SBUS'], etx: ['#fb8c00', 'Ethernet TX±'], erx: ['#5d4037', 'Ethernet RX±']
   };
+  /* Cada cable: [grupo AP, pin AP, grupo equipo, pin equipo, color, etiqueta] */
+  const CAN4 = (ap, cp) => [
+    [ap, '5V', cp, '5V', 'pos', '+5V'], [ap, 'CAN_H', cp, 'CAN_H', 'h', 'CAN_H'],
+    [ap, 'CAN_L', cp, 'CAN_L', 'l', 'CAN_L'], [ap, 'GND', cp, 'GND', 'gnd', 'GND']];
+  const CAN3 = (ap, cp) => [
+    [ap, 'CAN_H', cp, 'CAN_H', 'h', 'CAN_H'], [ap, 'CAN_L', cp, 'CAN_L', 'l', 'CAN_L'], [ap, 'GND', cp, 'GND', 'gnd', 'GND']];
+  const CONN_LINKS = {
+    receptor: { wires: [
+      ['RC IN · 21', '+5V', 'SBUS OUT', '5V', 'pos', '+5V'], ['RC IN · 21', 'GND', 'SBUS OUT', 'GND', 'gnd', 'GND'],
+      ['RC IN · 21', 'SBUS', 'SBUS OUT', 'SBUS', 'sbus', 'SBUS']], foot: 'El receptor se alimenta a 5 V desde el propio puerto RC IN.' },
+    gnss: { wires: CAN4('CAN1-1 · 04', 'Puerto CAN') },
+    pitot: { wires: CAN4('CAN1-2 · 05', 'Puerto CAN') },
+    'pmu-cola': { wires: CAN4('CAN1-3 · 06', 'Puerto CAN') },
+    'pmu-avionica': { wires: [
+      ['POWER C1 · 22', '+15V', 'Salida 15 V / 6 A', '+15V', 'pos', '+15V'], ['POWER C1 · 22', 'GND', 'Salida 15 V / 6 A', 'GND', 'gnd', 'GND'],
+      ...CAN3('CAN1', 'Puerto CAN')], foot: 'Entrada de la PMU: 20–70 V desde el distribuidor 6S.' },
+    servos: { wires: [
+      ['M1', 'PWM', 'Alerón izq.', 'S', 'pwm', 'PWM M1'], ['M2', 'PWM', 'Ruddervator izq.', 'S', 'pwm', 'PWM M2'],
+      ['M4', 'PWM', 'Ruddervator der.', 'S', 'pwm', 'PWM M4'], ['M9', 'PWM', 'Alerón der.', 'S', 'pwm', 'PWM M9'],
+      ...CAN3('CAN2-1 · 09', 'Bus CAN servos')], foot: 'CAN2: el 5 V del puerto 09 va sin conectar. Alimentación 6S de los servos desde el distribuidor, no desde el AP.' },
+    'esc-vertical': { wires: [
+      ['M5', 'PWM', 'ESC delantero der.', 'PWM', 'pwm', 'PWM M5'], ['M6', 'PWM', 'ESC trasero izq.', 'PWM', 'pwm', 'PWM M6'],
+      ['M7', 'PWM', 'ESC delantero izq.', 'PWM', 'pwm', 'PWM M7'], ['M8', 'PWM', 'ESC trasero der.', 'PWM', 'pwm', 'PWM M8'],
+      ...CAN3('CAN2-1 · 09', 'Bus CAN ESC')], foot: 'ESC → motor: fases A·B·C + encoder directos desde cada ESC (no pasan por el AP).' },
+    'motor-cola': { wires: [['M3', 'PWM', 'ESC Thunder 200A', 'PWM', 'pwm', 'PWM M3']], foot: 'Cableado de fuselaje. Potencia desde el pack de cola (PM08) vía cortacorriente.' },
+    video: { wires: [
+      ['TELEM1 · 01', 'TX', 'DJI O3 · UART', 'RX', 'tx', 'TX → RX'], ['TELEM1 · 01', 'RX', 'DJI O3 · UART', 'TX', 'rx', 'RX ← TX'],
+      ['TELEM1 · 01', 'GND', 'DJI O3 · UART', 'GND', 'gnd', 'GND'],
+      ['M13 · GPIO 62', 'S', 'Relé DJI', 'S', 'pwm', 'M13 · relé'], ['M13 · GPIO 62', 'GND', 'Relé DJI', 'GND', 'gnd', 'GND']],
+      foot: 'TELEM1: 5V, RTS y CTS sin conectar. DJI máx. 6S: relé alimentado desde el distribuidor, apagado en tierra.' },
+    radio: { wires: [
+      ['ETH · 03', 'TX+', 'Silvus · ETH', 'RX+', 'etx', 'TX+ → RX+'], ['ETH · 03', 'TX−', 'Silvus · ETH', 'RX−', 'etx', 'TX− → RX−'],
+      ['ETH · 03', 'RX+', 'Silvus · ETH', 'TX+', 'erx', 'RX+ ← TX+'], ['ETH · 03', 'RX−', 'Silvus · ETH', 'TX−', 'erx', 'RX− ← TX−']],
+      foot: 'Ethernet 100 Mb con pares cruzados. Silvus alimentada a 12 V desde el DC-DC.' },
+    can: { wires: [
+      ...CAN4('CAN1-1/2/3 · 04-06', 'Bus CAN1 (GNSS · Pitot · PMU cola)'),
+      ...CAN3('CAN2-1 · 09', 'Bus CAN2 (8 nodos)')], foot: 'Comprobar 60 Ω entre CAN_H y CAN_L con todo apagado (2 terminadores de 120 Ω).' }
+  };
+
   function connSVG(compId) {
     const c = compById(compId);
-    const links = CONN_LINKS[compId];
-    if (!c || !links) return '';
-    const rowH = 40, top = 30;
-    const h = top * 2 + (links.length - 1) * rowH + 70;
-    const midY = h / 2;
-    const rows = links.map((l, i) => {
-      const y = top + 35 + i * rowH;
-      return `<g>
-        <line x1="96" y1="${y}" x2="244" y2="${y}" stroke="${l.color}" stroke-width="4" ${l.dash ? `stroke-dasharray="${l.dash}"` : ''}/>
-        <circle cx="96" cy="${y}" r="4" fill="${l.color}"/><circle cx="244" cy="${y}" r="4" fill="${l.color}"/>
-        <text x="170" y="${y - 9}" text-anchor="middle" class="conn__lbl">${esc(l.label)}</text>
+    const spec = CONN_LINKS[compId];
+    if (!c || !spec) return '';
+    const W = spec.wires;
+    const ROW = 24, HEAD = 84, BLK_T = 24, BLK_GAP = 12, AX = 230, CX = 530, VW = 760;
+    /* agrupa por conector y calcula la Y de cada pin, por lado */
+    const layout = (gi) => {
+      const groups = new Map(); let y = HEAD + 10;
+      W.forEach((w, i) => { if (!groups.has(w[gi])) groups.set(w[gi], []); groups.get(w[gi]).push(i); });
+      const blocks = [], ys = [];
+      groups.forEach((idx, name) => {
+        const top = y; y += BLK_T;
+        idx.forEach(i => { ys[i] = y + ROW / 2; y += ROW; });
+        y += 6; blocks.push({ name, top, h: y - top, idx }); y += BLK_GAP;
+      });
+      return { blocks, ys, end: y };
+    };
+    const A = layout(0), B = layout(2);
+    const H = Math.max(A.end, B.end) + 6;
+    const r = 7;
+    const order = W.map((_, i) => i).filter(i => A.ys[i] !== B.ys[i]);
+    const down = order.filter(i => B.ys[i] > A.ys[i]).sort((a, b) => A.ys[b] - A.ys[a]);
+    const up = order.filter(i => B.ys[i] < A.ys[i]).sort((a, b) => A.ys[a] - A.ys[b]);
+    const xm = {}; down.forEach((i, k) => xm[i] = 330 + k * 9); up.forEach((i, k) => xm[i] = 330 + k * 9);
+    const wires = W.map((w, i) => {
+      const col = WC[w[4]][0], ay = A.ys[i], by = B.ys[i];
+      let d;
+      if (ay === by) d = `M${AX} ${ay}H${CX}`;
+      else {
+        const s = by > ay ? 1 : -1, rr = Math.min(r, Math.abs(by - ay) / 2), x = xm[i];
+        d = `M${AX} ${ay}H${x - rr}Q${x} ${ay} ${x} ${ay + s * rr}V${by - s * rr}Q${x} ${by} ${x + rr} ${by}H${CX}`;
+      }
+      const pw = 12 + w[5].length * 6.4;
+      return `<g class="conn__wire">
+        <path d="${d}" class="conn__halo"/><path d="${d}" stroke="${col}" class="conn__cable"/>
+        <rect x="${AX + 12}" y="${ay - 8}" width="${pw}" height="16" rx="8" fill="${col}" class="conn__pill"/>
+        <text x="${AX + 12 + pw / 2}" y="${ay + 3.6}" text-anchor="middle" class="conn__pilltxt" ${w[4] === 'h' ? 'fill="#111"' : ''}>${esc(w[5])}</text>
       </g>`;
     }).join('');
-    return `<div class="connwrap">
-      <svg class="connsvg" viewBox="0 0 340 ${h}" role="img" aria-label="Conexi\u00f3n entre el autopiloto y ${esc(c.name)}">
-        <rect x="4" y="${midY - 34}" width="90" height="68" rx="14" class="conn__box conn__box--ap"/>
-        <text x="49" y="${midY - 6}" text-anchor="middle" class="conn__t conn__t--b">CUAV</text>
-        <text x="49" y="${midY + 12}" text-anchor="middle" class="conn__t">X25 EVO</text>
-        ${rows}
-        <rect x="246" y="${midY - 34}" width="90" height="68" rx="14" class="conn__box conn__box--comp"/>
-        <text x="291" y="${midY - 6}" text-anchor="middle" class="conn__t conn__t--b">${esc(c.model.split(' ')[0])}</text>
-        <text x="291" y="${midY + 12}" text-anchor="middle" class="conn__t">${esc(c.model.split(' ').slice(1).join(' '))}</text>
+    const panel = (x, w, title, sub, file, cls, L, side) => {
+      const edge = side === 'ap' ? x + w : x;
+      const blocks = L.blocks.map(b => {
+        const bx = side === 'ap' ? x + 10 : x, bw = w - 10;
+        const pins = b.idx.map(i => {
+          const y = L.ys[i], pin = W[i][side === 'ap' ? 1 : 3], col = WC[W[i][4]][0];
+          const t = side === 'ap'
+            ? `<text x="${edge - 18}" y="${y + 3.5}" text-anchor="end" class="conn__pin">${esc(pin)}</text>`
+            : `<text x="${edge + 18}" y="${y + 3.5}" class="conn__pin">${esc(pin)}</text>`;
+          return `${t}<circle cx="${edge}" cy="${y}" r="5.5" fill="${col}" class="conn__dot"/>`;
+        }).join('');
+        return `<rect x="${bx}" y="${b.top}" width="${bw}" height="${b.h}" rx="9" class="conn__blk"/>
+          <text x="${bx + 12}" y="${b.top + 16}" class="conn__blkt">${esc(b.name)}</text>${pins}`;
+      }).join('');
+      const lines = [''];
+      title.split(' ').forEach(wd => { const l = lines[lines.length - 1]; if ((l + ' ' + wd).trim().length > 17 && l) lines.push(wd); else lines[lines.length - 1] = (l + ' ' + wd).trim(); });
+      const ty = 36 - (lines.length - 1) * 7;
+      const head = lines.map((t, k) => `<text x="${x + 86}" y="${ty + k * 15}" class="conn__ptitle">${esc(t)}</text>`).join('');
+      return `<rect x="${x}" y="0" width="${w}" height="${H}" rx="18" class="conn__panel ${cls}"/>
+        <image href="${IMG}${file}" x="${x + 12}" y="12" width="64" height="64" preserveAspectRatio="xMidYMid meet"/>
+        ${head}
+        <text x="${x + 86}" y="${ty + lines.length * 15}" class="conn__psub">${esc(sub)}</text>${blocks}`;
+    };
+    const legend = [...new Set(W.map(w => w[4]))].map(k => `<li><i style="background:${WC[k][0]}"></i>${WC[k][1]}</li>`).join('');
+    return `<figure class="connwrap">
+      <svg class="connsvg" viewBox="0 0 ${VW} ${H}" role="img" aria-label="Cableado entre el autopiloto y ${esc(c.name)}">
+        ${panel(16, 214, 'CUAV X25 EVO', 'Autopiloto', 'cuav-x25evo.png', 'conn__panel--ap', A, 'ap')}
+        ${panel(CX, 214, c.name, c.model, c.img, 'conn__panel--comp', B, 'comp')}
+        ${wires}
       </svg>
-    </div>`;
+      <ul class="conn__legend">${legend}</ul>
+      ${spec.foot ? `<figcaption>${esc(spec.foot)}</figcaption>` : ''}
+    </figure>`;
   }
 
   const BOOK = {
@@ -917,6 +996,143 @@
     bindScheme(model);
   }
 
+  /* ------------------------------------------------------------------ */
+  /* ESQUEMAS DISPONIBLES + FIRMWARE PREPARADO (bajo el esquema flotante) */
+  /* ------------------------------------------------------------------ */
+  const SCHEMAS = [
+    { file: 'Equipos Aéreos E-VTOL V3.1 (Visual).svg', title: 'Cableado general · Visual', tag: 'Rev. 4',
+      desc: 'Autopiloto al centro, cada puerto en su posición real y cada cable con su nombre y color.' },
+    { file: 'Equipos Aéreos E-VTOL V3.1.svg', title: 'Diagrama de equipos · draw.io', tag: 'Editable',
+      desc: 'Diagrama de bloques editable con todos los equipos de la plataforma.' }
+  ];
+  const svgUrl = (f) => IMG + 'svgs/' + encodeURI(f);
+
+  const FW_BUILDS = [
+    { name: 'ArduPlane v4.6.3 · TARSIS', tag: 'No oficial', kind: 'custom', board: 'CUAV-X25-EVO', file: 'arduplane-4.6.3-tarsis-x25evo.apj',
+      feats: [
+        ['Telemetría CAN Futaba', 'Telemetría de los servos Futaba integrada por CAN directamente en el código del FW.'],
+        ['ECU + EMS P4F', 'ECU y EMS del motor P4F definidos en el bus CAN.'],
+        ['Mensajes EFI', 'Conjunto total de mensajes EFI del P4F disponible en el FW.']
+      ] },
+    { name: 'ArduPlane v4.7.1', tag: 'Oficial', kind: 'official', board: 'CUAV-X25-EVO', file: null,
+      feats: [['Base del libro', 'Versión sobre la que está escrita esta documentación y su tabla de parámetros.']] }
+  ];
+
+  const FW_METHODS = [
+    { id: 'mp', label: 'Mission Planner', lead: 'Cargar el firmware desde Mission Planner (Windows). Desconecta el autopiloto antes de empezar.',
+      modes: [
+        { t: 'Online', steps: ['Abrir *Setup → Install Firmware* sin estar conectado.', 'Pulsar el icono **Plane** (descarga la versión oficial de firmware.ardupilot.org).', 'Conectar el USB-C cuando lo pida y esperar al *Done*.', 'Conectar y comprobar la versión en la pestaña *Messages*.'] },
+        { t: 'Sin conexión (.apj propio)', steps: ['Tener el `.apj` en el PC (p. ej. `arduplane-4.6.3-tarsis-x25evo.apj`).', 'Abrir *Setup → Install Firmware* y pulsar **Load custom firmware**.', 'Seleccionar el `.apj`; conectar el USB-C cuando lo pida.', 'Esperar al *Done* y conectar. No requiere internet.'] }
+      ] },
+    { id: 'qgc', label: 'QGroundControl', lead: 'Cargar el firmware desde QGC (Windows, Linux o macOS). Abrir *Vehicle Setup → Firmware* y conectar el USB después.',
+      modes: [
+        { t: 'Online', steps: ['Abrir *Vehicle Setup → Firmware* con el autopiloto desconectado.', 'Conectar el USB-C; elegir **ArduPilot**.', 'Seleccionar *Plane* y la versión (stable/beta) y pulsar *OK*.'] },
+        { t: 'Sin conexión (.apj propio)', steps: ['En el diálogo de firmware marcar **Advanced settings**.', 'Elegir **Custom firmware file…** en el desplegable.', 'Pulsar *OK* y seleccionar el `.apj`; esperar a que termine.'] }
+      ] },
+    { id: 'waf', label: 'Compilar con waf (Ubuntu)', lead: 'Compilar el FW propio desde el código fuente. En Windows, usar WSL2 con Ubuntu.',
+      modes: [
+        { t: 'Preparar entorno', code: ['sudo apt update && sudo apt install -y git', 'git clone --recurse-submodules https://github.com/ArduPilot/ardupilot.git', 'cd ardupilot', 'git checkout Plane-4.6.3', 'git submodule update --init --recursive', 'Tools/environment_install/install-prereqs-ubuntu.sh -y', '. ~/.profile'] },
+        { t: 'Compilar', code: ['./waf configure --board CUAV-X25-EVO', './waf plane', '# resultado: build/CUAV-X25-EVO/bin/arduplane.apj'], note: 'Aplicar antes los cambios propios (CAN Futaba, ECU/EMS P4F, EFI) sobre este árbol. Para subirlo por USB: `./waf --targets bin/arduplane --upload`.' }
+      ] },
+    { id: 'web', label: 'Custom Firmware Builder', lead: 'Constructor web oficial de ArduPilot (custom.ardupilot.org): no hace falta instalar nada.',
+      modes: [
+        { t: 'Pasos', steps: ['Abrir custom.ardupilot.org y elegir **Plane**.', 'Seleccionar la versión y la placa **CUAV-X25-EVO**.', 'Activar o desactivar las funciones (EFI, DroneCAN, etc.) y pulsar *Build*.', 'Descargar el `.apj` y cargarlo con Mission Planner o QGC (modo sin conexión).'],
+          note: 'Compila solo código oficial: **no incluye** la telemetría CAN Futaba ni el ECU/EMS P4F propios.' }
+      ] }
+  ];
+
+  function renderExtras() {
+    const box = $('#extras');
+    const schemas = SCHEMAS.map((s, i) => `
+      <li class="schema">
+        <button class="schema__btn" type="button" data-schema="${i}" aria-label="Ampliar ${esc(s.title)}">
+          <span class="schema__prev"><img src="${svgUrl(s.file)}" alt="" loading="lazy"></span>
+          <span class="schema__zoom" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 4a6 6 0 1 0 3.9 10.6l4.8 4.8 1.4-1.4-4.8-4.8A6 6 0 0 0 10 4Zm-1 3h2v2h2v2h-2v2H9v-2H7V9h2V7Z"/></svg>Ampliar</span>
+        </button>
+        <div class="schema__info"><span class="chip">${esc(s.tag)}</span><h4>${esc(s.title)}</h4><p>${esc(s.desc)}</p>
+          <a class="schema__dl" href="${svgUrl(s.file)}" target="_blank" rel="noopener">Abrir SVG en pestaña nueva</a></div>
+      </li>`).join('');
+
+    const builds = FW_BUILDS.map(b => `
+      <li class="fwcard fwcard--${b.kind}">
+        <div class="fwcard__head"><h4>${esc(b.name)}</h4><span class="chip chip--${b.kind}">${esc(b.tag)}</span></div>
+        <p class="fwcard__meta">Placa <code>${esc(b.board)}</code>${b.file ? ` · Archivo <code>${esc(b.file)}</code> <em>(pendiente de subir)</em>` : ' · Descarga desde Mission Planner / QGC'}</p>
+        <ul class="fwcard__feats">${b.feats.map(f => `<li><strong>${esc(f[0])}</strong><span>${esc(f[1])}</span></li>`).join('')}</ul>
+      </li>`).join('');
+
+    const tabs = FW_METHODS.map((m, i) => `<button class="fwtab" type="button" role="tab" id="fwt-${m.id}" aria-selected="${i === 0}" aria-controls="fwp-${m.id}" data-fw="${m.id}">${esc(m.label)}</button>`).join('');
+    const panels = FW_METHODS.map((m, i) => `
+      <div class="fwpanel" role="tabpanel" id="fwp-${m.id}" aria-labelledby="fwt-${m.id}" ${i ? 'hidden' : ''}>
+        <p class="fwpanel__lead">${inline(m.lead)}</p>
+        <div class="fwmodes">${m.modes.map(md => `
+          <div class="fwmode"><h5>${esc(md.t)}</h5>
+            ${md.steps ? `<ol>${md.steps.map(s => `<li>${inline(s)}</li>`).join('')}</ol>` : ''}
+            ${md.code ? `<pre><code>${esc(md.code.join('\n'))}</code></pre><button class="copy" type="button" data-copy="${esc(md.code.filter(l => !l.startsWith('#')).join('\n'))}">Copiar</button>` : ''}
+            ${md.note ? `<p class="fwmode__note">${inline(md.note)}</p>` : ''}
+          </div>`).join('')}</div>
+      </div>`).join('');
+
+    box.innerHTML = `
+      <section class="extra" aria-labelledby="exSchemas">
+        <p class="eyebrow">Documentación gráfica</p>
+        <h3 id="exSchemas">Esquemas disponibles</h3>
+        <p class="extra__lead">Vista previa de cada esquema (SVG). Pulsa para ampliarlo sin salir de la página.</p>
+        <ul class="schemas">${schemas}</ul>
+      </section>
+      <section class="extra" aria-labelledby="exFw">
+        <p class="eyebrow">Firmware preparado · no oficial</p>
+        <h3 id="exFw">Builds y cómo cargarlas</h3>
+        <p class="extra__lead">Firmwares propios de la plataforma, con lo que lleva cada uno, y las distintas formas de instalarlos.</p>
+        <ul class="fwcards">${builds}</ul>
+        <div class="fwtabs" role="tablist" aria-label="Método de carga">${tabs}</div>
+        ${panels}
+        <p class="fwwarn"><strong>Antes de flashear:</strong> guardar el archivo de parámetros actual (<em>Config → Full Parameter List → Save to file</em>) y confirmar la versión en <em>Messages</em> tras reiniciar.</p>
+      </section>`;
+    box.hidden = false;
+    bindExtras(box);
+  }
+
+  function bindExtras(box) {
+    box.querySelectorAll('[data-schema]').forEach(b => b.addEventListener('click', () => openLightbox(SCHEMAS[b.dataset.schema])));
+    const tabs = $$('.fwtab', box);
+    const pick = (t) => tabs.forEach(x => {
+      const on = x === t; x.setAttribute('aria-selected', on);
+      $('#fwp-' + x.dataset.fw).hidden = !on;
+    });
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => pick(t));
+      t.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); pick(n); }
+      });
+    });
+    box.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+      navigator.clipboard.writeText(b.dataset.copy).then(() => toast('Comandos copiados'), () => toast('No se pudo copiar'));
+    }));
+  }
+
+  function openLightbox(s) {
+    const lb = document.createElement('div');
+    lb.className = 'lightbox'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', s.title);
+    lb.innerHTML = `
+      <div class="lightbox__bar"><strong>${esc(s.title)}</strong>
+        <span><button type="button" data-zoom>Tamaño real</button><a href="${svgUrl(s.file)}" target="_blank" rel="noopener">Abrir</a><button type="button" data-x aria-label="Cerrar">✕</button></span></div>
+      <div class="lightbox__view"><img src="${svgUrl(s.file)}" alt="${esc(s.title)}"></div>`;
+    const prev = document.activeElement;
+    const close = () => { lb.remove(); document.removeEventListener('keydown', onKey); document.body.classList.remove('lb-open'); prev && prev.focus && prev.focus(); };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    lb.addEventListener('click', (e) => {
+      if (e.target.closest('[data-x]') || e.target.classList.contains('lightbox__view')) close();
+      if (e.target.closest('[data-zoom]')) {
+        const full = lb.classList.toggle('is-full'); e.target.textContent = full ? 'Ajustar' : 'Tamaño real';
+      }
+    });
+    document.addEventListener('keydown', onKey);
+    document.body.classList.add('lb-open');
+    document.body.appendChild(lb);
+    $('[data-x]', lb).focus();
+  }
+
   function bindScheme(model) {
     const scheme = $('#scheme');
     const hl = (id, on) => {
@@ -1153,11 +1369,12 @@
       $('#modelLead').textContent = 'La documentación de esta plataforma está en preparación.';
       $('#scheme').innerHTML = `<div class="empty"><div class="empty__img" data-ph>${img(model.img, model.name)}</div><p>Esquema y libro de configuración próximamente.</p><a class="btn" href="#/">Volver a plataformas</a></div>`;
       $('#schemeHint').textContent = ''; $('#btnBook').hidden = true; renderedModel = null; closeBook();
+      $('#extras').hidden = true; $('#extras').innerHTML = '';
       return;
     }
 
     $('#modelLead').textContent = model.lead;
-    if (renderedModel !== model.id) { renderScheme(model.id); renderedModel = model.id; }
+    if (renderedModel !== model.id) { renderScheme(model.id); renderExtras(); renderedModel = model.id; }
     $('#btnBook').hidden = false;
 
     if (ch) {
