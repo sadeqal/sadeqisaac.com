@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Configuración de Plataformas Aéreas · INDRA</title>
+  <meta name="description" content="Documentación de configuración de plataformas aéreas no tripuladas: TARSIS VTOL, MFE y DRIZZLE.">
+  <meta name="theme-color" content="#00262e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/docs.css">
+</head>
+<body>
+  <a class="skip" href="#main">Saltar al contenido</a>
+  <div class="bg-logo" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#/" aria-label="Inicio · Configuración de Plataformas Aéreas">
+      <img class="brand__logo" src="../images/docs/indra-logo.png" alt="" onerror="this.style.display='none'">
+      <span class="brand__text"><strong>INDRA</strong><small>Configuración de Plataformas Aéreas</small></span>
+    </a>
+    <nav class="crumbs" id="crumbs" aria-label="Ruta de navegación"></nav>
+    <div class="topbar__actions">
+      <button class="btn btn--ghost" id="btnBook" type="button" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Zm2 12h11V5H6v12Z"/></svg>
+        Abrir libro completo
+      </button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section id="viewHome" class="view" aria-labelledby="homeTitle">
+      <div class="hero">
+        <p class="eyebrow">Documentación técnica · Ardupilot 4.7.1</p>
+        <h1 id="homeTitle">Configuración de <span>Plataformas Aéreas</span></h1>
+        <p class="lead">Selecciona una plataforma para ver su esquema completo de equipos y acceder, en un clic, a la configuración detallada de cada componente.</p>
+      </div>
+      <ul class="cards" id="cards"></ul>
+    </section>
+
+    <section id="viewModel" class="view" aria-labelledby="modelTitle" hidden>
+      <div class="model-head">
+        <p class="eyebrow" id="modelEyebrow"></p>
+        <h2 id="modelTitle"></h2>
+        <p class="lead" id="modelLead"></p>
+      </div>
+      <div class="scheme" id="scheme"></div>
+      <p class="hint" id="schemeHint"></p>
+    </section>
+  </main>
+
+  <div class="book" id="book" role="dialog" aria-modal="true" aria-label="Libro de configuración" hidden>
+    <div class="book__scrim" data-close></div>
+    <div class="book__panel">
+      <aside class="book__side" id="bookSide">
+        <div class="book__sidehead">
+          <p class="eyebrow" id="bookModel"></p>
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4a6 6 0 1 0 3.9 10.6l4.8 4.8 1.4-1.4-4.8-4.8A6 6 0 0 0 10 4Zm0 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/></svg>
+            <input id="bookSearch" type="search" placeholder="Buscar parámetro, equipo…" autocomplete="off" aria-label="Buscar en el libro">
+          </label>
+        </div>
+        <nav class="toc" id="toc" aria-label="Índice"></nav>
+      </aside>
+      <div class="book__main">
+        <div class="book__bar">
+          <button class="iconbtn book__menu" id="bookMenu" type="button" aria-label="Mostrar índice" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z"/></svg>
+          </button>
+          <div class="book__where" id="bookWhere"></div>
+          <button class="iconbtn" id="bookPrint" type="button" aria-label="Imprimir">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v5H7V3Zm-3 7h16v8h-3v3H7v-3H4v-8Zm5 5v4h6v-4H9Zm9-3a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg>
+          </button>
+          <button class="iconbtn" id="bookClose" type="button" aria-label="Cerrar libro (Esc)" data-close>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.4 5 5.6 5.6L17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19 5 17.6l5.6-5.6L5 6.4 6.4 5Z"/></svg>
+          </button>
+        </div>
+        <article class="book__scroll" id="bookScroll" tabindex="-1"></article>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="../scripts/docs.js"></script>
+</body>
+</html>

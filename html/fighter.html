@@ -3,649 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArduPilot Fighter VTOL - Complete Configuration Guide</title>
+    <title>FIGHTER VTOL // ArduPilot Tactical Configuration Manual</title>
+    <link rel="stylesheet" href="../styles/fighter.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        :root {
-            --primary: #00d4ff;
-            --primary-dark: #0099cc;
-            --secondary: #ff6b35;
-            --bg-dark: #0a0e27;
-            --bg-card: #1a1f3a;
-            --bg-light: #252d4a;
-            --text-primary: #e0e6ff;
-            --text-secondary: #a0aec0;
-            --success: #00d97e;
-            --warning: #ffd93d;
-            --error: #ff6b6b;
-            --border: #2d3748;
-            --accent-blue: #3b82f6;
-            --accent-orange: #f97316;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #0f1535 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* LAYOUT PRINCIPAL */
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 280px;
-            background: rgba(10, 14, 39, 0.95);
-            border-right: 1px solid var(--border);
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            padding: 24px 0;
-            left: 0;
-            top: 0;
-            z-index: 100;
-        }
-
-        .sidebar-title {
-            padding: 0 24px 24px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 24px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--primary);
-        }
-
-        .sidebar-item {
-            padding: 12px 24px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 13px;
-            border-left: 3px solid transparent;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sidebar-item:hover {
-            background: rgba(0, 212, 255, 0.1);
-            color: var(--primary);
-            border-left-color: var(--primary);
-        }
-
-        .sidebar-item.active {
-            background: rgba(0, 212, 255, 0.15);
-            color: var(--primary);
-            border-left-color: var(--primary);
-            font-weight: 600;
-        }
-
-        .sidebar-item::before {
-            content: '';
-            width: 4px;
-            height: 4px;
-            background: currentColor;
-            border-radius: 50%;
-            opacity: 0;
-        }
-
-        .sidebar-item.active::before {
-            opacity: 1;
-        }
-
-        /* MAIN CONTENT */
-        .main-content {
-            margin-left: 280px;
-            flex: 1;
-            padding: 48px;
-            padding-top: 24px;
-        }
-
-        /* HEADER */
-        .header {
-            position: sticky;
-            top: 0;
-            background: rgba(10, 14, 39, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
-            margin: -48px -48px 48px -48px;
-            padding-left: 48px;
-            padding-right: 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 99;
-        }
-
-        .header-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: var(--bg-dark);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 212, 255, 0.3);
-        }
-
-        .btn-secondary {
-            background: var(--bg-light);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-card);
-            border-color: var(--primary);
-        }
-
-        /* SECTIONS */
-        .section {
-            margin-bottom: 64px;
-            scroll-margin-top: 80px;
-        }
-
-        .section-header {
-            margin-bottom: 32px;
-        }
-
-        .section-number {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        .section-title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-            line-height: 1.2;
-        }
-
-        .section-subtitle {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-        }
-
-        /* CARDS */
-        .card {
-            background: rgba(26, 31, 58, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 24px;
-            margin-bottom: 24px;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            border-color: var(--primary);
-            background: rgba(26, 31, 58, 0.7);
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        .card-description {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin-bottom: 16px;
-        }
-
-        /* LINKS */
-        .link-box {
-            background: rgba(59, 130, 246, 0.1);
-            border-left: 3px solid var(--accent-blue);
-            padding: 16px;
-            margin-bottom: 16px;
-            border-radius: 4px;
-        }
-
-        .link-box a {
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            word-break: break-all;
-            display: inline-block;
-        }
-
-        .link-box a:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
-        }
-
-        /* IMAGE PLACEHOLDER */
-        .image-placeholder {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            padding: 48px;
-            text-align: center;
-            margin: 24px 0;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .image-placeholder-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
-
-        .image-placeholder-text {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .image-placeholder-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-        }
-
-        /* CODE BLOCK */
-        .code-block {
-            background: rgba(10, 14, 39, 0.8);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            margin: 16px 0;
-            overflow: hidden;
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .code-header {
-            background: var(--bg-light);
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-        }
-
-        .code-content {
-            padding: 16px;
-            overflow-x: auto;
-            color: var(--primary);
-        }
-
-        .code-content code {
-            color: inherit;
-        }
-
-        .copy-btn {
-            background: rgba(0, 212, 255, 0.2);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .copy-btn:hover {
-            background: var(--primary);
-            color: var(--bg-dark);
-        }
-
-        /* PARAMETERS TABLE */
-        .params-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 12px;
-        }
-
-        .params-table thead {
-            background: var(--bg-light);
-        }
-
-        .params-table th {
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--primary);
-            border-bottom: 2px solid var(--border);
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-        }
-
-        .params-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-secondary);
-        }
-
-        .params-table tbody tr:hover {
-            background: rgba(0, 212, 255, 0.05);
-        }
-
-        .param-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-family: 'Monaco', monospace;
-        }
-
-        .param-value {
-            color: var(--success);
-            font-weight: 500;
-        }
-
-        .param-default {
-            color: var(--warning);
-        }
-
-        /* TABS */
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border);
-            margin: 24px 0;
-            gap: 0;
-        }
-
-        .tab {
-            padding: 12px 24px;
-            border: none;
-            background: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .tab:hover {
-            color: var(--text-primary);
-        }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* COLLAPSIBLE */
-        .collapsible {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            transition: all 0.3s;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .collapsible:hover {
-            background: rgba(0, 212, 255, 0.1);
-            border-color: var(--primary);
-        }
-
-        .collapsible-icon {
-            transition: transform 0.3s;
-            font-size: 18px;
-        }
-
-        .collapsible.open .collapsible-icon {
-            transform: rotate(180deg);
-        }
-
-        .collapsible-content {
-            display: none;
-            padding: 16px;
-            background: rgba(10, 14, 39, 0.5);
-            border-left: 3px solid var(--primary);
-            margin-bottom: 16px;
-            border-radius: 4px;
-        }
-
-        .collapsible-content.open {
-            display: block;
-        }
-
-        /* PROGRESS */
-        .progress {
-            height: 3px;
-            background: var(--border);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 24px 0;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent-orange));
-            width: 0;
-            transition: width 0.3s;
-        }
-
-        /* ALERTS */
-        .alert {
-            padding: 16px;
-            border-radius: 6px;
-            border-left: 4px solid;
-            margin-bottom: 16px;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .alert-info {
-            background: rgba(59, 130, 246, 0.1);
-            border-left-color: var(--accent-blue);
-            color: var(--text-secondary);
-        }
-
-        .alert-warning {
-            background: rgba(255, 217, 61, 0.1);
-            border-left-color: var(--warning);
-            color: var(--warning);
-        }
-
-        .alert-error {
-            background: rgba(255, 107, 107, 0.1);
-            border-left-color: var(--error);
-            color: var(--error);
-        }
-
-        .alert-success {
-            background: rgba(0, 217, 126, 0.1);
-            border-left-color: var(--success);
-            color: var(--success);
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 240px;
-            }
-            .main-content {
-                margin-left: 240px;
-                padding: 32px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-                padding: 16px;
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 24px;
-            }
-            .header {
-                flex-direction: column;
-                gap: 16px;
-            }
-            .section-title {
-                font-size: 24px;
-            }
-        }
-
-        /* PRINT */
-        @media print {
-            .sidebar {
-                display: none;
-            }
-            .header {
-                display: none;
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 0;
-            }
-            .section {
-                page-break-inside: avoid;
-                margin-bottom: 40px;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-title">📋 Contents</div>
-            <div class="sidebar-item active" data-section="intro">Introduction</div>
-            <div class="sidebar-item" data-section="firmware">1. Firmware Installation</div>
-            <div class="sidebar-item" data-section="radio">2. Radio Configuration (CUAV P9)</div>
-            <div class="sidebar-item" data-section="receiver">3. Receiver Setup (FrSky TDRS 18)</div>
-            <div class="sidebar-item" data-section="gnss">4. GNSS Configuration</div>
-            <div class="sidebar-item" data-section="airspeed">5. Airspeed Sensor</div>
-            <div class="sidebar-item" data-section="modes">6. Flight Modes & Speeds</div>
-            <div class="sidebar-item" data-section="camera">7. Payload Configuration</div>
-            <div class="sidebar-item" data-section="accel">8. IMU Calibration</div>
-            <div class="sidebar-item" data-section="servo">9. Servo Output Mapping</div>
-            <div class="sidebar-item" data-section="motors">10. Motor Calibration</div>
-            <div class="sidebar-item" data-section="rangefinder">11. Range Finder Setup</div>
-            <div class="sidebar-item" data-section="tuning">12. PID Tuning (Cruise)</div>
-            <div class="sidebar-item" data-section="params">13. Complete Parameters</div>
+            <div class="sidebar-title">MFE FIGHTER VTOL <span class="tag">MFE-X25</span></div>
+
+            <div class="sidebar-item active" data-section="intro">Introducción</div>
+
+            <div class="sidebar-group-label">Plataforma</div>
+            <div class="sidebar-item" data-section="frame">01 · Firmware &amp; Modos de Vuelo</div>
+            <div class="sidebar-item" data-section="telemetry">02 · Radio &amp; Enlaces Serie</div>
+            <div class="sidebar-item" data-section="rc">03 · Mando Manual (RC)</div>
+
+            <div class="sidebar-group-label">Sensores</div>
+            <div class="sidebar-item" data-section="gnss">04 · GNSS</div>
+            <div class="sidebar-item" data-section="compass">05 · Compás</div>
+            <div class="sidebar-item" data-section="airspeed">06 · Sonda de Velocidad</div>
+            <div class="sidebar-item" data-section="baro">07 · Barómetro</div>
+            <div class="sidebar-item" data-section="imu">08 · IMU / INS</div>
+            <div class="sidebar-item" data-section="ekf">09 · Filtro EKF3</div>
+            <div class="sidebar-item" data-section="battery">10 · Batería</div>
+            <div class="sidebar-item" data-section="rangefinder">11 · Telémetro Láser</div>
+
+            <div class="sidebar-group-label">Actuación</div>
+            <div class="sidebar-item" data-section="servos">12 · Mapeo de Servos</div>
+            <div class="sidebar-item" data-section="motors">13 · Motores / ESC</div>
+            <div class="sidebar-item" data-section="payload">14 · Payload / Relés</div>
+
+            <div class="sidebar-group-label">Ajuste (Tuning)</div>
+            <div class="sidebar-item" data-section="transition">15 · Transición &amp; Assist</div>
+            <div class="sidebar-item" data-section="tuning-q">16 · PID Modo Q (VTOL)</div>
+            <div class="sidebar-item" data-section="tuning-cruise">17 · PID Modo Crucero</div>
+
+            <div class="sidebar-group-label">Seguridad</div>
+            <div class="sidebar-item" data-section="safety">18 · Failsafe &amp; Arming</div>
+            <div class="sidebar-item" data-section="params">19 · Exportación Completa</div>
         </aside>
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
             <!-- HEADER -->
             <div class="header">
-                <div class="header-title">ArduPilot VTOL Fighter Configuration Guide</div>
+                <div class="header-title">Fighter VTOL Configuration Manual
+                    <span class="subtag">ArduPilot 4.7.1 // CUAV X25-EVO // Actualizado 29-09-2026</span>
+                </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="toggleSidebar()">☰ Menu</button>
-                    <button class="btn btn-primary" onclick="exportPDF()">📥 Export PDF</button>
+                    <button class="btn btn-secondary" onclick="toggleSidebar()">☰ MENÚ</button>
+                    <button class="btn btn-primary" onclick="exportPDF()">⬇ EXPORTAR PDF</button>
                 </div>
             </div>
+
+            <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
 
             <!-- INTRO SECTION -->
             <section class="section" id="intro">
                 <div class="section-header">
-                    <div class="section-number">Introduction</div>
-                    <h1 class="section-title">Complete ArduPilot Configuration for Fighter VTOL</h1>
-                    <p class="section-subtitle">Step-by-step guide for MFE Fighter platform on CUAV Autopilot X25-EVO</p>
+                    <div class="section-number">// Documento de Referencia Operativa</div>
+                    <h1 class="section-title">Manual de Configuración ArduPilot — Fighter VTOL</h1>
+                    <p class="section-subtitle">Guía técnica sensor por sensor, valores de ajuste (tuning) en modo Q y modo crucero, mando manual y mapeo de servos — extraída directamente del archivo de parámetros de vuelo real de la aeronave.</p>
                 </div>
 
                 <div class="card">
-                    <div class="card-title">Platform Overview</div>
+                    <div class="card-title">Resumen de la plataforma</div>
                     <div class="card-description">
-                        This documentation covers the complete setup of the MFE Fighter VTOL platform running ArduPilot firmware.
-                        Follow each step sequentially to ensure proper system configuration.
+                        Esta plataforma MFE Fighter VTOL opera sobre autopiloto CUAV Pixhawk X25-EVO con ArduPilot Plane 4.7.1.
+                        Todos los valores mostrados en este documento provienen del volcado de parámetros real
+                        <code>Params VTOL, con PID 29-09-2026.param</code>, no de valores por defecto de fábrica.
+                        Cada sección indica explícitamente cuándo un valor difiere del estándar ArduPilot.
                     </div>
+                    <span class="card-flag ok">FUENTE: PARAM DUMP REAL</span>
                 </div>
 
                 <div class="alert alert-info">
-                    <strong>Documentation Status:</strong> This guide covers firmware installation through PID tuning for cruise flight.
-                    Image placeholders are provided for each configuration step.
+                    <strong>Estado del documento:</strong> Cobertura completa — firmware, radio, mando manual, los 6 sensores instalados,
+                    mapeo de 10 servos, motores VTOL, transición, y ajuste PID completo en modo Q y modo crucero.
                 </div>
 
-                <h3 style="margin-top: 32px; margin-bottom: 16px;">Platform Resources</h3>
+                <div class="alert alert-warning">
+                    <strong>Aviso operativo:</strong> Se han detectado 3 configuraciones que requieren atención antes del próximo vuelo:
+                    sonda de velocidad calibrada pero <span class="param-off">deshabilitada</span> para control (<code>ARSPD_USE=0</code>),
+                    telémetro láser sin instalar (<code>RNGFND1_TYPE=0</code>), y acciones de failsafe de batería desactivadas
+                    (<code>BATT_FS_LOW_ACT / BATT_FS_CRT_ACT = 0</code>). Ver secciones 06, 11 y 18.
+                </div>
+
+                <h3 class="subhead">Recursos de la plataforma</h3>
                 <div class="link-box">
                     <strong>MFE Fighter:</strong><br>
                     <a href="https://www.makeflyeasy.com/index.php/奋斗者vtol/" target="_blank">
@@ -653,1732 +102,915 @@
                     </a>
                 </div>
                 <div class="link-box">
-                    <strong>ArduPilot Fighter Docs:</strong><br>
+                    <strong>Documentación ArduPilot Fighter:</strong><br>
                     <a href="https://ardupilot.org/plane/docs/common-makeflyeasy-fighter-vtol.html" target="_blank">
                         https://ardupilot.org/plane/docs/common-makeflyeasy-fighter-vtol.html
                     </a>
                 </div>
                 <div class="link-box">
-                    <strong>Custom Build Tool:</strong><br>
+                    <strong>Herramienta de Build Personalizado:</strong><br>
                     <a href="https://custom.ardupilot.org/" target="_blank">
                         https://custom.ardupilot.org/
                     </a>
                 </div>
             </section>
 
-            <!-- 1. FIRMWARE INSTALLATION -->
-            <section class="section" id="firmware">
+            <!-- 01 FRAME & FLIGHT MODES -->
+            <section class="section" id="frame">
                 <div class="section-header">
-                    <div class="section-number">Step 1</div>
-                    <h2 class="section-title">Firmware Installation</h2>
-                    <p class="section-subtitle">Installing official and custom ArduPilot builds</p>
+                    <div class="section-number">Sección 01</div>
+                    <h2 class="section-title">Firmware, Frame &amp; Modos de Vuelo</h2>
+                    <p class="section-subtitle">Configuración base de la aeronave: tipo de frame VTOL y asignación de los 6 modos de vuelo</p>
                 </div>
 
                 <div class="card">
-                    <div class="card-title">1.1 Standard Build vs Custom Build</div>
+                    <div class="card-title">Configuración de Frame VTOL</div>
                     <div class="card-description">
-                        Choose between pre-built official firmware or customize features for your specific requirements.
+                        El frame QuadPlane está habilitado con geometría Quad clase X. La parte de ala fija no usa
+                        <code>FRAME_CLASS</code> (exclusivo de Copter); en Plane, la parte VTOL se define únicamente con
+                        <code>Q_FRAME_CLASS</code> / <code>Q_FRAME_TYPE</code>.
                     </div>
                 </div>
 
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">🖼️</div>
-                    <div class="image-placeholder-text">ArduPilot Build Selection Interface</div>
-                    <div class="image-placeholder-label">Step 1 - Firmware Build Selection</div>
-                </div>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">Q_ENABLE</td><td class="param-value">1</td><td>Funcionalidad QuadPlane habilitada</td></tr>
+                        <tr><td class="param-name">Q_FRAME_CLASS</td><td class="param-value">1</td><td>Quad</td></tr>
+                        <tr><td class="param-name">Q_FRAME_TYPE</td><td class="param-value">1</td><td>Geometría en X</td></tr>
+                        <tr><td class="param-name">Q_GUIDED_MODE</td><td class="param-value">0</td><td>Guided VTOL deshabilitado</td></tr>
+                        <tr><td class="param-name">INITIAL_MODE</td><td class="param-value">0</td><td>Arranca en MANUAL</td></tr>
+                        <tr><td class="param-name">STICK_MIXING</td><td class="param-value">1</td><td>Mezcla de stick habilitada en modos auto</td></tr>
+                    </tbody>
+                </table>
 
-                <h3 style="margin: 32px 0 16px;">Standard Build (Official Firmware)</h3>
-                <div class="alert alert-success">
-                    <strong>Recommended for:</strong> Production deployments, stable features, no custom modifications
-                </div>
-                <p style="margin-bottom: 16px; color: var(--text-secondary);">
-                    Download pre-compiled official firmware from firmware.ardupilot.org:
+                <h3 class="subhead">Asignación de Modos de Vuelo (canal 7)</h3>
+                <p style="color:var(--text-secondary); font-size:13px; margin-bottom:12px;">
+                    <code>FLTMODE_CH = 7</code> — la posición del interruptor en el canal 7 del S20E selecciona el modo activo.
                 </p>
-
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>STANDARD BUILD STEPS</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <div class="code-content"><code>1. Visit: https://firmware.ardupilot.org/
-2. Select Vehicle Type: Plane
-3. Select Frame: MFE Fighter VTOL
-4. Select Hardware: CUAV Pixhawk X25-EVO
-5. Download Latest Release
-6. Upload via Mission Planner or APM Planner</code></div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">Custom Build</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Modo</th><th>Tipo</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">FLTMODE1</td><td class="param-value">17</td><td>QSTABILIZE</td><td>VTOL — estabilizado</td></tr>
+                        <tr><td class="param-name">FLTMODE2</td><td class="param-value">17</td><td>QSTABILIZE</td><td>VTOL — estabilizado</td></tr>
+                        <tr><td class="param-name">FLTMODE3</td><td class="param-value">2</td><td>STABILIZE</td><td>Ala fija — estabilizado</td></tr>
+                        <tr><td class="param-name">FLTMODE4</td><td class="param-value">2</td><td>STABILIZE</td><td>Ala fija — estabilizado</td></tr>
+                        <tr><td class="param-name">FLTMODE5</td><td class="param-value">0</td><td>MANUAL</td><td>Control directo, sin estabilización</td></tr>
+                        <tr><td class="param-name">FLTMODE6</td><td class="param-value">0</td><td>MANUAL</td><td>Control directo, sin estabilización</td></tr>
+                    </tbody>
+                </table>
                 <div class="alert alert-info">
-                    <strong>Use for:</strong> Custom features, specific sensor support, optimized parameters
-                </div>
-                <p style="margin-bottom: 16px; color: var(--text-secondary);">
-                    Build custom firmware with specific features enabled:
-                </p>
-
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>CUSTOM BUILD STEPS</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <div class="code-content"><code>1. Visit: https://custom.ardupilot.org/
-2. Select Vehicle: Plane
-3. Select Autopilot: CUAV X25 EVO
-4. Configure Options:
-   - Enable DDS: Yes (for telemetry)
-   - Enable DroneCAN: Yes
-   - Enable CAN protocol: Yes
-5. Add Custom Features:
-   - Payload support
-   - Rangefinder integration
-   - Airspeed sensor
-6. Build and Download
-7. Upload to autopilot</code></div>
-                </div>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">⚙️</div>
-                    <div class="image-placeholder-text">Custom Build Configuration Panel</div>
-                    <div class="image-placeholder-label">Step 1.2 - Custom Build Options</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">Upload to Autopilot</h3>
-                <div class="alert alert-warning">
-                    <strong>Important:</strong> Connect autopilot via USB. Do NOT connect power or radio while uploading.
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>MISSION PLANNER UPLOAD</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <div class="code-content"><code>1. Open Mission Planner
-2. Select COM port (CUAV device)
-3. Connect to autopilot
-4. Go to: Initial Setup → Install Firmware
-5. Select firmware file (.apj)
-6. Wait for "Erasing Sectors" message
-7. Wait 30 seconds for verification
-8. Green "Firmware uploaded successfully" confirmation</code></div>
+                    <strong>Nota:</strong> No hay modos automáticos (AUTO/RTL/QLOITER) mapeados actualmente en los 6 slots.
+                    Solo se usan QSTABILIZE, STABILIZE y MANUAL — perfil de vuelo manual/asistido.
                 </div>
             </section>
 
-            <!-- 2. RADIO CONFIGURATION -->
-            <section class="section" id="radio">
+            <!-- 02 TELEMETRY / SERIAL -->
+            <section class="section" id="telemetry">
                 <div class="section-header">
-                    <div class="section-number">Step 2</div>
-                    <h2 class="section-title">Radio Configuration (CUAV P9)</h2>
-                    <p class="section-subtitle">Point-to-point telemetry setup for ground station to airborne</p>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">2.1 Hardware Overview</div>
-                    <div class="card-description">
-                        CUAV P9 900MHz wireless module supports point-to-point and mesh modes. Configured for point-to-point with
-                        57600 baud rate, master on ground, slave on aircraft.
-                    </div>
+                    <div class="section-number">Sección 02</div>
+                    <h2 class="section-title">Radio &amp; Enlaces Serie (CUAV P9)</h2>
+                    <p class="section-subtitle">Telemetría punto a punto y mapeo completo de los 8 puertos serie del autopiloto</p>
                 </div>
 
                 <div class="link-box">
-                    <strong>CUAV P9 Documentation:</strong><br>
+                    <strong>Documentación CUAV P9:</strong><br>
                     <a href="https://doc.cuav.net/data-transmission/p9-radio/en/config.html" target="_blank">
                         https://doc.cuav.net/data-transmission/p9-radio/en/config.html
                     </a>
                 </div>
 
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">📡</div>
-                    <div class="image-placeholder-text">Serial Port Utility Configuration</div>
-                    <div class="image-placeholder-label">Step 2 - CUAV P9 Serial Configuration</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">2.2 Master Configuration (Ground Station)</h3>
-                <div class="alert alert-info">
-                    <strong>Connection:</strong> CUAV P9 radio module via USB serial adapter
-                </div>
-
+                <h3 class="subhead">Configuración del radio P9 900MHz</h3>
                 <div class="code-block">
-                    <div class="code-header">
-                        <span>MASTER DEFAULT SETTINGS</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
+                    <div class="code-header"><span>MASTER (ESTACIÓN TERRENA)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                     <div class="code-content"><code>AT&F10
 ATS102=2
 ATS104=725527
 AT&W
 AT&V</code></div>
                 </div>
-
-                <p style="margin: 16px 0; color: var(--text-secondary); font-size: 13px;">
-                    <strong>Configuration Steps:</strong>
-                </p>
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
-                        <li>Open Serial Port Utility</li>
-                        <li>Select COM port (CUAV P9)</li>
-                        <li>Set Baud Rate: 57600</li>
-                        <li>Open serial connection</li>
-                        <li>Copy each command line above</li>
-                        <li>Paste into serial terminal</li>
-                        <li>Press Enter</li>
-                        <li>Wait for "OK" response</li>
-                        <li>Repeat for all commands</li>
-                    </ol>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">2.3 Slave Configuration (Airborne)</h3>
-                <div class="alert alert-warning">
-                    <strong>Power ON:</strong> Aircraft must be powered for slave configuration
-                </div>
-
                 <div class="code-block">
-                    <div class="code-header">
-                        <span>SLAVE DEFAULT SETTINGS</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
+                    <div class="code-header"><span>SLAVE (AERONAVE)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                     <div class="code-content"><code>AT&F11
 ATS102=2
 ATS104=725527
 AT&W</code></div>
                 </div>
 
-                <h3 style="margin: 32px 0 16px;">2.4 Autopilot Serial Port Mapping</h3>
+                <h3 class="subhead">Mapeo completo de puertos serie</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Port</th>
-                            <th>Device</th>
-                            <th>Baud Rate</th>
-                            <th>Protocol</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Puerto</th><th>Protocolo</th><th>Baudios</th><th>Uso</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>Telem 1</td>
-                            <td>CUAV P9 Slave</td>
-                            <td>57600</td>
-                            <td>MAVLink</td>
-                        </tr>
-                        <tr>
-                            <td>Telem 2</td>
-                            <td>DroneCAN (optional)</td>
-                            <td>1000000</td>
-                            <td>DroneCAN</td>
-                        </tr>
-                        <tr>
-                            <td>Serial 3</td>
-                            <td>Available</td>
-                            <td>Configurable</td>
-                            <td>Custom</td>
-                        </tr>
+                        <tr><td class="param-name">SERIAL0</td><td class="param-value">2 · MAVLink2</td><td>115200</td><td>Consola / USB</td></tr>
+                        <tr><td class="param-name">SERIAL1</td><td class="param-value">2 · MAVLink2</td><td>57600</td><td>Telem 1 — Radio CUAV P9</td></tr>
+                        <tr><td class="param-name">SERIAL2</td><td class="param-value">2 · MAVLink2</td><td>57600</td><td>Telem 2 — enlace secundario</td></tr>
+                        <tr><td class="param-name">SERIAL3</td><td class="param-value">5 · GPS</td><td>230400</td><td>GPS1</td></tr>
+                        <tr><td class="param-name">SERIAL4</td><td class="param-value">5 · GPS</td><td>230400</td><td>GPS2 (reservado)</td></tr>
+                        <tr><td class="param-name">SERIAL5</td><td class="param-off">-1 · Ninguno</td><td>57600</td><td>Sin uso</td></tr>
+                        <tr><td class="param-name">SERIAL6</td><td class="param-off">-1 · Ninguno</td><td>57600</td><td>Sin uso</td></tr>
+                        <tr><td class="param-name">SERIAL7</td><td class="param-value">2 · MAVLink2</td><td>115200</td><td>Computador de a bordo / DDS-ROS2</td></tr>
+                    </tbody>
+                </table>
+                <div class="table-caption">BRD_SER1_RTSCTS = 2 · BRD_SER2_RTSCTS = 2 — control de flujo automático en Telem 1/2</div>
+
+                <h3 class="subhead">Bus CAN / DroneCAN</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">CAN_P1_DRIVER</td><td class="param-value">1</td><td>Bus CAN1 activo</td></tr>
+                        <tr><td class="param-name">CAN_P1_BITRATE</td><td class="param-value">1000000</td><td>1 Mbps</td></tr>
+                        <tr><td class="param-name">CAN_D1_PROTOCOL</td><td class="param-value">1 · DroneCAN</td><td>GPS, compás, airspeed y batería en este bus</td></tr>
+                        <tr><td class="param-name">CAN_P2_DRIVER</td><td class="param-value">1</td><td>Bus CAN2 activo (redundante)</td></tr>
+                        <tr><td class="param-name">CAN_D2_PROTOCOL</td><td class="param-value">1 · DroneCAN</td><td>Redundancia de red DroneCAN</td></tr>
+                        <tr><td class="param-name">CAN_D1_UC_NODE</td><td class="param-value">10</td><td>Node ID del autopiloto en la red</td></tr>
                     </tbody>
                 </table>
 
-                <h3 style="margin: 32px 0 16px;">2.5 Mission Planner Parameter Configuration</h3>
-                <div class="alert alert-info">
-                    <strong>Go to:</strong> Full Parameter List → Search for SERIAL
-                </div>
-
+                <h3 class="subhead">Enlace ROS2 / DDS</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td class="param-name">SERIAL1_PROTOCOL</td>
-                            <td class="param-value">2</td>
-                            <td>MAVLink protocol for Telem 1</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">SERIAL1_BAUD</td>
-                            <td class="param-value">57</td>
-                            <td>57600 baud rate</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">SERIAL1_OPTIONS</td>
-                            <td class="param-value">0</td>
-                            <td>Default options</td>
-                        </tr>
+                        <tr><td class="param-name">DDS_ENABLE</td><td class="param-value">1</td><td>Cliente XRCE-DDS activo</td></tr>
+                        <tr><td class="param-name">DDS_UDP_PORT</td><td class="param-value">2019</td><td>Puerto UDP</td></tr>
+                        <tr><td class="param-name">DDS_IP</td><td class="param-value">192.168.144.2</td><td>IP del companion computer</td></tr>
                     </tbody>
                 </table>
             </section>
 
-            <!-- 3. RECEIVER SETUP -->
-            <section class="section" id="receiver">
+            <!-- 03 RC / MANUAL CONTROL -->
+            <section class="section" id="rc">
                 <div class="section-header">
-                    <div class="section-number">Step 3</div>
-                    <h2 class="section-title">Receiver Configuration (FrSky TDRS 18 + S20E)</h2>
-                    <p class="section-subtitle">RC receiver and transmitter pairing for flight control</p>
+                    <div class="section-number">Sección 03</div>
+                    <h2 class="section-title">Mando Manual — Entrada RC (FrSky TDRS 18 + S20E)</h2>
+                    <p class="section-subtitle">Calibración real de cada canal, deadzones, mapeo de ejes y funciones auxiliares</p>
                 </div>
 
                 <div class="card">
-                    <div class="card-title">3.1 FrSky TDRS 18 Overview</div>
-                    <div class="card-description">
-                        Ultra-long-range digital receiver supporting 16+ channels. Requires S20E access point for configuration.
-                    </div>
+                    <div class="card-title">Mapeo de ejes (RCMAP)</div>
+                    <div class="card-description">Configuración estándar de mando: Roll=1, Pitch=2, Throttle=3, Yaw=4.</div>
                 </div>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">📻</div>
-                    <div class="image-placeholder-text">FrSky TDRS 18 Receiver</div>
-                    <div class="image-placeholder-label">Step 3.1 - FrSky Receiver Hardware</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">3.2 Receiver Binding Procedure</h3>
-                <div class="alert alert-warning">
-                    <strong>Safety:</strong> Remove propellers during binding and testing
-                </div>
-
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 2;">
-                        <li>Power on transmitter (S20E)</li>
-                        <li>Hold down binding button on TDRS 18 for 3 seconds</li>
-                        <li>LED will flash (binding mode)</li>
-                        <li>Press bind button on S20E transmitter</li>
-                        <li>Wait for steady green LED (binding complete)</li>
-                        <li>Test all channels with transmitter stick movements</li>
-                    </ol>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">3.3 Channel Mapping</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Channel</th>
-                            <th>Function</th>
-                            <th>S20E Stick</th>
-                            <th>PWM Range</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Eje</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Roll</td>
-                            <td>Left Stick X</td>
-                            <td>1000-2000</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Pitch</td>
-                            <td>Left Stick Y</td>
-                            <td>1000-2000</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Throttle</td>
-                            <td>Right Stick Y</td>
-                            <td>1000-2000</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Yaw</td>
-                            <td>Right Stick X</td>
-                            <td>1000-2000</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Flight Mode</td>
-                            <td>Switch A/B</td>
-                            <td>1000-2000</td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td>Aux 1</td>
-                            <td>Rotary</td>
-                            <td>1000-2000</td>
-                        </tr>
+                        <tr><td class="param-name">RCMAP_ROLL</td><td class="param-value">1</td><td>Alerón / Roll</td></tr>
+                        <tr><td class="param-name">RCMAP_PITCH</td><td class="param-value">2</td><td>Elevador / Pitch</td></tr>
+                        <tr><td class="param-name">RCMAP_THROTTLE</td><td class="param-value">3</td><td>Acelerador</td></tr>
+                        <tr><td class="param-name">RCMAP_YAW</td><td class="param-value">4</td><td>Timón / Yaw</td></tr>
                     </tbody>
                 </table>
 
-                <h3 style="margin: 32px 0 16px;">3.4 Autopilot RC Input Configuration</h3>
-                <div class="alert alert-info">
-                    <strong>Connection:</strong> TDRS 18 → Autopilot RC input (PPM or S.Bus)
-                </div>
-
+                <h3 class="subhead">Calibración de canales (valores reales, no por defecto)</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Canal</th><th>Min</th><th>Trim</th><th>Max</th><th>DZ</th><th>Función</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td class="param-name">RCIN_TYPE</td>
-                            <td class="param-value">1</td>
-                            <td>PPM input type</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RC1_MIN</td>
-                            <td class="param-value">1100</td>
-                            <td>Roll minimum PWM</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RC1_MAX</td>
-                            <td class="param-value">1900</td>
-                            <td>Roll maximum PWM</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RC_OVERRIDE_TIME</td>
-                            <td class="param-value">3</td>
-                            <td>RC override timeout (seconds)</td>
-                        </tr>
+                        <tr><td class="param-name">RC1</td><td>983</td><td>1488</td><td>1992</td><td>30</td><td>Roll</td></tr>
+                        <tr><td class="param-name">RC2</td><td>991</td><td>1495</td><td>1996</td><td>30</td><td>Pitch</td></tr>
+                        <tr><td class="param-name">RC3</td><td>991</td><td>991</td><td>1995</td><td>30</td><td>Throttle (trim = min, stick de gases)</td></tr>
+                        <tr><td class="param-name">RC4</td><td>990</td><td>1486</td><td>1980</td><td>30</td><td>Yaw</td></tr>
+                        <tr><td class="param-name">RC5</td><td>996</td><td>1501</td><td>2005</td><td>0</td><td>Auxiliar</td></tr>
+                        <tr><td class="param-name">RC6</td><td>1100</td><td>1500</td><td>1900</td><td>0</td><td>Auxiliar</td></tr>
+                        <tr><td class="param-name">RC7</td><td>1100</td><td>1500</td><td>1900</td><td>0</td><td>Selector de modo de vuelo (FLTMODE_CH)</td></tr>
+                        <tr><td class="param-name">RC8</td><td>1000</td><td>1500</td><td>2000</td><td>0</td><td>RC8_OPTION = 153</td></tr>
+                        <tr><td class="param-name">RC9</td><td>1100</td><td>1500</td><td>1900</td><td>0</td><td>RC9_OPTION = 4</td></tr>
+                        <tr><td class="param-name">RC10–16</td><td>1100</td><td>1500</td><td>1900</td><td>0</td><td class="param-off">Sin asignar (valores de fábrica)</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Armado y failsafe de radio</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">ARMING_RUDDER</td><td class="param-value">2</td><td>Armado/desarmado con timón (ambos sentidos)</td></tr>
+                        <tr><td class="param-name">ARMING_REQUIRE</td><td class="param-value">1</td><td>Armado requerido antes de despegue</td></tr>
+                        <tr><td class="param-name">RC_FS_TIMEOUT</td><td class="param-value">1 s</td><td>Tiempo para declarar pérdida de señal</td></tr>
+                        <tr><td class="param-name">RC_OVERRIDE_TIME</td><td class="param-value">3 s</td><td>Timeout de override MAVLink</td></tr>
+                        <tr><td class="param-name">THR_FAILSAFE</td><td class="param-value">1</td><td>Failsafe de throttle habilitado</td></tr>
+                        <tr><td class="param-name">THR_FS_VALUE</td><td class="param-value">950</td><td>PWM umbral de pérdida de señal</td></tr>
                     </tbody>
                 </table>
             </section>
 
-            <!-- 4. GNSS CONFIGURATION -->
+            <!-- 04 GNSS -->
             <section class="section" id="gnss">
                 <div class="section-header">
-                    <div class="section-number">Step 4</div>
-                    <h2 class="section-title">GNSS Configuration (NEO Pro 3)</h2>
-                    <p class="section-subtitle">GPS/GNSS receiver setup for position and heading</p>
+                    <div class="section-number">Sección 04 · Sensor</div>
+                    <h2 class="section-title">GNSS — Receptor DroneCAN (NEO Pro 3)</h2>
+                    <p class="section-subtitle">Posicionamiento vía red DroneCAN, sin conexión serie directa</p>
                 </div>
 
                 <div class="card">
-                    <div class="card-title">4.1 GNSS Hardware Overview</div>
+                    <div class="card-title">Conexión</div>
                     <div class="card-description">
-                        U-blox NEO Pro 3 multi-frequency GNSS receiver. Provides GPS, GLONASS, Galileo, and BeiDou positioning.
-                        Supports compass-free heading via dual antenna configuration.
+                        El receptor GNSS está conectado por <strong>DroneCAN (CAN1)</strong> en lugar de puerto serie tradicional.
+                        <code>GPS1_TYPE = 9</code> corresponde a "UAVCAN / DroneCAN".
                     </div>
+                    <span class="card-flag ok">SENSOR ACTIVO</span>
                 </div>
 
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">🛰️</div>
-                    <div class="image-placeholder-text">GNSS Receiver Installation</div>
-                    <div class="image-placeholder-label">Step 4 - NEO Pro 3 Setup</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">4.2 Physical Installation</h3>
-                <div class="alert alert-warning">
-                    <strong>Antenna Placement:</strong> Mount on top of fuselage, away from metal and carbon fiber
-                </div>
-
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
-                        <strong>Installation Checklist:</strong>
-                    </p>
-                    <ul style="color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
-                        <li>✓ Mount antenna vertically (perpendicular to ground)</li>
-                        <li>✓ Minimum 10cm clearance from metal components</li>
-                        <li>✓ Ground plane: 5cm x 5cm minimum</li>
-                        <li>✓ Keep away from radio antennas</li>
-                        <li>✓ Dual antenna setup for heading: 40cm+ separation</li>
-                    </ul>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">4.3 Serial Connection</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Autopilot Port</th>
-                            <th>Connection</th>
-                            <th>Baud Rate</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>Serial 2</td>
-                            <td>GNSS Receiver</td>
-                            <td>115200</td>
-                        </tr>
-                        <tr>
-                            <td>CAN 1 (optional)</td>
-                            <td>DroneCAN GNSS</td>
-                            <td>1000000</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <h3 style="margin: 32px 0 16px;">4.4 Parameter Configuration</h3>
-                <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="param-name">SERIAL2_PROTOCOL</td>
-                            <td class="param-value">5</td>
-                            <td>GNSS protocol</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">SERIAL2_BAUD</td>
-                            <td class="param-value">115</td>
-                            <td>115200 baud</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">GPS_TYPE</td>
-                            <td class="param-value">5</td>
-                            <td>NMEA or UBX protocol</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">GPS_AUTO_SWITCH</td>
-                            <td class="param-value">1</td>
-                            <td>Auto-switch to best receiver</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">GPS_HDOP_GOOD</td>
-                            <td class="param-value">200</td>
-                            <td>Good HDOP threshold (cm)</td>
-                        </tr>
+                        <tr><td class="param-name">GPS1_TYPE</td><td class="param-value">9</td><td>UAVCAN / DroneCAN</td></tr>
+                        <tr><td class="param-name">GPS1_CAN_NODEID</td><td class="param-value">125</td><td>Node ID en la red DroneCAN</td></tr>
+                        <tr><td class="param-name">GPS1_RATE_MS</td><td class="param-value">200</td><td>Tasa de actualización (5 Hz)</td></tr>
+                        <tr><td class="param-name">GPS2_TYPE</td><td class="param-off">0</td><td>Sin segundo receptor físico</td></tr>
+                        <tr><td class="param-name">GPS_AUTO_SWITCH</td><td class="param-value">1</td><td>Cambio automático al mejor receptor</td></tr>
+                        <tr><td class="param-name">GPS_BLEND_MASK</td><td class="param-value">5</td><td>Mezcla por posición y velocidad horizontal</td></tr>
+                        <tr><td class="param-name">GPS_SBAS_MODE</td><td class="param-value">2</td><td>SBAS habilitado (corrección diferencial)</td></tr>
+                        <tr><td class="param-name">GPS_NAVFILTER</td><td class="param-value">8</td><td>Perfil dinámico "Airborne &lt;4g"</td></tr>
+                        <tr><td class="param-name">GPS_MIN_ELEV</td><td class="param-value">-100°</td><td>Sin restricción de elevación de satélite</td></tr>
+                        <tr><td class="param-name">GPS_SAVE_CFG</td><td class="param-value">2</td><td>Guardar configuración automáticamente</td></tr>
                     </tbody>
                 </table>
             </section>
 
-            <!-- 5. AIRSPEED SENSOR -->
-            <section class="section" id="airspeed">
+            <!-- 05 COMPASS -->
+            <section class="section" id="compass">
                 <div class="section-header">
-                    <div class="section-number">Step 5</div>
-                    <h2 class="section-title">Airspeed Sensor Configuration (CUAV SKYE Nano 2)</h2>
-                    <p class="section-subtitle">Pitot tube airspeed measurement for accurate flight dynamics</p>
+                    <div class="section-number">Sección 05 · Sensor</div>
+                    <h2 class="section-title">Compás — Calibración Dual</h2>
+                    <p class="section-subtitle">Dos magnetómetros calibrados y priorizados; el tercer slot no está en uso</p>
                 </div>
 
                 <div class="card">
-                    <div class="card-title">5.1 SKYE Nano 2 Overview</div>
-                    <div class="card-description">
-                        High-resolution differential airspeed sensor using DroneCAN protocol. Supports CAN1 or CAN2 connection.
-                    </div>
+                    <div class="card-title">Estado</div>
+                    <div class="card-description">Compás externo como primario (<code>COMPASS_EXTERNAL=1</code>). Ambos sensores calibrados y activos en la fusión EKF.</div>
+                    <span class="card-flag ok">CALIBRADO — 2 SENSORES ACTIVOS</span>
+                </div>
+
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">COMPASS_ENABLE</td><td class="param-value">1</td><td>Sensor habilitado</td></tr>
+                        <tr><td class="param-name">COMPASS_EXTERNAL</td><td class="param-value">1</td><td>Compás #1 es externo</td></tr>
+                        <tr><td class="param-name">COMPASS_USE / USE2 / USE3</td><td class="param-value">1 / 1 / 0</td><td>Compás 3 deshabilitado en EKF</td></tr>
+                        <tr><td class="param-name">COMPASS_PRIO1_ID</td><td class="param-value">97539</td><td>Prioridad 1 (device ID)</td></tr>
+                        <tr><td class="param-name">COMPASS_PRIO2_ID</td><td class="param-value">1114658</td><td>Prioridad 2 (device ID)</td></tr>
+                        <tr><td class="param-name">COMPASS_AUTODEC</td><td class="param-value">1</td><td>Declinación magnética automática</td></tr>
+                        <tr><td class="param-name">COMPASS_DEC</td><td class="param-value">0.0016 rad</td><td>Declinación calculada para la zona</td></tr>
+                        <tr><td class="param-name">COMPASS_MOTCT</td><td class="param-value">0</td><td>Sin compensación por corriente de motor</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Offsets y matrices de calibración</h3>
+                <table class="params-table">
+                    <thead><tr><th>Compás</th><th>Offset X / Y / Z</th><th>Escala Diagonal X / Y / Z</th><th>Scale Factor</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">#1 (Externo, ID 97539)</td><td>-144.87 / 24.80 / 57.03</td><td>0.9758 / 0.9882 / 1.0440</td><td class="param-value">1.3792</td></tr>
+                        <tr><td class="param-name">#2 (Interno, ID 1114658)</td><td>-108.54 / -157.13 / -43.18</td><td>1.0725 / 0.9913 / 0.9662</td><td class="param-value">1.1218</td></tr>
+                        <tr><td class="param-name">#3</td><td class="param-off">0 / 0 / 0</td><td class="param-off">1 / 1 / 1</td><td class="param-off">no calibrado</td></tr>
+                    </tbody>
+                </table>
+                <div class="table-caption">COMPASS_CAL_FIT = 16 · calidad de ajuste de calibración objetivo</div>
+            </section>
+
+            <!-- 06 AIRSPEED -->
+            <section class="section" id="airspeed">
+                <div class="section-header">
+                    <div class="section-number">Sección 06 · Sensor</div>
+                    <h2 class="section-title">Sonda de Velocidad Aérea — CUAV SKYE Nano 2 (DroneCAN)</h2>
+                    <p class="section-subtitle">Sensor diferencial calibrado, conectado por CAN1</p>
                 </div>
 
                 <div class="link-box">
-                    <strong>CUAV SKYE Documentation:</strong><br>
+                    <strong>Documentación CUAV SKYE:</strong><br>
                     <a href="https://doc.cuav.net/others/skye/en/skye2-nano/users-manual-for-ardupilot.html" target="_blank">
                         https://doc.cuav.net/others/skye/en/skye2-nano/users-manual-for-ardupilot.html
                     </a>
                 </div>
 
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">💨</div>
-                    <div class="image-placeholder-text">CUAV SKYE Nano 2 Sensor</div>
-                    <div class="image-placeholder-label">Step 5 - Airspeed Sensor Installation</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">5.2 Physical Installation</h3>
                 <div class="alert alert-warning">
-                    <strong>Pitot Tube Placement:</strong> Mount on wing strut or boom, clear of fuselage wake
+                    <strong>Atención:</strong> El sensor está calibrado (<code>ARSPD_AUTOCAL=1</code>, offset y ratio ya ajustados)
+                    pero <code>ARSPD_USE = 0</code> — la salida <strong>no</strong> se está utilizando actualmente para control TECS/L1.
+                    Cambiar a <code>ARSPD_USE = 1</code> antes de vuelos de crucero de largo alcance.
                 </div>
 
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
-                        <strong>Installation Requirements:</strong>
-                    </p>
-                    <ul style="color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
-                        <li>✓ Pitot probe perpendicular to airflow</li>
-                        <li>✓ Minimum 30cm from fuselage center line</li>
-                        <li>✓ Static port away from prop wash</li>
-                        <li>✓ Tubing: 4mm or 6mm diameter</li>
-                        <li>✓ Avoid sharp bends in tubing</li>
-                    </ul>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">5.3 DroneCAN Connection</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Connection Option</th>
-                            <th>Port</th>
-                            <th>Baud Rate</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>Primary</td>
-                            <td>CAN 1</td>
-                            <td>1000000</td>
-                        </tr>
-                        <tr>
-                            <td>Secondary</td>
-                            <td>CAN 2</td>
-                            <td>1000000</td>
-                        </tr>
+                        <tr><td class="param-name">ARSPD_TYPE</td><td class="param-value">8</td><td>UAVCAN / DroneCAN</td></tr>
+                        <tr><td class="param-name">ARSPD_BUS</td><td class="param-value">1</td><td>Bus CAN1</td></tr>
+                        <tr><td class="param-name">ARSPD_DEVID</td><td class="param-value">31491</td><td>ID del dispositivo</td></tr>
+                        <tr><td class="param-name">ARSPD_USE</td><td class="param-off">0</td><td>NO utilizado para control (ver aviso)</td></tr>
+                        <tr><td class="param-name">ARSPD_AUTOCAL</td><td class="param-value">1</td><td>Auto-calibración en vuelo activa</td></tr>
+                        <tr><td class="param-name">ARSPD_OFFSET</td><td class="param-value">4.0058</td><td>Offset de calibración medido</td></tr>
+                        <tr><td class="param-name">ARSPD_RATIO</td><td class="param-value">2.5</td><td>Ratio de escalado del sensor</td></tr>
+                        <tr><td class="param-name">ARSPD_TUBE_ORDR</td><td class="param-value">2</td><td>Orden de tubos pitot/estático</td></tr>
+                        <tr><td class="param-name">ARSPD_OPTIONS</td><td class="param-value">11</td><td>Opciones combinadas (chequeo + uso en despegue)</td></tr>
                     </tbody>
                 </table>
 
-                <h3 style="margin: 32px 0 16px;">5.4 Parameter Configuration</h3>
-                <div class="alert alert-info">
-                    <strong>Note:</strong> Choose CAN1 or CAN2 based on your hardware setup
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>CAN1 CONNECTION (RECOMMENDED)</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <div class="code-content"><code>CAN_P1_DRIVER=1
-CAN_D1_PROTOCOL=1
-ARSPD_TYPE=8
-ARSPD_USE=1</code></div>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>CAN2 CONNECTION (ALTERNATIVE)</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <div class="code-content"><code>CAN_P2_DRIVER=1
-CAN_D2_PROTOCOL=1
-ARSPD_TYPE=8
-ARSPD_USE=1</code></div>
-                </div>
-
+                <h3 class="subhead">Límites de velocidad aérea de la aeronave</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor (m/s)</th><th>Descripción</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td class="param-name">ARSPD_TYPE</td>
-                            <td class="param-value">8</td>
-                            <td>UAVCAN airspeed sensor</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">ARSPD_USE</td>
-                            <td class="param-value">1</td>
-                            <td>Enable airspeed use</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">ARSPD_OFFSET</td>
-                            <td class="param-value">0</td>
-                            <td>Calibration offset (auto-calculated)</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">ARSPD_RATIO</td>
-                            <td class="param-value">1.9936</td>
-                            <td>Airspeed scaling (sensor specific)</td>
-                        </tr>
+                        <tr><td class="param-name">AIRSPEED_CRUISE</td><td class="param-value">20</td><td>Velocidad de crucero deseada</td></tr>
+                        <tr><td class="param-name">AIRSPEED_MAX</td><td class="param-value">40</td><td>Velocidad máxima segura</td></tr>
+                        <tr><td class="param-name">AIRSPEED_MIN</td><td class="param-value">15</td><td>Velocidad mínima segura en crucero</td></tr>
+                        <tr><td class="param-name">AIRSPEED_STALL</td><td class="param-value">10</td><td>Velocidad de pérdida estimada</td></tr>
                     </tbody>
                 </table>
             </section>
 
-            <!-- 6. FLIGHT MODES & SPEEDS -->
-            <section class="section" id="modes">
+            <!-- 07 BARO -->
+            <section class="section" id="baro">
                 <div class="section-header">
-                    <div class="section-number">Step 6</div>
-                    <h2 class="section-title">Flight Modes & Cruise Speed Configuration</h2>
-                    <p class="section-subtitle">Setting up transition speeds and mode parameters for VTOL operations</p>
+                    <div class="section-number">Sección 07 · Sensor</div>
+                    <h2 class="section-title">Barómetro — Doble Sensor Redundante</h2>
+                    <p class="section-subtitle">Dos barómetros internos activos, el tercero sin instalar</p>
                 </div>
-
-                <div class="card">
-                    <div class="card-title">6.1 VTOL Flight Mode Overview</div>
-                    <div class="card-description">
-                        VTOL operates in Hover (quad-like) and Cruise (plane-like) modes. Transition between modes
-                        is automatic or manual depending on pilot input and flight parameters.
-                    </div>
-                </div>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">✈️</div>
-                    <div class="image-placeholder-text">Flight Modes & Speed Transition Diagram</div>
-                    <div class="image-placeholder-label">Step 6 - Flight Modes Configuration</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">6.2 Airspeed Configuration</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value (m/s)</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Sensor</th><th>Device ID</th><th>Presión de referencia en tierra</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td class="param-name">AIRSPEED_CRUISE</td>
-                            <td class="param-value">20</td>
-                            <td>Desired cruise speed (adjust per mission)</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">AIRSPEED_MAX</td>
-                            <td class="param-value">40</td>
-                            <td>Maximum safe airspeed</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">AIRSPEED_MIN</td>
-                            <td class="param-value">15</td>
-                            <td>Minimum safe airspeed for cruise flight</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">AIRSPEED_STALL</td>
-                            <td class="param-value">11</td>
-                            <td>Estimated stall speed</td>
-                        </tr>
+                        <tr><td class="param-name">BARO1 (primario)</td><td>1376546</td><td class="param-value">95044.53 Pa</td></tr>
+                        <tr><td class="param-name">BARO2</td><td>1073921</td><td class="param-value">94942.24 Pa</td></tr>
+                        <tr><td class="param-name">BARO3</td><td class="param-off">no instalado</td><td class="param-off">—</td></tr>
                     </tbody>
                 </table>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">📊</div>
-                    <div class="image-placeholder-text">Airspeed Parameter Configuration</div>
-                    <div class="image-placeholder-label">Step 6.1 - Airspeed Values</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">6.3 Transition & Assist Parameters</h3>
-                <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Units</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="param-name">Q_ASSIST_SPEED</td>
-                            <td class="param-value">14</td>
-                            <td>m/s</td>
-                            <td>Assist mode activation threshold</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">Q_ASSIST_ALT</td>
-                            <td class="param-value">20</td>
-                            <td>m</td>
-                            <td>Minimum altitude for assist</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">Q_ASSIST_ANGLE</td>
-                            <td class="param-value">90</td>
-                            <td>deg</td>
-                            <td>Bank angle for assist trigger</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">Q_ASSIST_DELAY</td>
-                            <td class="param-value">0.5</td>
-                            <td>s</td>
-                            <td>Assist mode delay</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">⚡</div>
-                    <div class="image-placeholder-text">Assist Mode Parameters</div>
-                    <div class="image-placeholder-label">Step 6.3 - Q Assist Settings</div>
-                </div>
+                <div class="table-caption">BARO_PRIMARY = 0 · BARO_ALT_OFFSET = 0 · BARO_FIELD_ELV = 0</div>
             </section>
 
-            <!-- 7. CAMERA & PAYLOAD -->
-            <section class="section" id="camera">
+            <!-- 08 IMU -->
+            <section class="section" id="imu">
                 <div class="section-header">
-                    <div class="section-number">Step 7</div>
-                    <h2 class="section-title">Payload Configuration (DJI Camera via Relay)</h2>
-                    <p class="section-subtitle">Triggering camera and other payloads through autopilot relays</p>
+                    <div class="section-number">Sección 08 · Sensor</div>
+                    <h2 class="section-title">IMU / INS — Triple Redundancia</h2>
+                    <p class="section-subtitle">3 IMUs físicas activas y fusionadas; filtros y trims de nivelación</p>
                 </div>
 
-                <div class="card">
-                    <div class="card-title">7.1 DJI Camera Integration</div>
-                    <div class="card-description">
-                        Connect DJI camera trigger through Relay output. Supports automated triggering via missions and
-                        scheduled captures during flight.
-                    </div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">7.2 Relay Output Mapping</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Relay</th>
-                            <th>Autopilot Pin</th>
-                            <th>Device</th>
-                            <th>Function</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>Relay 1</td>
-                            <td>Telem 1 Pin</td>
-                            <td>Available</td>
-                            <td>Reserved</td>
-                        </tr>
-                        <tr>
-                            <td>Relay 2</td>
-                            <td>Telem 2 Pin</td>
-                            <td>Available</td>
-                            <td>Reserved</td>
-                        </tr>
-                        <tr>
-                            <td>Relay 3</td>
-                            <td>Serial 3 Pin</td>
-                            <td>Available</td>
-                            <td>Reserved</td>
-                        </tr>
-                        <tr>
-                            <td>Relay 4 (Pin 13)</td>
-                            <td>GPIO Pin 13</td>
-                            <td>DJI Camera</td>
-                            <td>Shutter trigger</td>
-                        </tr>
+                        <tr><td class="param-name">INS_ENABLE_MASK</td><td class="param-value">127</td><td>Las 3 IMU habilitadas a nivel de driver</td></tr>
+                        <tr><td class="param-name">INS_USE / USE2 / USE3</td><td class="param-value">1 / 1 / 1</td><td>Las 3 IMU se usan en el EKF</td></tr>
+                        <tr><td class="param-name">INS_ACC_BODYFIX</td><td class="param-value">2</td><td>IMU #2 como referencia body-fixed</td></tr>
+                        <tr><td class="param-name">INS_GYRO_FILTER</td><td class="param-value">20 Hz</td><td>Filtro paso-bajo de giróscopos</td></tr>
+                        <tr><td class="param-name">INS_ACCEL_FILTER</td><td class="param-value">10 Hz</td><td>Filtro paso-bajo de acelerómetros</td></tr>
+                        <tr><td class="param-name">INS_FAST_SAMPLE</td><td class="param-value">7</td><td>Muestreo rápido en las 3 IMU</td></tr>
+                        <tr><td class="param-name">INS_GYR_CAL</td><td class="param-value">1</td><td>Calibración de giróscopo al armar</td></tr>
+                        <tr><td class="param-name">AHRS_TRIM_X / Y</td><td class="param-value">-0.0090 / -0.0004 rad</td><td>Trim de nivelación (≈ -0.52° / -0.02°)</td></tr>
+                        <tr><td class="param-name">AHRS_EKF_TYPE</td><td class="param-value">3</td><td>Motor de estimación: EKF3</td></tr>
                     </tbody>
                 </table>
 
-                <h3 style="margin: 32px 0 16px;">7.3 Parameter Configuration for Relay 4</h3>
+                <h3 class="subhead">Calibración individual por IMU</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>IMU</th><th>Accel Offset X/Y/Z</th><th>Accel Scale X/Y/Z</th><th>Gyro Offset X/Y/Z</th><th>Temp. cal.</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td class="param-name">RELAY4_PIN</td>
-                            <td class="param-value">13</td>
-                            <td>GPIO pin number</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RELAY4_FUNCTION</td>
-                            <td class="param-value">10</td>
-                            <td>Camera trigger</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">CAM_TRIGG_TYPE</td>
-                            <td class="param-value">0</td>
-                            <td>Relay type trigger</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">CAM_TRIGG_DIST</td>
-                            <td class="param-value">0</td>
-                            <td>Distance-based trigger (0 = disabled)</td>
-                        </tr>
+                        <tr><td class="param-name">IMU 1</td><td>-0.0022 / -0.0208 / -0.0947</td><td>0.9989 / 0.9990 / 0.9998</td><td>-0.0052 / -0.0055 / -0.0014</td><td>—</td></tr>
+                        <tr><td class="param-name">IMU 2</td><td>-0.0122 / -0.0012 / 0.0327</td><td>0.9989 / 0.9973 / 0.9978</td><td>0.0066 / -0.0039 / -0.0026</td><td>47.1°C / 25.8°C</td></tr>
+                        <tr><td class="param-name">IMU 3</td><td>0.0127 / 0.0029 / -0.0809</td><td>0.9938 / 0.9986 / 0.9963</td><td>-0.0069 / 0.0026 / -0.0044</td><td>55.7°C / 26.8°C</td></tr>
                     </tbody>
                 </table>
-
-                <h3 style="margin: 32px 0 16px;">7.4 Mission Planner Payload Setup</h3>
-                <div class="alert alert-info">
-                    <strong>Note:</strong> Payload configuration in Mission Planner under Setup → Optional Hardware → Camera Gimbal
-                </div>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">📷</div>
-                    <div class="image-placeholder-text">DJI Camera Configuration</div>
-                    <div class="image-placeholder-label">Step 7 - Camera Payload Setup</div>
-                </div>
             </section>
 
-            <!-- 8. IMU CALIBRATION -->
-            <section class="section" id="accel">
+            <!-- 09 EKF3 -->
+            <section class="section" id="ekf">
                 <div class="section-header">
-                    <div class="section-number">Step 8</div>
-                    <h2 class="section-title">IMU Calibration (Accelerometer & Compass)</h2>
-                    <p class="section-subtitle">Calibrating inertial measurement unit for accurate flight dynamics</p>
+                    <div class="section-number">Sección 09</div>
+                    <h2 class="section-title">Filtro de Navegación — EKF3</h2>
+                    <p class="section-subtitle">Fusión de sensores: fuentes primarias GPS + Baro + Compás</p>
                 </div>
-
-                <div class="card">
-                    <div class="card-title">8.1 Calibration Overview</div>
-                    <div class="card-description">
-                        Proper IMU calibration is critical for stable flight. Includes accelerometer, gyroscope, and compass calibration.
-                    </div>
-                </div>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">🧭</div>
-                    <div class="image-placeholder-text">Compass & Calibration Panels</div>
-                    <div class="image-placeholder-label">Step 8 - IMU Calibration Interface</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">8.2 Accelerometer Calibration</h3>
-                <div class="alert alert-warning">
-                    <strong>Requirements:</strong> Level work surface, no vibrations, aircraft must be stationary
-                </div>
-
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 2;">
-                        <li>Connect autopilot via USB</li>
-                        <li>Open Mission Planner</li>
-                        <li>Go to: Initial Setup → Mandatory Hardware → Accel Calibration</li>
-                        <li>Click "Calibrate Accel"</li>
-                        <li>Place aircraft level on flat surface</li>
-                        <li>Press "Click here to start" button</li>
-                        <li>Wait for completion (green checkmark)</li>
-                        <li>Repeat for each IMU if multiple units present</li>
-                    </ol>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">8.3 Compass Calibration</h3>
-                <div class="alert alert-warning">
-                    <strong>Environment:</strong> Perform in open area away from magnetic interference
-                </div>
-
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 2;">
-                        <li>Go to: Initial Setup → Mandatory Hardware → Compass</li>
-                        <li>Click "Start"</li>
-                        <li>Rotate aircraft slowly in all axes</li>
-                        <li>Complete minimum 2-3 full rotations</li>
-                        <li>Monitor progress bar</li>
-                        <li>Click "Accept" when complete</li>
-                    </ol>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">8.4 Compass Priorities & Configuration</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Priority</th>
-                            <th>Compass</th>
-                            <th>Bus Type</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Internal (RM3100 or similar)</td>
-                            <td>I2C/SPI</td>
-                            <td>Primary</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>External Compass</td>
-                            <td>I2C</td>
-                            <td>Secondary</td>
-                        </tr>
+                        <tr><td class="param-name">EK3_ENABLE</td><td class="param-value">1</td><td>Motor EKF3 activo</td></tr>
+                        <tr><td class="param-name">EK3_IMU_MASK</td><td class="param-value">3</td><td>Núcleos EKF corriendo sobre IMU 1 y 2</td></tr>
+                        <tr><td class="param-name">EK3_PRIMARY</td><td class="param-value">0</td><td>Núcleo primario: 0</td></tr>
+                        <tr><td class="param-name">EK3_GPS_CHECK</td><td class="param-value">31</td><td>Todas las comprobaciones de calidad GPS activas</td></tr>
+                        <tr><td class="param-name">EK3_SRC1_POSXY / VELXY</td><td class="param-value">3 · GPS</td><td>Posición y velocidad horizontal</td></tr>
+                        <tr><td class="param-name">EK3_SRC1_POSZ</td><td class="param-value">1 · Baro</td><td>Altitud vertical</td></tr>
+                        <tr><td class="param-name">EK3_SRC1_YAW</td><td class="param-value">1 · Compás</td><td>Rumbo</td></tr>
+                        <tr><td class="param-name">EK3_MAG_CAL</td><td class="param-value">0</td><td>Calibración automática según perfil de vuelo</td></tr>
+                        <tr><td class="param-name">EK3_ALT_M_NSE</td><td class="param-value">3</td><td>Ruido esperado de altitud (m)</td></tr>
                     </tbody>
                 </table>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">✓</div>
-                    <div class="image-placeholder-text">Calibration Success Indicators</div>
-                    <div class="image-placeholder-label">Step 8.4 - Calibration Results</div>
-                </div>
             </section>
 
-            <!-- 9. SERVO OUTPUT -->
-            <section class="section" id="servo">
+            <!-- 10 BATTERY -->
+            <section class="section" id="battery">
                 <div class="section-header">
-                    <div class="section-number">Step 9</div>
-                    <h2 class="section-title">Servo Output Mapping</h2>
-                    <p class="section-subtitle">Configuring motor and control surface outputs for Fighter VTOL</p>
+                    <div class="section-number">Sección 10 · Sensor</div>
+                    <h2 class="section-title">Batería — Monitor Inteligente DroneCAN</h2>
+                    <p class="section-subtitle">Batería inteligente reportando estado vía DroneCAN, sin shunt analógico</p>
                 </div>
-
-                <div class="card">
-                    <div class="card-title">9.1 Output Configuration Overview</div>
-                    <div class="card-description">
-                        Fighter VTOL requires 10 servo outputs: 4 vertical motors, 2 cruise motors, 2 control surfaces, plus camera/payload.
-                    </div>
-                </div>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">⚙️</div>
-                    <div class="image-placeholder-text">Servo Output Configuration Table</div>
-                    <div class="image-placeholder-label">Step 9 - Servo Mapping</div>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">9.2 Fighter VTOL Servo Mapping</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Position</th>
-                            <th>PWM Min</th>
-                            <th>PWM Center</th>
-                            <th>PWM Max</th>
-                            <th>Function</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>1500</td>
-                            <td>1050</td>
-                            <td>1500</td>
-                            <td>1800</td>
-                            <td>Aileron (right wing)</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>1610</td>
-                            <td>1280</td>
-                            <td>1610</td>
-                            <td>1840</td>
-                            <td>Elevator</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>1100</td>
-                            <td>1100</td>
-                            <td>1100</td>
-                            <td>2000</td>
-                            <td>Throttle (cruise motor M3)</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>1370</td>
-                            <td>1160</td>
-                            <td>1370</td>
-                            <td>1740</td>
-                            <td>Elevator (second surface)</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>1000</td>
-                            <td>1100</td>
-                            <td>1500</td>
-                            <td>1900</td>
-                            <td>Vertical Motor 1 (FL)</td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td>1000</td>
-                            <td>1100</td>
-                            <td>1500</td>
-                            <td>1900</td>
-                            <td>Vertical Motor 2 (FR)</td>
-                        </tr>
-                        <tr>
-                            <td>7</td>
-                            <td>1000</td>
-                            <td>1100</td>
-                            <td>1500</td>
-                            <td>1900</td>
-                            <td>Vertical Motor 3 (BL)</td>
-                        </tr>
-                        <tr>
-                            <td>8</td>
-                            <td>1000</td>
-                            <td>1100</td>
-                            <td>1500</td>
-                            <td>1900</td>
-                            <td>Vertical Motor 4 (BR)</td>
-                        </tr>
-                        <tr>
-                            <td>9</td>
-                            <td>1440</td>
-                            <td>1150</td>
-                            <td>1440</td>
-                            <td>2000</td>
-                            <td>Aileron (left wing)</td>
-                        </tr>
-                        <tr>
-                            <td>10</td>
-                            <td>1550</td>
-                            <td>1099</td>
-                            <td>1550</td>
-                            <td>1900</td>
-                            <td>Rudder</td>
-                        </tr>
-                        <tr>
-                            <td>11-14</td>
-                            <td>—</td>
-                            <td>1100</td>
-                            <td>1500</td>
-                            <td>1900</td>
-                            <td>Disabled / Reserved</td>
-                        </tr>
+                        <tr><td class="param-name">BATT_MONITOR</td><td class="param-value">8</td><td>UAVCAN BatteryInfo (DroneCAN)</td></tr>
+                        <tr><td class="param-name">BATT_CAPACITY</td><td class="param-value">22000 mAh</td><td>Capacidad nominal</td></tr>
+                        <tr><td class="param-name">BATT_ARM_VOLT</td><td class="param-value">44.0 V</td><td>Voltaje mínimo para armar</td></tr>
+                        <tr><td class="param-name">BATT_LOW_VOLT</td><td class="param-value">43.2 V</td><td>Umbral de aviso "batería baja"</td></tr>
+                        <tr><td class="param-name">BATT_LOW_MAH</td><td class="param-value">4000 mAh</td><td>Capacidad remanente de aviso</td></tr>
+                        <tr><td class="param-name">BATT_CRT_VOLT</td><td class="param-value">42.0 V</td><td>Umbral crítico</td></tr>
+                        <tr><td class="param-name">BATT_CRT_MAH</td><td class="param-value">2000 mAh</td><td>Capacidad remanente crítica</td></tr>
+                        <tr><td class="param-name">BATT_LOW_TIMER</td><td class="param-value">10 s</td><td>Tiempo bajo umbral antes de disparar aviso</td></tr>
                     </tbody>
                 </table>
-
-                <h3 style="margin: 32px 0 16px;">9.3 PWM Calibration in Mission Planner</h3>
-                <div class="alert alert-warning">
-                    <strong>Warning:</strong> Remove propellers before PWM testing. Do NOT arm the autopilot.
-                </div>
-
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 2;">
-                        <li>Go to: Mandatory Hardware → Servo Output</li>
-                        <li>Test each servo individually</li>
-                        <li>Verify correct direction (reverse if needed)</li>
-                        <li>Ensure full range: min-to-max movement</li>
-                        <li>Check for no binding or jitter</li>
-                    </ol>
-                </div>
-            </section>
-
-            <!-- 10. MOTOR CALIBRATION -->
-            <section class="section" id="motors">
-                <div class="section-header">
-                    <div class="section-number">Step 10</div>
-                    <h2 class="section-title">Motor Calibration</h2>
-                    <p class="section-subtitle">ESC calibration for vertical and cruise motors</p>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">10.1 Motor Calibration Overview</div>
-                    <div class="card-description">
-                        VTOL requires two separate calibrations: vertical motors (quad-mode) and cruise motors (plane-mode).
-                        Vertical motors must be calibrated on quadcopter firmware, cruise motors on plane firmware.
-                    </div>
-                </div>
-
-                <div class="alert alert-warning">
-                    <strong>Critical:</strong> Remove propellers before all motor calibration. Propeller contact will cause injury.
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">10.2 Vertical Motor Calibration (Motors 5-8)</h3>
                 <div class="alert alert-error">
-                    <strong>Method:</strong> Use separate quadcopter firmware on dedicated autopilot OR temporary setup on second flight controller
+                    <strong>Crítico:</strong> <code>BATT_FS_LOW_ACT = 0</code> y <code>BATT_FS_CRT_ACT = 0</code> — no hay ninguna
+                    acción automática (RTL/Land) configurada ante batería baja o crítica. Solo se generan avisos sonoros/GCS.
+                    Se recomienda configurar una acción antes de misiones de largo alcance.
                 </div>
-
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
-                        <strong>Quadcopter Firmware Calibration:</strong>
-                    </p>
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 2;">
-                        <li>Flash quadcopter firmware to temporary autopilot</li>
-                        <li>Map motors 5-8 to quad outputs 1-4</li>
-                        <li>Connect ESCs to motor outputs</li>
-                        <li>Go to: Initial Setup → Optional Hardware → Motor Test</li>
-                        <li>Test each motor individually (5% throttle)</li>
-                        <li>Verify correct rotation direction</li>
-                        <li>Record calibration completion</li>
-                        <li>Restore VTOL firmware to main autopilot</li>
-                    </ol>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">10.3 Cruise Motor Calibration (Motors 3 & M3)</h3>
-                <div class="alert alert-success">
-                    <strong>Method:</strong> Can be done on VTOL firmware using throttle calibration
-                </div>
-
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 2;">
-                        <li>Connect VTOL aircraft via USB</li>
-                        <li>Go to: Initial Setup → Motor Test</li>
-                        <li>Test output 3 (throttle) at 5%</li>
-                        <li>Verify smooth acceleration</li>
-                        <li>No audio error tones should occur</li>
-                        <li>Record final settings</li>
-                    </ol>
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">10.4 ESC Parameter Configuration</h3>
-                <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="param-name">MOT_SPIN_ARM</td>
-                            <td class="param-value">0.1</td>
-                            <td>Spin at min throttle when armed</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">MOT_SPIN_MIN</td>
-                            <td class="param-value">0.15</td>
-                            <td>Minimum spin rate</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">MOT_PWM_TYPE</td>
-                            <td class="param-value">0</td>
-                            <td>Normal PWM output</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">SERVO_MIN</td>
-                            <td class="param-value">1100</td>
-                            <td>Minimum PWM (all motors)</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">SERVO_MAX</td>
-                            <td class="param-value">1900</td>
-                            <td>Maximum PWM (all motors)</td>
-                        </tr>
-                    </tbody>
-                </table>
             </section>
 
-            <!-- 11. RANGEFINDER -->
+            <!-- 11 RANGEFINDER -->
             <section class="section" id="rangefinder">
                 <div class="section-header">
-                    <div class="section-number">Step 11</div>
-                    <h2 class="section-title">Range Finder Configuration (LW20)</h2>
-                    <p class="section-subtitle">Laser range finder for precision altitude measurement</p>
+                    <div class="section-number">Sección 11 · Sensor</div>
+                    <h2 class="section-title">Telémetro Láser — No Instalado</h2>
+                    <p class="section-subtitle">Todos los slots de rangefinder están deshabilitados en la configuración actual</p>
                 </div>
-
-                <div class="card">
-                    <div class="card-title">11.1 LW20 Laser Range Finder</div>
-                    <div class="card-description">
-                        Lightware LW20 provides accurate altitude measurement for landing and low-level flight.
-                        Supports serial and DroneCAN connections.
-                    </div>
+                <div class="alert alert-warning">
+                    <strong>Pendiente:</strong> <code>RNGFND1_TYPE</code> hasta <code>RNGFNDA_TYPE</code> están en <code>0</code> (deshabilitado).
+                    No hay telémetro láser (p. ej. Lightware LW20) físicamente configurado en este momento.
+                    Si se instala, recordar habilitar también <code>Q_WP_RFND_USE = 1</code> (ya activo) para su uso en aterrizaje VTOL.
                 </div>
-
-                <h3 style="margin: 32px 0 16px;">11.2 Serial Connection Setup</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Port</th>
-                            <th>Device</th>
-                            <th>Baud Rate</th>
-                            <th>Protocol</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Estado</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>Serial 4</td>
-                            <td>LW20 Rangefinder</td>
-                            <td>19200</td>
-                            <td>LW20 Serial</td>
-                        </tr>
+                        <tr><td class="param-name">RNGFND1_TYPE … RNGFNDA_TYPE</td><td class="param-off">0</td><td class="param-off">Deshabilitado (10 slots)</td></tr>
+                        <tr><td class="param-name">RNGFND_LANDING</td><td class="param-off">0</td><td class="param-off">Sin uso en aterrizaje ala fija</td></tr>
                     </tbody>
                 </table>
-
-                <h3 style="margin: 32px 0 16px;">11.3 Parameter Configuration</h3>
-                <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="param-name">RNGFND1_TYPE</td>
-                            <td class="param-value">2</td>
-                            <td>LW20/SF45 series</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RNGFND1_PIN</td>
-                            <td class="param-value">-1</td>
-                            <td>Serial port (not analog)</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">SERIAL4_PROTOCOL</td>
-                            <td class="param-value">9</td>
-                            <td>Rangefinder protocol</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">SERIAL4_BAUD</td>
-                            <td class="param-value">19</td>
-                            <td>19200 baud rate</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RNGFND1_MAX_CM</td>
-                            <td class="param-value">4000</td>
-                            <td>Maximum range: 40m</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="image-placeholder">
-                    <div class="image-placeholder-icon">🎯</div>
-                    <div class="image-placeholder-text">Range Finder Mounting</div>
-                    <div class="image-placeholder-label">Step 11 - LW20 Installation</div>
-                </div>
             </section>
 
-            <!-- 12. PID TUNING -->
-            <section class="section" id="tuning">
+            <!-- 12 SERVOS -->
+            <section class="section" id="servos">
                 <div class="section-header">
-                    <div class="section-number">Step 12</div>
-                    <h2 class="section-title">PID Tuning for Cruise Flight</h2>
-                    <p class="section-subtitle">Stabilization and response tuning for cruise (fixed-wing) mode</p>
+                    <div class="section-number">Sección 12</div>
+                    <h2 class="section-title">Mapeo de Salidas de Servo</h2>
+                    <p class="section-subtitle">10 salidas activas: 4 motores VTOL, motor de crucero, 2 alerones, 2 elevadores y timón</p>
                 </div>
 
-                <div class="card">
-                    <div class="card-title">12.1 PID Control Basics</div>
-                    <div class="card-description">
-                        PID tuning optimizes aircraft stability and control response. Includes proportional, integral, and derivative gains
-                        for Roll, Pitch, and Yaw axes.
-                    </div>
-                </div>
-
-                <div class="alert alert-warning">
-                    <strong>Tuning Safety:</strong> Perform initial tuning in simulator or gentle outdoor tests with manual override ready
-                </div>
-
-                <h3 style="margin: 32px 0 16px;">12.2 Roll Control (Aileron) PID</h3>
                 <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Default</th>
-                            <th>Recommended</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Salida</th><th>Función</th><th>Min</th><th>Trim</th><th>Max</th><th>Rev.</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td class="param-name">RLL_P</td>
-                            <td class="param-value">2.0</td>
-                            <td class="param-value">2.0-2.5</td>
-                            <td>Roll proportional gain</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RLL_I</td>
-                            <td class="param-value">0.05</td>
-                            <td class="param-value">0.05-0.1</td>
-                            <td>Roll integral gain</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RLL_D</td>
-                            <td class="param-value">0.0</td>
-                            <td class="param-value">0.0-0.15</td>
-                            <td>Roll derivative gain (damping)</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RLL_RATE_P</td>
-                            <td class="param-value">0.15</td>
-                            <td class="param-value">0.15-0.25</td>
-                            <td>Roll rate proportional</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RLL_RATE_I</td>
-                            <td class="param-value">0.0</td>
-                            <td class="param-value">0.0-0.05</td>
-                            <td>Roll rate integral</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">RLL_RATE_D</td>
-                            <td class="param-value">0.004</td>
-                            <td class="param-value">0.004-0.010</td>
-                            <td>Roll rate derivative</td>
-                        </tr>
+                        <tr><td class="param-name">SERVO1</td><td>Alerón derecho (Fn 4)</td><td>960</td><td>1400</td><td>1830</td><td class="param-value">Sí</td></tr>
+                        <tr><td class="param-name">SERVO2</td><td>Elevador (Fn 19)</td><td>1280</td><td>1610</td><td>1850</td><td class="param-value">Sí</td></tr>
+                        <tr><td class="param-name">SERVO3</td><td>Motor de crucero — Throttle (Fn 70)</td><td>1000</td><td>1000</td><td>2000</td><td>No</td></tr>
+                        <tr><td class="param-name">SERVO4</td><td>Elevador, superficie 2 (Fn 19)</td><td>1170</td><td>1400</td><td>1750</td><td>No</td></tr>
+                        <tr><td class="param-name">SERVO5</td><td>Motor VTOL 1 (Fn 33)</td><td>1100</td><td>1500</td><td>2000</td><td>No</td></tr>
+                        <tr><td class="param-name">SERVO6</td><td>Motor VTOL 2 (Fn 34)</td><td>1100</td><td>1500</td><td>2000</td><td>No</td></tr>
+                        <tr><td class="param-name">SERVO7</td><td>Motor VTOL 3 (Fn 35)</td><td>1100</td><td>1500</td><td>2000</td><td>No</td></tr>
+                        <tr><td class="param-name">SERVO8</td><td>Motor VTOL 4 (Fn 36)</td><td>1100</td><td>1500</td><td>2000</td><td>No</td></tr>
+                        <tr><td class="param-name">SERVO9</td><td>Alerón izquierdo (Fn 4)</td><td>1050</td><td>1450</td><td>1850</td><td class="param-value">Sí</td></tr>
+                        <tr><td class="param-name">SERVO10</td><td>Timón — Rudder (Fn 21)</td><td>1250</td><td>1580</td><td>2000</td><td>No</td></tr>
+                        <tr><td class="param-name">SERVO11–16</td><td class="param-off">Sin asignar</td><td>1100</td><td>1500</td><td>1900</td><td>—</td></tr>
                     </tbody>
                 </table>
+                <div class="table-caption">Códigos de función ArduPilot: 4=Aileron · 19=Elevator · 21=Rudder · 33-36=Motor 1-4 (VTOL) · 70=Throttle</div>
 
-                <h3 style="margin: 32px 0 16px;">12.3 Pitch Control (Elevator) PID</h3>
-                <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Default</th>
-                            <th>Recommended</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="param-name">PTCH_P</td>
-                            <td class="param-value">2.0</td>
-                            <td class="param-value">2.0-2.5</td>
-                            <td>Pitch proportional gain</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">PTCH_I</td>
-                            <td class="param-value">0.05</td>
-                            <td class="param-value">0.05-0.1</td>
-                            <td>Pitch integral gain</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">PTCH_D</td>
-                            <td class="param-value">0.0</td>
-                            <td class="param-value">0.0-0.15</td>
-                            <td>Pitch derivative gain</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">PTCH_RATE_P</td>
-                            <td class="param-value">0.15</td>
-                            <td class="param-value">0.15-0.25</td>
-                            <td>Pitch rate proportional</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">PTCH_RATE_I</td>
-                            <td class="param-value">0.0</td>
-                            <td class="param-value">0.0-0.05</td>
-                            <td>Pitch rate integral</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">PTCH_RATE_D</td>
-                            <td class="param-value">0.004</td>
-                            <td class="param-value">0.004-0.010</td>
-                            <td>Pitch rate derivative</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <h3 style="margin: 32px 0 16px;">12.4 Yaw Control (Rudder) PID</h3>
-                <table class="params-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Default</th>
-                            <th>Recommended</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="param-name">YAW_P</td>
-                            <td class="param-value">1.2</td>
-                            <td class="param-value">1.2-1.8</td>
-                            <td>Yaw proportional gain</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">YAW_I</td>
-                            <td class="param-value">0.02</td>
-                            <td class="param-value">0.02-0.05</td>
-                            <td>Yaw integral gain</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">YAW_D</td>
-                            <td class="param-value">0.0</td>
-                            <td class="param-value">0.0-0.05</td>
-                            <td>Yaw derivative gain</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">YAW_RATE_P</td>
-                            <td class="param-value">0.18</td>
-                            <td class="param-value">0.18-0.30</td>
-                            <td>Yaw rate proportional</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <h3 style="margin: 32px 0 16px;">12.5 Tuning Methodology</h3>
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
-                        <strong>Iterative Tuning Process:</strong>
-                    </p>
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 2;">
-                        <li><strong>Start Conservative:</strong> Begin with low P gains (1.0-1.5)</li>
-                        <li><strong>Test & Observe:</strong> Fly in manual mode, assess response</li>
-                        <li><strong>Increase P:</strong> Increase P gain 10-20% per iteration until oscillations appear</li>
-                        <li><strong>Back Off:</strong> Reduce P gain by 10-15% for stable operation</li>
-                        <li><strong>Add Damping (D):</strong> Small D gain (0.05-0.1) reduces overshoot</li>
-                        <li><strong>Integral (I):</strong> Minimal I gain for steady-state error correction</li>
-                        <li><strong>Rate Controller:</strong> Tune after attitude controller stable</li>
-                        <li><strong>Document Settings:</strong> Save all final parameters</li>
+                <div class="note-block">
+                    <strong>Procedimiento de verificación en Mission Planner:</strong>
+                    <ol>
+                        <li>Quitar hélices antes de cualquier prueba</li>
+                        <li>Initial Setup → Mandatory Hardware → Servo Output</li>
+                        <li>Probar cada salida individualmente y confirmar sentido correcto</li>
+                        <li>Confirmar recorrido completo min↔max sin bloqueos</li>
                     </ol>
                 </div>
             </section>
 
-            <!-- 13. COMPLETE PARAMETERS -->
+            <!-- 13 MOTORS -->
+            <section class="section" id="motors">
+                <div class="section-header">
+                    <div class="section-number">Sección 13</div>
+                    <h2 class="section-title">Motores &amp; ESC — Parte VTOL</h2>
+                    <p class="section-subtitle">Calibración de empuje, spin y aprendizaje de hover ya completados</p>
+                </div>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">Q_M_PWM_MIN / MAX</td><td class="param-value">1000 / 2000</td><td>Rango PWM de motores VTOL</td></tr>
+                        <tr><td class="param-name">Q_M_SPIN_ARM</td><td class="param-value">0</td><td>Sin giro al armar</td></tr>
+                        <tr><td class="param-name">Q_M_SPIN_MIN</td><td class="param-value">0.01</td><td>Spin mínimo en vuelo</td></tr>
+                        <tr><td class="param-name">Q_M_SPIN_MAX</td><td class="param-value">0.95</td><td>Spin máximo permitido</td></tr>
+                        <tr><td class="param-name">Q_M_THST_EXPO</td><td class="param-value">0.65</td><td>Curva de expo de empuje</td></tr>
+                        <tr><td class="param-name">Q_M_THST_HOVER</td><td class="param-value">0.38</td><td><strong>Aprendido:</strong> 38% throttle en hover</td></tr>
+                        <tr><td class="param-name">Q_M_HOVER_LEARN</td><td class="param-value">2</td><td>Aprendizaje y guardado automático activo</td></tr>
+                        <tr><td class="param-name">Q_M_YAW_HEADROOM</td><td class="param-value">50</td><td>Margen PWM reservado para autoridad de yaw</td></tr>
+                        <tr><td class="param-name">Q_ESC_CAL</td><td class="param-value">0</td><td>Fuera de modo calibración ESC</td></tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-success">
+                    <strong>Estado:</strong> Q_M_THST_HOVER = 0.38 confirma que el aprendizaje automático de hover ya se ejecutó
+                    correctamente en vuelo — no se requiere recalibración manual salvo cambio de peso/hélices.
+                </div>
+            </section>
+
+            <!-- 14 PAYLOAD / RELAY -->
+            <section class="section" id="payload">
+                <div class="section-header">
+                    <div class="section-number">Sección 14</div>
+                    <h2 class="section-title">Payload / Relés</h2>
+                    <p class="section-subtitle">Un relé configurado; cámara sin driver de gimbal asignado</p>
+                </div>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">RELAY1_FUNCTION</td><td class="param-value">1</td><td>Relé estándar habilitado</td></tr>
+                        <tr><td class="param-name">RELAY1_PIN</td><td class="param-value">62</td><td>Pin GPIO físico</td></tr>
+                        <tr><td class="param-name">RELAY1_INVERTED</td><td class="param-value">0</td><td>Lógica normal</td></tr>
+                        <tr><td class="param-name">RELAY2–6_FUNCTION</td><td class="param-off">0</td><td class="param-off">Sin uso</td></tr>
+                        <tr><td class="param-name">CAM1_TYPE / CAM2_TYPE</td><td class="param-off">0</td><td class="param-off">Sin driver de cámara/gimbal asignado</td></tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-info">
+                    <strong>Nota:</strong> El disparo de la cámara DJI, si se usa, se realiza actualmente vía Relay 1 / pin 62
+                    sin integración de gimbal por MAVLink (CAM_TYPE en 0).
+                </div>
+            </section>
+
+            <!-- 15 VTOL TRANSITION & ASSIST -->
+            <section class="section" id="transition">
+                <div class="section-header">
+                    <div class="section-number">Sección 15 · Tuning</div>
+                    <h2 class="section-title">Transición VTOL &amp; Modo Assist</h2>
+                    <p class="section-subtitle">Parámetros de transición ala fija ↔ VTOL y asistencia automática en vuelo crucero</p>
+                </div>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">Q_ASSIST_SPEED</td><td class="param-value">14 m/s</td><td>Velocidad bajo la cual se activa el assist VTOL</td></tr>
+                        <tr><td class="param-name">Q_ASSIST_ALT</td><td class="param-value">15 m</td><td>Altitud mínima para permitir assist</td></tr>
+                        <tr><td class="param-name">Q_ASSIST_ANGLE</td><td class="param-value">90°</td><td>Ángulo de inclinación que dispara assist</td></tr>
+                        <tr><td class="param-name">Q_ASSIST_DELAY</td><td class="param-value">0.5 s</td><td>Retardo antes de activar</td></tr>
+                        <tr><td class="param-name">Q_TRANSITION_MS</td><td class="param-value">4000 ms</td><td>Duración de transición VTOL → crucero</td></tr>
+                        <tr><td class="param-name">Q_BACKTRANS_MS</td><td class="param-value">3000 ms</td><td>Duración de transición crucero → VTOL</td></tr>
+                        <tr><td class="param-name">Q_TRAN_PIT_MAX</td><td class="param-value">3°</td><td>Límite de pitch durante transición</td></tr>
+                        <tr><td class="param-name">Q_FWD_PIT_LIM</td><td class="param-value">3°</td><td>Límite de pitch usando empuje de crucero en VTOL</td></tr>
+                        <tr><td class="param-name">Q_FWD_THR_GAIN</td><td class="param-value">2</td><td>Ganancia de empuje directo en modos Q</td></tr>
+                        <tr><td class="param-name">Q_BCK_PIT_LIM</td><td class="param-value">10°</td><td>Límite de pitch en transición de retorno</td></tr>
+                        <tr><td class="param-name">Q_RTL_MODE</td><td class="param-value">1</td><td>RTL transiciona a VTOL para aterrizar</td></tr>
+                        <tr><td class="param-name">Q_RTL_ALT</td><td class="param-value">15 m</td><td>Altitud objetivo de RTL</td></tr>
+                        <tr><td class="param-name">Q_RTL_ALT_MIN</td><td class="param-value">10 m</td><td>Altitud mínima de seguridad en RTL</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 16 Q MODE PID TUNING -->
+            <section class="section" id="tuning-q">
+                <div class="section-header">
+                    <div class="section-number">Sección 16 · Tuning</div>
+                    <h2 class="section-title">Ajuste PID — Modo Q (VTOL)</h2>
+                    <p class="section-subtitle">Ganancias de actitud, tasa, posición y loiter para vuelo tipo multicóptero</p>
+                </div>
+
+                <h3 class="subhead">Control de actitud (ángulo)</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">Q_A_ANG_RLL_P</td><td class="param-value">6.0</td><td>Ganancia proporcional de ángulo — Roll</td></tr>
+                        <tr><td class="param-name">Q_A_ANG_PIT_P</td><td class="param-value">5.0</td><td>Ganancia proporcional de ángulo — Pitch</td></tr>
+                        <tr><td class="param-name">Q_A_ANG_YAW_P</td><td class="param-value">3.0</td><td>Ganancia proporcional de ángulo — Yaw</td></tr>
+                        <tr><td class="param-name">Q_A_ANGLE_MAX</td><td class="param-value">30°</td><td>Inclinación máxima permitida</td></tr>
+                        <tr><td class="param-name">Q_A_ANG_LIM_TC</td><td class="param-value">1.0</td><td>Constante de tiempo del limitador de ángulo</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Control de tasa (rate) — Roll / Pitch / Yaw</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Roll</th><th>Pitch</th><th>Yaw</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">Q_A_RAT_*_P</td><td class="param-value">0.20</td><td class="param-value">0.20</td><td class="param-value">0.50</td></tr>
+                        <tr><td class="param-name">Q_A_RAT_*_I</td><td class="param-value">0.20</td><td class="param-value">0.20</td><td class="param-value">0.018</td></tr>
+                        <tr><td class="param-name">Q_A_RAT_*_D</td><td class="param-value">0.010</td><td class="param-value">0.010</td><td class="param-value">0.006</td></tr>
+                        <tr><td class="param-name">Q_A_RAT_*_IMAX</td><td>0.50</td><td>0.50</td><td>0.50</td></tr>
+                        <tr><td class="param-name">Q_A_RAT_*_FLTT</td><td>20 Hz</td><td>20 Hz</td><td>20 Hz</td></tr>
+                        <tr><td class="param-name">Q_A_RAT_*_FLTD</td><td>10 Hz</td><td>10 Hz</td><td>10 Hz</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Límites de aceleración y tasa angular</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">Q_A_ACC_R_MAX / P_MAX</td><td class="param-value">300 °/s²</td><td>Aceleración angular máx. roll/pitch</td></tr>
+                        <tr><td class="param-name">Q_A_ACC_Y_MAX</td><td class="param-value">200 °/s²</td><td>Aceleración angular máx. yaw</td></tr>
+                        <tr><td class="param-name">Q_A_RATE_R_MAX / P_MAX / Y_MAX</td><td class="param-value">75 °/s</td><td>Tasa angular máxima en los 3 ejes</td></tr>
+                        <tr><td class="param-name">Q_A_RATE_WPY_MAX</td><td class="param-value">60 °/s</td><td>Tasa de yaw máxima en waypoints</td></tr>
+                        <tr><td class="param-name">Q_A_THR_MIX_MIN / MAX / MAN</td><td class="param-value">0.1 / 0.5 / 0.5</td><td>Mezcla de prioridad actitud vs. throttle</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Control de posición horizontal y vertical</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">Q_P_NE_POS_P</td><td class="param-value">0.5</td><td>Posición horizontal (N-E)</td></tr>
+                        <tr><td class="param-name">Q_P_NE_VEL_P / I / D</td><td class="param-value">0.7 / 0.35 / 0.17</td><td>Velocidad horizontal</td></tr>
+                        <tr><td class="param-name">Q_P_D_POS_P</td><td class="param-value">1.0</td><td>Posición vertical (Down)</td></tr>
+                        <tr><td class="param-name">Q_P_D_VEL_P / I</td><td class="param-value">5.0 / 0.0</td><td>Velocidad vertical</td></tr>
+                        <tr><td class="param-name">Q_P_D_ACC_P / I / IMAX</td><td class="param-value">0.03 / 0.1 / 0.8</td><td>Aceleración vertical</td></tr>
+                        <tr><td class="param-name">Q_P_JERK_D / JERK_NE</td><td class="param-value">5 / 2</td><td>Límites de jerk vertical y horizontal</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Loiter, navegación WP y veleta de viento (weathervane)</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">Q_LOIT_SPEED_MS</td><td class="param-value">5 m/s</td><td>Velocidad máxima en loiter</td></tr>
+                        <tr><td class="param-name">Q_LOIT_ANG_MAX</td><td class="param-value">10°</td><td>Inclinación máxima en loiter</td></tr>
+                        <tr><td class="param-name">Q_LOIT_BRK_ACC_M / BRK_JRK_M</td><td class="param-value">0.5 / 2.5</td><td>Frenado (aceleración/jerk)</td></tr>
+                        <tr><td class="param-name">Q_WP_SPD</td><td class="param-value">5 m/s</td><td>Velocidad horizontal en waypoints</td></tr>
+                        <tr><td class="param-name">Q_WP_SPD_UP / SPD_DN</td><td class="param-value">2.5 / 1.5 m/s</td><td>Velocidad de subida / bajada</td></tr>
+                        <tr><td class="param-name">Q_WP_RADIUS_M</td><td class="param-value">2 m</td><td>Radio de aceptación de waypoint</td></tr>
+                        <tr><td class="param-name">Q_WP_RFND_USE</td><td class="param-value">1</td><td>Uso de telémetro habilitado (pendiente de instalar, ver sección 11)</td></tr>
+                        <tr><td class="param-name">Q_WVANE_ENABLE</td><td class="param-value">1</td><td>Veleta de viento activa en hover</td></tr>
+                        <tr><td class="param-name">Q_WVANE_GAIN</td><td class="param-value">0.5</td><td>Ganancia de alineación con el viento</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 17 CRUISE PID TUNING -->
+            <section class="section" id="tuning-cruise">
+                <div class="section-header">
+                    <div class="section-number">Sección 17 · Tuning</div>
+                    <h2 class="section-title">Ajuste PID — Modo Crucero (Ala Fija)</h2>
+                    <p class="section-subtitle">Roll, Pitch, Yaw/Steering y control de energía TECS para vuelo horizontal</p>
+                </div>
+
+                <h3 class="subhead">Roll — Alerones</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">RLL_RATE_P</td><td class="param-value">0.10</td><td>Proporcional de tasa de roll</td></tr>
+                        <tr><td class="param-name">RLL_RATE_I</td><td class="param-value">0.15</td><td>Integral de tasa de roll</td></tr>
+                        <tr><td class="param-name">RLL_RATE_D</td><td class="param-value">0.0</td><td>Derivativo (sin uso)</td></tr>
+                        <tr><td class="param-name">RLL_RATE_FF</td><td class="param-value">0.325</td><td>Feed-forward de tasa</td></tr>
+                        <tr><td class="param-name">RLL_RATE_IMAX</td><td class="param-value">0.666</td><td>Límite del término integral</td></tr>
+                        <tr><td class="param-name">RLL_RATE_FLTT / FLTD</td><td class="param-value">3 Hz / 12 Hz</td><td>Filtros de objetivo y derivada</td></tr>
+                        <tr><td class="param-name">RLL2SRV_TCONST</td><td class="param-value">0.45 s</td><td>Constante de tiempo roll → servo</td></tr>
+                        <tr><td class="param-name">RLL2SRV_RMAX</td><td class="param-value">75 °/s</td><td>Tasa máxima de roll comandada</td></tr>
+                        <tr><td class="param-name">ROLL_LIMIT_DEG</td><td class="param-value">45°</td><td>Inclinación máxima de alabeo</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Pitch — Elevadores</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">PTCH_RATE_P</td><td class="param-value">0.08</td><td>Proporcional de tasa de pitch</td></tr>
+                        <tr><td class="param-name">PTCH_RATE_I</td><td class="param-value">0.15</td><td>Integral de tasa de pitch</td></tr>
+                        <tr><td class="param-name">PTCH_RATE_D</td><td class="param-value">0.0</td><td>Derivativo (sin uso)</td></tr>
+                        <tr><td class="param-name">PTCH_RATE_FF</td><td class="param-value">0.395</td><td>Feed-forward de tasa</td></tr>
+                        <tr><td class="param-name">PTCH_RATE_IMAX</td><td class="param-value">0.666</td><td>Límite del término integral</td></tr>
+                        <tr><td class="param-name">PTCH2SRV_TCONST</td><td class="param-value">0.45 s</td><td>Constante de tiempo pitch → servo</td></tr>
+                        <tr><td class="param-name">PTCH2SRV_RMAX_UP / DN</td><td class="param-value">75 / 75 °/s</td><td>Tasa máxima de cabeceo</td></tr>
+                        <tr><td class="param-name">PTCH2SRV_RLL</td><td class="param-value">1</td><td>Compensación de pitch por alabeo</td></tr>
+                        <tr><td class="param-name">PTCH_LIM_MAX_DEG / MIN_DEG</td><td class="param-value">20° / -25°</td><td>Límites de cabeceo</td></tr>
+                        <tr><td class="param-name">LEVEL_ROLL_LIMIT</td><td class="param-value">5°</td><td>Umbral de "nivelado" para transición</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Yaw, Timón &amp; Rodaje en tierra</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">YAW2SRV_RLL</td><td class="param-value">1</td><td>Coordinación de viraje habilitada</td></tr>
+                        <tr><td class="param-name">YAW2SRV_SLIP / INT</td><td class="param-value">0 / 0</td><td>Sin corrección de derrape / integral</td></tr>
+                        <tr><td class="param-name">STEER2SRV_P</td><td class="param-value">1.8</td><td>Proporcional de dirección en tierra</td></tr>
+                        <tr><td class="param-name">STEER2SRV_I</td><td class="param-value">0.2</td><td>Integral de dirección en tierra</td></tr>
+                        <tr><td class="param-name">STEER2SRV_D</td><td class="param-value">0.005</td><td>Derivativo de dirección en tierra</td></tr>
+                        <tr><td class="param-name">STEER2SRV_TCONST</td><td class="param-value">0.75 s</td><td>Constante de tiempo de dirección</td></tr>
+                        <tr><td class="param-name">KFF_RDDRMIX</td><td class="param-value">0.5</td><td>Mezcla timón/alerón en viraje</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">TECS — Control de Energía Total (velocidad/altitud)</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">TECS_CLMB_MAX</td><td class="param-value">2 m/s</td><td>Tasa de subida máxima</td></tr>
+                        <tr><td class="param-name">TECS_SINK_MIN / MAX</td><td class="param-value">2 / 5 m/s</td><td>Tasa de descenso mínima/máxima</td></tr>
+                        <tr><td class="param-name">TECS_TIME_CONST</td><td class="param-value">5 s</td><td>Constante de tiempo del controlador</td></tr>
+                        <tr><td class="param-name">TECS_THR_DAMP</td><td class="param-value">0.5</td><td>Amortiguación de throttle</td></tr>
+                        <tr><td class="param-name">TECS_PTCH_DAMP</td><td class="param-value">0.3</td><td>Amortiguación de pitch</td></tr>
+                        <tr><td class="param-name">TECS_SPDWEIGHT</td><td class="param-value">0.8</td><td>Prioridad velocidad vs. altitud</td></tr>
+                        <tr><td class="param-name">TECS_INTEG_GAIN</td><td class="param-value">0.3</td><td>Ganancia integral de energía</td></tr>
+                        <tr><td class="param-name">TECS_RLL2THR</td><td class="param-value">10</td><td>Compensación de throttle por alabeo</td></tr>
+                        <tr><td class="param-name">TECS_PITCH_MAX / MIN</td><td class="param-value">15° / 0°</td><td>Límites de pitch del controlador TECS</td></tr>
+                        <tr><td class="param-name">TECS_VERT_ACC</td><td class="param-value">7 m/s²</td><td>Aceleración vertical máxima</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subhead">Navegación L1 &amp; Autotune</h3>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">NAVL1_PERIOD</td><td class="param-value">22 s</td><td>Periodo de navegación L1</td></tr>
+                        <tr><td class="param-name">NAVL1_DAMPING</td><td class="param-value">0.75</td><td>Amortiguación de la curva de seguimiento</td></tr>
+                        <tr><td class="param-name">NAVL1_XTRACK_I</td><td class="param-value">0.02</td><td>Corrección integral de cross-track</td></tr>
+                        <tr><td class="param-name">TRIM_THROTTLE</td><td class="param-value">45%</td><td>Throttle de crucero nivelado</td></tr>
+                        <tr><td class="param-name">AUTOTUNE_AXES</td><td class="param-value">7</td><td>Autotune habilitado en Roll+Pitch+Yaw</td></tr>
+                        <tr><td class="param-name">AUTOTUNE_LEVEL</td><td class="param-value">6</td><td>Agresividad de autotune (media-alta)</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 18 SAFETY / FAILSAFE -->
+            <section class="section" id="safety">
+                <div class="section-header">
+                    <div class="section-number">Sección 18</div>
+                    <h2 class="section-title">Failsafe, Arming &amp; Geofence</h2>
+                    <p class="section-subtitle">Comportamiento ante pérdida de señal, batería baja y límites geográficos</p>
+                </div>
+                <table class="params-table">
+                    <thead><tr><th>Parámetro</th><th>Valor</th><th>Descripción</th></tr></thead>
+                    <tbody>
+                        <tr><td class="param-name">ARMING_REQUIRE</td><td class="param-value">1</td><td>Armado obligatorio antes de vuelo</td></tr>
+                        <tr><td class="param-name">ARMING_ACCTHRESH</td><td class="param-value">0.75 m/s²</td><td>Umbral de consistencia entre acelerómetros</td></tr>
+                        <tr><td class="param-name">ARMING_MAGTHRESH</td><td class="param-value">100</td><td>Umbral de consistencia entre compases</td></tr>
+                        <tr><td class="param-name">FS_SHORT_ACTN / FS_LONG_ACTN</td><td class="param-off">0 / 0</td><td class="param-off">Sin acción automática configurada</td></tr>
+                        <tr><td class="param-name">FS_LONG_TIMEOUT</td><td class="param-value">5 s</td><td>Tiempo para declarar failsafe largo</td></tr>
+                        <tr><td class="param-name">FS_EKF_THRESH</td><td class="param-value">0.8</td><td>Umbral de variance del EKF para failsafe</td></tr>
+                        <tr><td class="param-name">FENCE_ENABLE</td><td class="param-off">0</td><td class="param-off">Geofence deshabilitado actualmente</td></tr>
+                        <tr><td class="param-name">FENCE_TYPE</td><td class="param-value">4</td><td>Configurado como cilindro (inactivo)</td></tr>
+                        <tr><td class="param-name">FENCE_RADIUS</td><td class="param-value">300 m</td><td>Radio configurado (a la espera de activar)</td></tr>
+                        <tr><td class="param-name">FENCE_ALT_MAX / MIN</td><td class="param-value">100 / -10 m</td><td>Límites verticales configurados</td></tr>
+                        <tr><td class="param-name">RTL_ALTITUDE</td><td class="param-value">-1</td><td>Mantiene altitud actual en RTL</td></tr>
+                        <tr><td class="param-name">RTL_RADIUS</td><td class="param-value">200 m</td><td>Radio de loiter en RTL (ala fija)</td></tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-error">
+                    <strong>Resumen de riesgos activos:</strong> Geofence deshabilitado, sin acción automática en failsafe corto/largo
+                    ni en batería baja/crítica. La aeronave depende del piloto para reaccionar ante estos eventos.
+                </div>
+            </section>
+
+            <!-- 19 FULL PARAMETER EXPORT -->
             <section class="section" id="params">
                 <div class="section-header">
-                    <div class="section-number">Step 13</div>
-                    <h2 class="section-title">Complete Parameter Export</h2>
-                    <p class="section-subtitle">Full parameter list for Fighter VTOL on ArduPilot 4.7.1</p>
+                    <div class="section-number">Sección 19</div>
+                    <h2 class="section-title">Exportación Completa de Parámetros</h2>
+                    <p class="section-subtitle">Volcado íntegro del archivo real — Params VTOL, con PID 29-09-2026.param</p>
                 </div>
 
                 <div class="alert alert-info">
-                    <strong>Export Method:</strong> In Mission Planner: Full Parameter List → Save to File
-                </div>
-
-                <div class="card">
-                    <div class="card-title">13.1 Critical Parameters Summary</div>
-                    <div class="card-description">
-                        Below is a consolidated list of all parameters discussed in this guide. Copy these values to your autopilot.
-                    </div>
+                    <strong>Uso:</strong> En Mission Planner → Full Parameter List → Load from file, seleccionar este .param
+                    para replicar exactamente esta configuración en otro autopiloto idéntico.
                 </div>
 
                 <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>FRAME & FLIGHT MODE PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
+                    <span>FRAME, MODOS &amp; ARMADO</span><span class="collapsible-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
+                    <table class="params-table" style="font-size:11px;">
                         <tbody>
-                            <tr><td class="param-name">FRAME_CLASS</td><td>3 (VTOL)</td></tr>
-                            <tr><td class="param-name">FRAME_TYPE</td><td>10 (Quad + Plane)</td></tr>
-                            <tr><td class="param-name">FLTMODE1</td><td>10 (VTOL Assist)</td></tr>
-                            <tr><td class="param-name">FLTMODE2</td><td>4 (Stabilize)</td></tr>
-                            <tr><td class="param-name">FLTMODE3</td><td>15 (Guided)</td></tr>
-                            <tr><td class="param-name">FLTMODE4</td><td>16 (Return To Launch)</td></tr>
-                            <tr><td class="param-name">FLTMODE5</td><td>3 (Auto)</td></tr>
-                            <tr><td class="param-name">FLTMODE6</td><td>5 (Manual)</td></tr>
+                            <tr><td class="param-name">Q_ENABLE</td><td>1</td></tr>
+                            <tr><td class="param-name">Q_FRAME_CLASS</td><td>1</td></tr>
+                            <tr><td class="param-name">Q_FRAME_TYPE</td><td>1</td></tr>
+                            <tr><td class="param-name">FLTMODE_CH</td><td>7</td></tr>
+                            <tr><td class="param-name">FLTMODE1</td><td>17</td></tr>
+                            <tr><td class="param-name">FLTMODE2</td><td>17</td></tr>
+                            <tr><td class="param-name">FLTMODE3</td><td>2</td></tr>
+                            <tr><td class="param-name">FLTMODE4</td><td>2</td></tr>
+                            <tr><td class="param-name">FLTMODE5</td><td>0</td></tr>
+                            <tr><td class="param-name">FLTMODE6</td><td>0</td></tr>
+                            <tr><td class="param-name">ARMING_REQUIRE</td><td>1</td></tr>
+                            <tr><td class="param-name">ARMING_RUDDER</td><td>2</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>SERIAL & TELEMETRY PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
+                    <span>SERIE, CAN &amp; TELEMETRÍA</span><span class="collapsible-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
+                    <table class="params-table" style="font-size:11px;">
                         <tbody>
                             <tr><td class="param-name">SERIAL1_PROTOCOL</td><td>2</td></tr>
                             <tr><td class="param-name">SERIAL1_BAUD</td><td>57</td></tr>
-                            <tr><td class="param-name">SERIAL2_PROTOCOL</td><td>5</td></tr>
-                            <tr><td class="param-name">SERIAL2_BAUD</td><td>115</td></tr>
-                            <tr><td class="param-name">SERIAL3_PROTOCOL</td><td>1</td></tr>
-                            <tr><td class="param-name">SERIAL4_PROTOCOL</td><td>9</td></tr>
-                            <tr><td class="param-name">SERIAL4_BAUD</td><td>19</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>GPS & GNSS PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
-                        <tbody>
-                            <tr><td class="param-name">GPS_TYPE</td><td>5</td></tr>
-                            <tr><td class="param-name">GPS_HDOP_GOOD</td><td>200</td></tr>
-                            <tr><td class="param-name">GPS_AUTO_SWITCH</td><td>1</td></tr>
-                            <tr><td class="param-name">GPS_MIN_SATELLITES</td><td>6</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>AIRSPEED PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
-                        <tbody>
-                            <tr><td class="param-name">ARSPD_TYPE</td><td>8</td></tr>
-                            <tr><td class="param-name">ARSPD_USE</td><td>1</td></tr>
-                            <tr><td class="param-name">ARSPD_OFFSET</td><td>0</td></tr>
-                            <tr><td class="param-name">AIRSPEED_CRUISE</td><td>20</td></tr>
-                            <tr><td class="param-name">AIRSPEED_MAX</td><td>40</td></tr>
-                            <tr><td class="param-name">AIRSPEED_MIN</td><td>15</td></tr>
-                            <tr><td class="param-name">AIRSPEED_STALL</td><td>11</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>VTOL TRANSITION & ASSIST PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
-                        <tbody>
-                            <tr><td class="param-name">Q_ASSIST_SPEED</td><td>14</td></tr>
-                            <tr><td class="param-name">Q_ASSIST_ALT</td><td>20</td></tr>
-                            <tr><td class="param-name">Q_ASSIST_ANGLE</td><td>90</td></tr>
-                            <tr><td class="param-name">Q_ASSIST_DELAY</td><td>0.5</td></tr>
-                            <tr><td class="param-name">Q_ASSIST_OPTIONS</td><td>0</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>DroneCAN PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
-                        <tbody>
+                            <tr><td class="param-name">SERIAL2_PROTOCOL</td><td>2</td></tr>
+                            <tr><td class="param-name">SERIAL2_BAUD</td><td>57</td></tr>
+                            <tr><td class="param-name">SERIAL3_PROTOCOL</td><td>5</td></tr>
+                            <tr><td class="param-name">SERIAL3_BAUD</td><td>230</td></tr>
+                            <tr><td class="param-name">SERIAL7_PROTOCOL</td><td>2</td></tr>
                             <tr><td class="param-name">CAN_P1_DRIVER</td><td>1</td></tr>
                             <tr><td class="param-name">CAN_D1_PROTOCOL</td><td>1</td></tr>
-                            <tr><td class="param-name">CAN_P2_DRIVER</td><td>1</td></tr>
-                            <tr><td class="param-name">CAN_D2_PROTOCOL</td><td>1</td></tr>
+                            <tr><td class="param-name">DDS_ENABLE</td><td>1</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>ROLL (AILERON) PID PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
+                    <span>SENSORES — GPS / COMPÁS / AIRSPEED / BARO</span><span class="collapsible-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
+                    <table class="params-table" style="font-size:11px;">
                         <tbody>
-                            <tr><td class="param-name">RLL_P</td><td>2.2</td></tr>
-                            <tr><td class="param-name">RLL_I</td><td>0.1</td></tr>
-                            <tr><td class="param-name">RLL_D</td><td>0.08</td></tr>
-                            <tr><td class="param-name">RLL_RATE_P</td><td>0.2</td></tr>
-                            <tr><td class="param-name">RLL_RATE_I</td><td>0.05</td></tr>
-                            <tr><td class="param-name">RLL_RATE_D</td><td>0.006</td></tr>
+                            <tr><td class="param-name">GPS1_TYPE</td><td>9</td></tr>
+                            <tr><td class="param-name">GPS_AUTO_SWITCH</td><td>1</td></tr>
+                            <tr><td class="param-name">COMPASS_EXTERNAL</td><td>1</td></tr>
+                            <tr><td class="param-name">COMPASS_USE / USE2 / USE3</td><td>1 / 1 / 0</td></tr>
+                            <tr><td class="param-name">ARSPD_TYPE</td><td>8</td></tr>
+                            <tr><td class="param-name">ARSPD_USE</td><td>0</td></tr>
+                            <tr><td class="param-name">ARSPD_RATIO</td><td>2.5</td></tr>
+                            <tr><td class="param-name">AIRSPEED_CRUISE / MAX / MIN / STALL</td><td>20 / 40 / 15 / 10</td></tr>
+                            <tr><td class="param-name">BARO_PRIMARY</td><td>0</td></tr>
+                            <tr><td class="param-name">RNGFND1_TYPE</td><td>0</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>PITCH (ELEVATOR) PID PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
+                    <span>RC, SERVOS &amp; MOTORES</span><span class="collapsible-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
+                    <table class="params-table" style="font-size:11px;">
                         <tbody>
-                            <tr><td class="param-name">PTCH_P</td><td>2.2</td></tr>
-                            <tr><td class="param-name">PTCH_I</td><td>0.1</td></tr>
-                            <tr><td class="param-name">PTCH_D</td><td>0.08</td></tr>
-                            <tr><td class="param-name">PTCH_RATE_P</td><td>0.2</td></tr>
-                            <tr><td class="param-name">PTCH_RATE_I</td><td>0.05</td></tr>
-                            <tr><td class="param-name">PTCH_RATE_D</td><td>0.006</td></tr>
+                            <tr><td class="param-name">RCMAP_ROLL/PITCH/THR/YAW</td><td>1 / 2 / 3 / 4</td></tr>
+                            <tr><td class="param-name">SERVO1_FUNCTION</td><td>4 (Aileron)</td></tr>
+                            <tr><td class="param-name">SERVO2_FUNCTION</td><td>19 (Elevator)</td></tr>
+                            <tr><td class="param-name">SERVO3_FUNCTION</td><td>70 (Throttle)</td></tr>
+                            <tr><td class="param-name">SERVO5-8_FUNCTION</td><td>33 / 34 / 35 / 36 (Motor1-4)</td></tr>
+                            <tr><td class="param-name">SERVO9_FUNCTION</td><td>4 (Aileron)</td></tr>
+                            <tr><td class="param-name">SERVO10_FUNCTION</td><td>21 (Rudder)</td></tr>
+                            <tr><td class="param-name">Q_M_THST_HOVER</td><td>0.38</td></tr>
+                            <tr><td class="param-name">Q_M_PWM_MIN / MAX</td><td>1000 / 2000</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>YAW (RUDDER) PID PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
+                    <span>TUNING MODO Q — RATE &amp; ANGLE PID</span><span class="collapsible-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
+                    <table class="params-table" style="font-size:11px;">
                         <tbody>
-                            <tr><td class="param-name">YAW_P</td><td>1.5</td></tr>
-                            <tr><td class="param-name">YAW_I</td><td>0.04</td></tr>
-                            <tr><td class="param-name">YAW_D</td><td>0.02</td></tr>
-                            <tr><td class="param-name">YAW_RATE_P</td><td>0.24</td></tr>
+                            <tr><td class="param-name">Q_A_ANG_RLL_P / PIT_P / YAW_P</td><td>6 / 5 / 3</td></tr>
+                            <tr><td class="param-name">Q_A_RAT_RLL_P/I/D</td><td>0.2 / 0.2 / 0.01</td></tr>
+                            <tr><td class="param-name">Q_A_RAT_PIT_P/I/D</td><td>0.2 / 0.2 / 0.01</td></tr>
+                            <tr><td class="param-name">Q_A_RAT_YAW_P/I/D</td><td>0.5 / 0.018 / 0.006</td></tr>
+                            <tr><td class="param-name">Q_P_NE_POS_P</td><td>0.5</td></tr>
+                            <tr><td class="param-name">Q_P_NE_VEL_P/I/D</td><td>0.7 / 0.35 / 0.17</td></tr>
+                            <tr><td class="param-name">Q_P_D_POS_P</td><td>1.0</td></tr>
+                            <tr><td class="param-name">Q_P_D_VEL_P</td><td>5.0</td></tr>
+                            <tr><td class="param-name">Q_ASSIST_SPEED/ALT/ANGLE</td><td>14 / 15 / 90</td></tr>
+                            <tr><td class="param-name">Q_TRANSITION_MS</td><td>4000</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>SERVO OUTPUT PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
+                    <span>TUNING MODO CRUCERO — ROLL / PITCH / YAW / TECS</span><span class="collapsible-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
+                    <table class="params-table" style="font-size:11px;">
                         <tbody>
-                            <tr><td class="param-name">SERVO_MIN</td><td>1100</td></tr>
-                            <tr><td class="param-name">SERVO_MAX</td><td>1900</td></tr>
-                            <tr><td class="param-name">SERVO_TRIM</td><td>1500</td></tr>
-                            <tr><td class="param-name">MOT_SPIN_ARM</td><td>0.1</td></tr>
-                            <tr><td class="param-name">MOT_SPIN_MIN</td><td>0.15</td></tr>
-                            <tr><td class="param-name">MOT_PWM_TYPE</td><td>0</td></tr>
+                            <tr><td class="param-name">RLL_RATE_P/I/FF</td><td>0.10 / 0.15 / 0.325</td></tr>
+                            <tr><td class="param-name">PTCH_RATE_P/I/FF</td><td>0.08 / 0.15 / 0.395</td></tr>
+                            <tr><td class="param-name">RLL2SRV_TCONST</td><td>0.45</td></tr>
+                            <tr><td class="param-name">PTCH2SRV_TCONST</td><td>0.45</td></tr>
+                            <tr><td class="param-name">STEER2SRV_P/I/D</td><td>1.8 / 0.2 / 0.005</td></tr>
+                            <tr><td class="param-name">TECS_TIME_CONST</td><td>5</td></tr>
+                            <tr><td class="param-name">TECS_SPDWEIGHT</td><td>0.8</td></tr>
+                            <tr><td class="param-name">NAVL1_PERIOD/DAMPING</td><td>22 / 0.75</td></tr>
+                            <tr><td class="param-name">TRIM_THROTTLE</td><td>45</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span>RANGEFINDER PARAMETERS</span>
-                    <span class="collapsible-icon">▼</span>
+                    <span>BATERÍA, FAILSAFE &amp; FENCE</span><span class="collapsible-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
-                    <table class="params-table" style="font-size: 11px;">
+                    <table class="params-table" style="font-size:11px;">
                         <tbody>
-                            <tr><td class="param-name">RNGFND1_TYPE</td><td>2</td></tr>
-                            <tr><td class="param-name">RNGFND1_MAX_CM</td><td>4000</td></tr>
-                            <tr><td class="param-name">RNGFND1_GNDCLEAR</td><td>10</td></tr>
+                            <tr><td class="param-name">BATT_MONITOR</td><td>8</td></tr>
+                            <tr><td class="param-name">BATT_CAPACITY</td><td>22000</td></tr>
+                            <tr><td class="param-name">BATT_ARM_VOLT</td><td>44</td></tr>
+                            <tr><td class="param-name">BATT_LOW_VOLT / CRT_VOLT</td><td>43.2 / 42</td></tr>
+                            <tr><td class="param-name">BATT_FS_LOW_ACT / CRT_ACT</td><td>0 / 0</td></tr>
+                            <tr><td class="param-name">FENCE_ENABLE</td><td>0</td></tr>
+                            <tr><td class="param-name">FS_SHORT_ACTN / LONG_ACTN</td><td>0 / 0</td></tr>
+                            <tr><td class="param-name">RTL_ALTITUDE</td><td>-1</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3 style="margin: 32px 0 16px;">13.2 How to Load Parameters</h3>
-                <div style="background: rgba(26, 31, 58, 0.5); border-left: 3px solid var(--primary); padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                    <ol style="color: var(--text-secondary); font-size: 13px; line-height: 2;">
-                        <li>Connect autopilot via USB to Mission Planner</li>
-                        <li>Go to: Full Parameter List</li>
-                        <li>Click "Load from File"</li>
-                        <li>Select the .param file from this guide</li>
-                        <li>Click "Load"</li>
-                        <li>Wait for "Parameters uploaded to autopilot"</li>
-                        <li>Disconnect and power cycle the autopilot</li>
-                    </ol>
+                <div class="code-block">
+                    <div class="code-header"><span>ARCHIVO ORIGINAL — Params VTOL, con PID 29-09-2026.param</span><a href="../pubs/" style="color:var(--khaki); font-size:10.5px; text-decoration:none;">▸ Adjuntar en /pubs para descarga directa</a></div>
+                    <div class="code-content"><code>Ver documento adjunto original para el volcado completo de las ~700 líneas de parámetros
+(incluye MAVLink streams, EK3, logging, autotune, guided controller, etc. no listados individualmente arriba).</code></div>
                 </div>
             </section>
 
             <!-- FOOTER -->
             <section style="margin-top: 96px; padding-top: 48px; border-top: 1px solid var(--border); text-align: center;">
-                <p style="color: var(--text-secondary); font-size: 12px;">
-                    <strong>Document Version:</strong> 1.0 | <strong>Last Updated:</strong> 2025 | <strong>ArduPilot 4.7.1</strong>
+                <p style="color: var(--text-secondary); font-size: 12px; font-family: var(--font-mono);">
+                    <strong>Doc. v2.0</strong> · Fuente: Params VTOL, con PID 29-09-2026.param · <strong>ArduPilot 4.7.1</strong>
                 </p>
                 <p style="color: var(--text-secondary); font-size: 11px; margin-top: 12px;">
-                    For updates and additional resources, visit:
-                    <a href="https://ardupilot.org/" style="color: var(--primary);">ardupilot.org</a> |
-                    <a href="https://custom.ardupilot.org/" style="color: var(--primary);">custom.ardupilot.org</a>
+                    <a href="https://ardupilot.org/" style="color: var(--green-glow);">ardupilot.org</a> ·
+                    <a href="https://custom.ardupilot.org/" style="color: var(--green-glow);">custom.ardupilot.org</a>
                 </p>
             </section>
         </main>
     </div>
 
-    <script>
-        // SIDEBAR NAVIGATION
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const sectionId = this.getAttribute('data-section');
-                const section = document.getElementById(sectionId);
-                
-                // Update active state
-                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Scroll to section
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-        });
-
-        // UPDATE SIDEBAR ON SCROLL
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('[id^="intro"], [id^="firmware"], [id^="radio"], [id^="receiver"], [id^="gnss"], [id^="airspeed"], [id^="modes"], [id^="camera"], [id^="accel"], [id^="servo"], [id^="motors"], [id^="rangefinder"], [id^="tuning"], [id^="params"]');
-            
-            let current = '';
-            sections.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top <= 150) {
-                    current = section.getAttribute('id');
-                }
-            });
-            
-            if (current) {
-                document.querySelectorAll('.sidebar-item').forEach(item => {
-                    item.classList.remove('active');
-                    if (item.getAttribute('data-section') === current) {
-                        item.classList.add('active');
-                    }
-                });
-            }
-        });
-
-        // COPY CODE FUNCTIONALITY
-        function copyCode(button) {
-            const codeContent = button.parentElement.nextElementSibling.textContent;
-            navigator.clipboard.writeText(codeContent).then(() => {
-                const originalText = button.textContent;
-                button.textContent = '✓ Copied!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            });
-        }
-
-        // COLLAPSIBLE FUNCTIONALITY
-        function toggleCollapsible(element) {
-            element.classList.toggle('open');
-            const content = element.nextElementSibling;
-            content.classList.toggle('open');
-        }
-
-        // PDF EXPORT
-        function exportPDF() {
-            const element = document.querySelector('.main-content');
-            const opt = {
-                margin: 10,
-                filename: 'Fighter_VTOL_ArduPilot_Configuration_Guide.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { 
-                    orientation: 'portrait', 
-                    unit: 'mm', 
-                    format: 'a4',
-                    compress: true
-                },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
-
-            // Hide sidebar and header for PDF
-            const sidebar = document.querySelector('.sidebar');
-            const header = document.querySelector('.header');
-            sidebar.style.display = 'none';
-            header.style.display = 'none';
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                sidebar.style.display = '';
-                header.style.display = '';
-            });
-        }
-
-        // TOGGLE SIDEBAR ON MOBILE
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.style.display = sidebar.style.display === 'none' ? '' : 'none';
-        }
-
-        // PROGRESS TRACKING (OPTIONAL)
-        function updateProgress() {
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrolled = window.scrollY;
-            const progress = (scrolled / docHeight) * 100;
-            // Could update a progress bar here
-        }
-
-        window.addEventListener('scroll', updateProgress);
-    </script>
+    <script src="../scripts/fighter.js"></script>
 </body>
 </html>
