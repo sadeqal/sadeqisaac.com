@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Configuración de Plataformas Aéreas · INDRA</title>
   <meta name="description" content="Documentación de configuración de plataformas aéreas no tripuladas: TARSIS VTOL, MFE y DRIZZLE.">
-  <meta name="theme-color" content="#00262e">
+  <meta name="theme-color" content="#071017">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/docs.css">
 </head>
 <body>
@@ -33,9 +33,23 @@
   <main id="main" tabindex="-1">
     <section id="viewHome" class="view" aria-labelledby="homeTitle">
       <div class="hero">
-        <p class="eyebrow">Documentación técnica · Ardupilot 4.7.1</p>
-        <h1 id="homeTitle">Configuración de <span>Plataformas Aéreas</span></h1>
-        <p class="lead">Selecciona una plataforma para ver su esquema completo de equipos y acceder, en un clic, a la configuración detallada de cada componente.</p>
+        <div class="hero__copy">
+          <p class="eyebrow">Documentación técnica <span>·</span> ArduPilot 4.7.1</p>
+          <h1 id="homeTitle">Configuración de <span>Plataformas Aéreas</span></h1>
+          <p class="lead">Explora cada aeronave, descubre su arquitectura y accede a la configuración detallada de sus sistemas.</p>
+        </div>
+        <figure class="hero__visual">
+          <div class="hero__visual-frame">
+            <span class="hero__visual-label">TARSIS VTOL <i>01 / 02</i></span>
+            <img src="../images/docs/vtols.png" alt="TARSIS VTOL F50 V3.1 y TARSIS VTOL F50 MINI" width="1800" height="2400" fetchpriority="high">
+            <span class="hero__visual-caption">DISEÑADOS PARA IR MÁS ALLÁ</span>
+          </div>
+          <figcaption><strong>Una flota.</strong> <span>Múltiples formas de volar.</span></figcaption>
+        </figure>
+      </div>
+      <div class="fleet-heading">
+        <div><p class="eyebrow">La flota</p><h2>Elige tu plataforma<span>.</span></h2></div>
+        <p>Explora modelos y configuraciones</p>
       </div>
       <ul class="cards" id="cards"></ul>
     </section>

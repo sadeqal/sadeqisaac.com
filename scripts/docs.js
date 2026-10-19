@@ -15,13 +15,16 @@
   /* MODELOS                                                            */
   /* ------------------------------------------------------------------ */
   const MODELS = [
-    { id: 'tarsis-v20', name: 'TARSIS VTOL F50 V2.0', family: 'TARSIS', img: 'tarsis-vtol-f50-v2.0.png', ready: false },
-    { id: 'tarsis-v31', name: 'TARSIS VTOL F50 V3.1', family: 'TARSIS', img: 'tarsis-vtol-f50-v3.1.png', ready: true,
+    { id: 'tarsis-v10', name: 'TARSIS VTOL F50 V1.0', family: 'TARSIS', img: 'vtol-1.png', ready: false },
+    { id: 'tarsis-v20', name: 'TARSIS VTOL F50 V2.0', family: 'TARSIS', img: 'vtol-2.png', ready: false },
+    { id: 'tarsis-v31', name: 'TARSIS VTOL F50 V3.1', family: 'TARSIS', ready: true, featured: true,
       tag: 'E-VTOL · CUAV X25 EVO', lead: 'Pasa el ratón (o toca) sobre cualquier equipo para abrir su configuración completa, directamente en el punto que necesitas.' },
-    { id: 'tarsis-v32', name: 'TARSIS VTOL F50 V3.2', family: 'TARSIS', img: 'tarsis-vtol-f50-v3.2.png', ready: false },
-    { id: 'mfe-fighter', name: 'MakeFlyEasy (MFE) VTOL Fighter', family: 'MFE', img: 'mfe-vtol-fighter.png', ready: false },
-    { id: 'mfe-pioneer', name: 'MFE Pioneer', family: 'MFE', img: 'mfe-pioneer.png', ready: false },
-    { id: 'drizzle-1', name: 'DRIZZLE I', family: 'DRIZZLE', img: 'drizzle-i.png', ready: false }
+    { id: 'tarsis-v32', name: 'TARSIS VTOL F50 V3.2', family: 'TARSIS', ready: false },
+    { id: 'tarsis-mini', name: 'TARSIS VTOL F50 MINI', family: 'TARSIS', img: 'vtol-mini.png', ready: false },
+    { id: 'drizzle-interceptor', name: 'DRIZZLE Interceptor', family: 'DRIZZLE', img: 'drizzle.png', ready: false },
+    { id: 'mfe-fighter', name: 'MakeFlyEasy (MFE) VTOL Fighter', family: 'MFE', img: 'fighter.png', ready: false },
+    { id: 'mfe-pioneer', name: 'MFE Pioneer', family: 'MFE', img: 'pioneer.png', ready: false },
+    { id: 'mfe-hero', name: 'MFE HERO', family: 'MFE', img: 'hero.png', ready: false }
   ];
 
   /* ------------------------------------------------------------------ */
@@ -41,7 +44,7 @@
     { id: 'pmu-avionica', name: 'PMU aviónica', model: 'CUAV PMU 2 Lite', img: 'cuav-pmu2lite.png', icon: 'power' },
     { id: 'video', name: 'Vídeo FPV + relé', model: 'DJI O3 Air Unit', img: 'dji-o3air.png', icon: 'cam' },
     { id: 'radio', name: 'Radioenlace', model: 'Silvus SC4200', img: 'silvus4200.png', icon: 'antenna' },
-    { id: 'can', name: 'Bus CAN', model: 'CAN2 · 8 nodos', img: 'bus-can-terminadores.png', icon: 'can' }
+    { id: 'can', name: 'Bus CAN', model: 'CAN2 · 8 nodos', img: 'canBus.png', icon: 'can' }
   ];
 
   const ICONS = {
@@ -915,6 +918,11 @@
   function img(file, alt, cls = '') {
     return `<img class="${cls}" src="${IMG}${file}" alt="${esc(alt)}" loading="eager" data-file="${esc(file)}">`;
   }
+  function modelImage(model) {
+    return model.img
+      ? img(model.img, model.name)
+      : `<span class="aircraft-placeholder" role="img" aria-label="${esc(model.name)}: imagen pendiente">Imagen pendiente</span>`;
+  }
   document.addEventListener('error', (e) => {
     const t = e.target;
     if (t.tagName !== 'IMG' || !t.dataset.file) return;
@@ -931,9 +939,9 @@
   /* ------------------------------------------------------------------ */
   function renderHome() {
     $('#cards').innerHTML = MODELS.map((m, i) => `
-      <li class="card ${m.ready ? '' : 'is-soon'}" style="--i:${i}">
+      <li class="card ${m.ready ? '' : 'is-soon'} ${m.featured ? 'card--featured' : ''}" style="--i:${i}">
         <a href="#/${m.id}" class="card__link" ${m.ready ? '' : 'aria-describedby="soon-note"'}>
-          <div class="card__media" data-ph>${img(m.img, m.name)}</div>
+          <div class="card__media">${modelImage(m)}</div>
           <div class="card__body">
             <span class="card__fam">${esc(m.family)}</span>
             <h2 class="card__name">${esc(m.name)}</h2>
@@ -1367,7 +1375,7 @@
 
     if (!model.ready) {
       $('#modelLead').textContent = 'La documentación de esta plataforma está en preparación.';
-      $('#scheme').innerHTML = `<div class="empty"><div class="empty__img" data-ph>${img(model.img, model.name)}</div><p>Esquema y libro de configuración próximamente.</p><a class="btn" href="#/">Volver a plataformas</a></div>`;
+      $('#scheme').innerHTML = `<div class="empty"><div class="empty__img">${modelImage(model)}</div><p>Esquema y libro de configuración próximamente.</p><a class="btn" href="#/">Volver a plataformas</a></div>`;
       $('#schemeHint').textContent = ''; $('#btnBook').hidden = true; renderedModel = null; closeBook();
       $('#extras').hidden = true; $('#extras').innerHTML = '';
       return;
