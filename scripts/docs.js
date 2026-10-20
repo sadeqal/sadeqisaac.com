@@ -1396,6 +1396,39 @@
   /* INIT                                                                */
   /* ------------------------------------------------------------------ */
   function init() {
+    const gate = $('#accessGate');
+    const form = $('#accessForm');
+    const password = $('#accessPassword');
+    const error = $('#accessError');
+    const appElements = [$('.skip'), $('.topbar'), $('main'), $('#book')];
+    const accessKey = 'docs-access-granted';
+    const unlocked = sessionStorage.getItem(accessKey) === 'true';
+
+    if (unlocked) gate.hidden = true;
+    else {
+      document.body.classList.add('access-locked');
+      appElements.forEach((element) => {
+        element.inert = true;
+        element.setAttribute('aria-hidden', 'true');
+      });
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (password.value !== '585858') {
+          error.hidden = false;
+          password.select();
+          return;
+        }
+        sessionStorage.setItem(accessKey, 'true');
+        gate.hidden = true;
+        document.body.classList.remove('access-locked');
+        appElements.forEach((element) => {
+          element.inert = false;
+          element.removeAttribute('aria-hidden');
+        });
+        $('#main').focus();
+      });
+    }
+
     renderHome();
     bindSearch();
     $('#btnBook').addEventListener('click', () => go('/tarsis-v31/libro'));

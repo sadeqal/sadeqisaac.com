@@ -40,6 +40,45 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .skip:focus { top: 12px; }
 [hidden] { display: none !important; }
 
+/* ---------- Acceso provisional ---------- */
+.access-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at 50% 42%, rgba(0, 66, 79, .96), rgba(0, 26, 32, .99) 72%);
+}
+.access-gate__panel { width: min(100%, 460px); }
+.access-gate__panel h1 {
+  margin: 20px 0 14px;
+  font-family: 'Space Grotesk', var(--font);
+  font-size: clamp(2rem, 7vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.08;
+}
+.access-gate__panel h1 strong { color: var(--cyan-soft); font-weight: 600; }
+.access-gate__copy { margin: 0 0 28px; color: #a8c2c8; }
+.access-gate__form { display: grid; gap: 10px; }
+.access-gate__form label { color: #d7e8eb; font-size: .82rem; }
+.access-gate__form input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 15px;
+  border: 1px solid rgba(111, 227, 239, .35);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, .22);
+  color: #fff;
+  font: 600 1.1rem var(--mono);
+  letter-spacing: .28em;
+}
+.access-gate__form input:focus { border-color: var(--cyan-soft); outline: 2px solid rgba(111, 227, 239, .3); }
+.access-gate__error { margin: 0; color: #ff9a84; font-size: .82rem; }
+.access-gate__form .btn { justify-content: center; margin-top: 10px; border-radius: 8px; }
+.access-gate__form .btn span { font-size: 1.2rem; }
+body.access-locked { overflow: hidden; }
+
 /* ---------- Fondo: logo INDRA a página completa ---------- */
 .bg-logo {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;

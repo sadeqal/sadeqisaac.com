@@ -16,6 +16,20 @@
   <div class="bg-logo" aria-hidden="true"></div>
   <div class="bg-glow" aria-hidden="true"></div>
 
+  <section class="access-gate" id="accessGate" role="dialog" aria-modal="true" aria-labelledby="accessTitle">
+    <div class="access-gate__panel">
+      <p class="eyebrow">INDRA <span>·</span> Acceso provisional</p>
+      <h1 id="accessTitle">Documentación<br><strong>de plataformas aéreas</strong></h1>
+      <p class="access-gate__copy">Introduce la contraseña para continuar.</p>
+      <form class="access-gate__form" id="accessForm">
+        <label for="accessPassword">Contraseña</label>
+        <input id="accessPassword" name="password" type="password" inputmode="numeric" autocomplete="current-password" required autofocus>
+        <p class="access-gate__error" id="accessError" role="alert" hidden>La contraseña no es correcta.</p>
+        <button class="btn" type="submit">Entrar <span aria-hidden="true">→</span></button>
+      </form>
+    </div>
+  </section>
+
   <header class="topbar">
     <a class="brand" href="#/" aria-label="Inicio · Configuración de Plataformas Aéreas">
       <img class="brand__logo" src="../images/docs/indra-logo.png" alt="" onerror="this.style.display='none'">
