@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>404 - Off the Flight Plan | Sadeq Isaac</title>
+    <!-- Absolute paths: this page is served from any URL depth -->
+    <link rel="stylesheet" href="/styles/404.css">
+    <link rel="icon" type="image/png" href="/icons/pageIcon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Poppins:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="starfield" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <!-- Radar sweep -->
+    <div class="radar" aria-hidden="true">
+        <div class="radar-ring r1"></div>
+        <div class="radar-ring r2"></div>
+        <div class="radar-ring r3"></div>
+        <div class="radar-cross"></div>
+        <div class="radar-sweep"></div>
+        <span class="blip b1"></span>
+        <span class="blip b2"></span>
+        <span class="blip b3"></span>
+    </div>
+
+    <main class="stage">
+        <span class="eyebrow-tag">Signal lost &middot; Error 404</span>
+
+        <h1 class="code-lockup" aria-label="404">
+            <span class="digit outline" aria-hidden="true">4</span>
+            <span class="eye-blob" aria-hidden="true"><span class="sclera"><span class="pupil"></span></span></span>
+            <span class="digit fill" aria-hidden="true">4</span>
+        </h1>
+
+        <h2 class="headline">This page is off the flight plan.</h2>
+        <p class="lede">The route you requested doesn't exist, or it was moved. Pick a waypoint below and I'll get you back on course.</p>
+
+        <!-- Telemetry readout -->
+        <div class="telemetry" role="status">
+            <div class="telemetry-bar"><i></i><i></i><i></i><span>nav.log</span></div>
+            <p><span class="prompt">&gt;</span> GET <span id="req-path" class="path">/unknown</span></p>
+            <p><span class="prompt">&gt;</span> status: <span class="warn">404 ROUTE_NOT_FOUND</span></p>
+            <p id="nearest-line" hidden><span class="prompt">&gt;</span> nearest waypoint: <a id="nearest-link" href="/">/</a></p>
+            <p><span class="prompt">&gt;</span> awaiting new heading<span class="cursor">_</span></p>
+        </div>
+
+        <div class="ctas">
+            <a href="/" class="btn-hud">Return to Base</a>
+            <a href="#" id="go-back" class="btn-hud secondary" hidden>Go Back</a>
+        </div>
+
+        <nav class="waypoints" aria-label="Main pages">
+            <a class="waypoint" href="/" data-page="home">
+                <img src="/icons/home.png" alt="">
+                <span class="wp-label">Home</span>
+                <span class="wp-sub">Start from the top</span>
+            </a>
+            <a class="waypoint" href="/html/works.html" data-page="works">
+                <img src="/icons/work.png" alt="">
+                <span class="wp-label">Works</span>
+                <span class="wp-sub">Selected projects</span>
+            </a>
+            <a class="waypoint" href="/html/pubs.html" data-page="pubs">
+                <img src="/icons/pub.png" alt="">
+                <span class="wp-label">Publications</span>
+                <span class="wp-sub">Papers &amp; research</span>
+            </a>
+            <a class="waypoint" href="/html/cv.html" data-page="cv">
+                <img src="/icons/cv.png" alt="">
+                <span class="wp-label">CV</span>
+                <span class="wp-sub">Experience &amp; education</span>
+            </a>
+        </nav>
+    </main>
+
+    <script src="/scripts/404.js"></script>
+</body>
+</html>
