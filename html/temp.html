@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Los Fogones · Cocina asturiana en Vicálvaro, Madrid</title>
+<meta name="description" content="Restaurante Los Fogones: cocina asturiana en Vicálvaro. Fabada, cachopo y sidra. Menú del día, grupos y comida para llevar. Reserva tu mesa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ivory:#f7f2e8; --paper:#fffdf8; --ink:#1d2420; --mute:#6c7068;
+  --green:#14301f; --green2:#0e2316; --brass:#b8914a; --brass2:#d8b878; --line:rgba(20,48,31,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ivory);color:var(--ink);font-family:'Jost',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden}
+h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600;line-height:1.05}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+.eyebrow{font-size:.74rem;letter-spacing:.38em;text-transform:uppercase;color:var(--brass);font-weight:500;margin-bottom:18px;display:flex;align-items:center;gap:14px}
+.eyebrow::before{content:"";width:38px;height:1px;background:var(--brass)}
+h2{font-size:clamp(2.2rem,5vw,3.6rem);margin-bottom:18px;color:var(--green)}
+.lead{color:var(--mute);max-width:600px;font-size:1.05rem}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 34px;font-family:'Jost';font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;font-weight:500;border:1px solid var(--brass);cursor:pointer;transition:.35s;background:var(--brass);color:#fff}
+.btn:hover{background:transparent;color:var(--brass2)}
+.btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+.btn.ghost:hover{border-color:var(--brass2);color:var(--brass2)}
+.btn.dark{background:var(--green);border-color:var(--green)}
+.btn.dark:hover{background:transparent;color:var(--green)}
+
+/* NAV */
+nav{position:fixed;inset:0 0 auto 0;z-index:50;transition:.4s;padding:22px 0}
+nav.scrolled{background:rgba(247,242,232,.94);backdrop-filter:blur(12px);padding:12px 0;border-bottom:1px solid var(--line)}
+.nav-in{display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;letter-spacing:.06em;color:#fff;transition:.4s}
+.logo small{display:block;font-family:'Jost';font-size:.55rem;letter-spacing:.45em;text-transform:uppercase;color:var(--brass2);margin-top:-4px}
+nav.scrolled .logo{color:var(--green)}
+.links{display:flex;gap:34px;align-items:center;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:#fff;font-weight:400}
+nav.scrolled .links{color:var(--ink)}
+.links a:hover{color:var(--brass)}
+.links .btn{padding:11px 24px;color:#fff}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;color:#fff;overflow:hidden;
+  background:linear-gradient(180deg,rgba(14,35,22,.55),rgba(14,35,22,.82)),url('img/hero.jpg') center/cover,
+  radial-gradient(1000px 600px at 75% 25%,#2a5a3a,transparent 60%),linear-gradient(160deg,#18382a,#0a1a10)}
+.hero::after{content:"";position:absolute;inset:26px;border:1px solid rgba(216,184,120,.35);pointer-events:none}
+.hero-in{position:relative;z-index:2;max-width:780px;padding:140px 0 100px}
+.hero .eyebrow{color:var(--brass2)}.hero .eyebrow::before{background:var(--brass2)}
+.hero h1{font-size:clamp(3.2rem,9vw,7rem);margin-bottom:24px;font-weight:600}
+.hero h1 em{color:var(--brass2);font-weight:500}
+.hero p{font-size:1.15rem;max-width:520px;color:rgba(255,255,255,.82);margin-bottom:40px}
+.cta{display:flex;gap:16px;flex-wrap:wrap}
+.hero-bar{position:absolute;bottom:0;left:0;right:0;z-index:3;background:rgba(14,35,22,.78);backdrop-filter:blur(10px);border-top:1px solid rgba(216,184,120,.3)}
+.hero-bar .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-top:20px;padding-bottom:20px;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brass2)}
+.hero-bar b{color:#fff;font-weight:500}
+
+section{padding:120px 0}
+
+/* STORY */
+.story{display:grid;grid-template-columns:1.05fr .95fr;gap:80px;align-items:center}
+.photo{position:relative;aspect-ratio:4/5;background:url('img/sala.jpg') center/cover,linear-gradient(160deg,#2c5a3d,#10261a);}
+.photo::before{content:"";position:absolute;inset:-18px 18px 18px -18px;border:1px solid var(--brass);z-index:-1}
+.photo span{position:absolute;left:24px;bottom:24px;background:var(--paper);color:var(--green);padding:14px 20px;font-family:'Cormorant Garamond';font-size:1.1rem;font-style:italic}
+.points{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:38px}
+.pt b{font-family:'Cormorant Garamond';font-size:1.3rem;color:var(--green);display:block}
+.pt span{color:var(--mute);font-size:.92rem}
+
+/* MENÚ DEL DÍA */
+.mdd{background:var(--green);color:#fff;padding:90px 0;position:relative}
+.mdd .eyebrow{color:var(--brass2)}.mdd .eyebrow::before{background:var(--brass2)}
+.mdd h2{color:#fff}
+.mdd-in{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.mdd p{color:rgba(255,255,255,.75)}
+.mcard{border:1px solid rgba(216,184,120,.45);padding:44px 40px;text-align:center;position:relative}
+.mcard::before{content:"MENÚ DEL DÍA";position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--green);padding:0 18px;font-size:.7rem;letter-spacing:.4em;color:var(--brass2)}
+.mcard h3{font-size:2.8rem;color:var(--brass2);margin:6px 0}
+.mcard ul{list-style:none;margin:20px 0;color:rgba(255,255,255,.85)}
+.mcard li{padding:7px 0;border-bottom:1px dashed rgba(255,255,255,.15)}
+.mcard small{color:rgba(255,255,255,.55)}
+
+/* CARTA */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:36px 0 46px;border-bottom:1px solid var(--line)}
+.tab{padding:14px 26px;border:0;background:none;font-family:'Jost';font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.3s}
+.tab.active,.tab:hover{color:var(--green);border-color:var(--brass)}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:6px 70px}
+.item{padding:22px 0;border-bottom:1px solid var(--line)}
+.item .top{display:flex;align-items:baseline;gap:12px}
+.item h3{font-size:1.45rem;color:var(--green)}
+.item .dots{flex:1;border-bottom:1px dotted rgba(20,48,31,.3);transform:translateY(-5px)}
+.item .price{font-family:'Cormorant Garamond';font-size:1.4rem;color:var(--brass);font-weight:700}
+.item p{color:var(--mute);font-size:.93rem;margin-top:4px}
+.item .tag{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#fff;background:var(--brass);padding:3px 9px;margin-left:8px;vertical-align:middle;font-family:'Jost'}
+.hidden{display:none}
+.note{margin-top:30px;color:var(--mute);font-size:.8rem}
+
+/* GALERÍA */
+.gallery{background:var(--paper)}
+.gal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:240px;gap:14px;margin-top:44px}
+.gal div{background-size:cover;background-position:center;position:relative;overflow:hidden}
+.gal div::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(14,35,22,.55));opacity:0;transition:.4s}
+.gal div:hover::after{opacity:1}
+.gal .g1{grid-column:span 2;grid-row:span 2;background-image:url('img/1.jpg'),linear-gradient(150deg,#2f6040,#10261a)}
+.gal .g2{background-image:url('img/2.jpg'),linear-gradient(150deg,#b8914a,#5c4520)}
+.gal .g3{background-image:url('img/3.jpg'),linear-gradient(150deg,#3a6a4a,#16301f)}
+.gal .g4{background-image:url('img/4.jpg'),linear-gradient(150deg,#8a6a30,#3a2a10)}
+.gal .g5{grid-column:span 2;background-image:url('img/5.jpg'),linear-gradient(150deg,#1d4430,#0a1a10)}
+
+/* SERVICIOS */
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:50px}
+.s{background:var(--paper);border:1px solid var(--line);padding:42px 34px;transition:.4s;position:relative}
+.s:hover{transform:translateY(-8px);box-shadow:0 24px 50px rgba(20,48,31,.12);border-color:var(--brass)}
+.s .n{font-family:'Cormorant Garamond';font-size:3.4rem;color:var(--brass2);line-height:1}
+.s h3{font-size:1.6rem;color:var(--green);margin:10px 0}
+.s p{color:var(--mute);font-size:.95rem;margin-bottom:20px}
+.s a{font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);border-bottom:1px solid var(--brass);padding-bottom:3px}
+
+/* OPINIONES */
+.rev-wrap{display:grid;grid-template-columns:.8fr 1.2fr;gap:70px;align-items:center}
+.score{font-family:'Cormorant Garamond';font-size:6rem;color:var(--green);line-height:1}
+.stars{color:var(--brass);letter-spacing:5px}
+.quotes{display:grid;gap:20px}
+.q{padding:26px 30px;background:var(--paper);border-left:3px solid var(--brass);font-family:'Cormorant Garamond';font-size:1.35rem;font-style:italic;color:var(--green)}
+.q small{display:block;font-family:'Jost';font-style:normal;font-size:.75rem;color:var(--mute);margin-top:8px;letter-spacing:.1em}
+
+/* RESERVA */
+.reserve{background:var(--green2);color:#fff}
+.reserve h2{color:#fff}
+.reserve .eyebrow{color:var(--brass2)}.reserve .eyebrow::before{background:var(--brass2)}
+.rbox{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.reserve .lead{color:rgba(255,255,255,.7)}
+.info{margin-top:36px;display:grid;gap:22px}
+.info b{display:block;font-family:'Cormorant Garamond';font-size:1.3rem;color:var(--brass2);font-weight:600}
+.info span{color:rgba(255,255,255,.8)}
+form{border:1px solid rgba(216,184,120,.4);padding:44px;display:grid;gap:20px}
+label{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--brass2);display:block;margin-bottom:6px}
+input,select{width:100%;padding:13px 0;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.3);color:#fff;font-family:'Jost';font-size:1rem;border-radius:0}
+select option{color:#000}
+input:focus,select:focus{outline:0;border-color:var(--brass2)}
+input::-webkit-calendar-picker-indicator{filter:invert(1)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.map{height:380px;margin-top:80px;border:1px solid rgba(216,184,120,.4)}
+.map iframe{width:100%;height:100%;border:0;filter:grayscale(1) contrast(1.05) brightness(.9)}
+footer{background:#08150d;color:rgba(255,255,255,.55);padding:34px 0;text-align:center;font-size:.8rem;letter-spacing:.08em}
+
+.float{position:fixed;right:22px;bottom:22px;z-index:60;display:flex;flex-direction:column;gap:12px}
+.float a{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:1.4rem;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:.3s}
+.float a:hover{transform:scale(1.1)}
+.f-wa{background:#25d366}.f-call{background:var(--brass)}
+
+.reveal{opacity:0;transform:translateY(40px);transition:1.1s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:900px){
+  .links a:not(.btn){display:none}
+  .story,.mdd-in,.rev-wrap,.rbox{grid-template-columns:1fr;gap:44px}
+  .list{grid-template-columns:1fr}
+  .svc{grid-template-columns:1fr}
+  .gal{grid-template-columns:1fr 1fr;grid-auto-rows:170px}
+  .gal .g1{grid-column:span 2}.gal .g5{grid-column:span 2}
+  section{padding:80px 0}
+  .hero-bar{display:none}
+  .hero::after{inset:12px}
+  form{padding:28px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap nav-in">
+    <a href="#top" class="logo">Los Fogones<small>Cocina asturiana</small></a>
+    <div class="links">
+      <a href="#historia">Casa</a>
+      <a href="#carta">Carta</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#opiniones">Opiniones</a>
+      <a href="#reservar" class="btn">Reservar</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-in">
+      <div class="eyebrow">Vicálvaro · Madrid</div>
+      <h1>Asturias,<br><em>en tu mesa</em></h1>
+      <p>Cocina de siempre, producto de la tierra y sidra escanciada. Un lugar para comer sin prisa y volver.</p>
+      <div class="cta">
+        <a href="#reservar" class="btn">Reservar mesa</a>
+        <a href="#carta" class="btn ghost">Ver la carta</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-bar"><div class="wrap">
+    <span><b>10–20 €</b> por persona</span>
+    <span>Abierto hasta <b>00:00</b></span>
+    <span><b>+1.000</b> opiniones</span>
+    <span>Local <b>accesible</b></span>
+  </div></div>
+</header>
+
+<section id="historia">
+  <div class="wrap story">
+    <div class="photo reveal"><span>Comer bien, en buena compañía</span></div>
+    <div class="reveal">
+      <div class="eyebrow">Nuestra casa</div>
+      <h2>Una mesa grande para toda la familia</h2>
+      <p class="lead">Un comedor amplio y cálido, con madera, piedra y luz suave. Pensado para comidas largas, celebraciones y cenas con amigos.</p>
+      <div class="points">
+        <div class="pt"><b>Cocina tradicional</b><span>Recetas de siempre, raciones generosas.</span></div>
+        <div class="pt"><b>Producto asturiano</b><span>Quesos, fabes, sidra y embutidos.</span></div>
+        <div class="pt"><b>Grupos y eventos</b><span>Mesas amplias y menús cerrados.</span></div>
+        <div class="pt"><b>Para llevar</b><span>Pide por teléfono y recoge.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="mdd">
+  <div class="wrap mdd-in">
+    <div class="reveal">
+      <div class="eyebrow">De lunes a viernes</div>
+      <h2>Un menú que se agradece</h2>
+      <p>Primero, segundo, postre y bebida. Pregunta en sala por el menú del día o por menús para grupos.</p>
+      <div style="margin-top:30px"><a href="#reservar" class="btn">Reservar</a></div>
+    </div>
+    <div class="mcard reveal">
+      <h3>Desde 13 €</h3>
+      <ul>
+        <li>Primeros a elegir</li>
+        <li>Segundos a elegir</li>
+        <li>Postre casero</li>
+        <li>Bebida y pan</li>
+      </ul>
+      <small>Ejemplo de propuesta · se sustituye por vuestro menú real</small>
+    </div>
+  </div>
+</div>
+
+<section id="carta">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">La carta</div>
+      <h2>Lo que más se pide</h2>
+    </div>
+    <div class="tabs reveal">
+      <button class="tab active" data-c="todo">Todo</button>
+      <button class="tab" data-c="entrantes">Entrantes</button>
+      <button class="tab" data-c="principales">Principales</button>
+      <button class="tab" data-c="postres">Postres</button>
+      <button class="tab" data-c="bebidas">Bebidas</button>
+    </div>
+    <div class="list reveal">
+      <div class="item" data-c="principales"><div class="top"><h3>Cachopo asturiano<span class="tag">Estrella</span></h3><span class="dots"></span><span class="price">14,50</span></div><p>Ternera empanada rellena de jamón y queso, con patatas fritas.</p></div>
+      <div class="item" data-c="principales"><div class="top"><h3>Fabada asturiana</h3><span class="dots"></span><span class="price">12,00</span></div><p>Fabes, chorizo, morcilla, lacón y tocino. A fuego lento.</p></div>
+      <div class="item" data-c="entrantes"><div class="top"><h3>Tabla de quesos</h3><span class="dots"></span><span class="price">10,00</span></div><p>Selección asturiana con membrillo y nueces.</p></div>
+      <div class="item" data-c="entrantes"><div class="top"><h3>Croquetas caseras</h3><span class="dots"></span><span class="price">8,50</span></div><p>Jamón, cabrales o bacalao.</p></div>
+      <div class="item" data-c="principales"><div class="top"><h3>Merluza a la sidra</h3><span class="dots"></span><span class="price">15,00</span></div><p>Con almejas y salsa de sidra natural.</p></div>
+      <div class="item" data-c="principales"><div class="top"><h3>Pote asturiano</h3><span class="dots"></span><span class="price">11,50</span></div><p>Berza, patata, judías y compango.</p></div>
+      <div class="item" data-c="postres"><div class="top"><h3>Arroz con leche</h3><span class="dots"></span><span class="price">4,50</span></div><p>Cremoso, con canela y caramelizado al momento.</p></div>
+      <div class="item" data-c="postres"><div class="top"><h3>Tarta de queso</h3><span class="dots"></span><span class="price">5,00</span></div><p>Casera, con mermelada de frutos rojos.</p></div>
+      <div class="item" data-c="bebidas"><div class="top"><h3>Sidra natural</h3><span class="dots"></span><span class="price">3,50</span></div><p>Botella, escanciada en mesa.</p></div>
+      <div class="item" data-c="bebidas"><div class="top"><h3>Vinos de la casa</h3><span class="dots"></span><span class="price">2,50</span></div><p>Copa de tinto, blanco o rosado.</p></div>
+    </div>
+    <p class="note reveal">* Platos y precios de ejemplo para esta propuesta de diseño. Se sustituirán por vuestra carta real.</p>
+  </div>
+</section>
+
+<section class="gallery">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">Galería</div>
+      <h2>Un vistazo a la casa</h2>
+    </div>
+    <div class="gal reveal">
+      <div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="g5"></div>
+    </div>
+  </div>
+</section>
+
+<section id="servicios">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">Servicios</div>
+      <h2>Lo que hacemos por ti</h2>
+    </div>
+    <div class="svc reveal">
+      <div class="s"><div class="n">01</div><h3>Comida para llevar</h3><p>Pide por WhatsApp y recoge sin esperas.</p><a href="https://wa.me/34912511592?text=Hola%2C%20quiero%20hacer%20un%20pedido%20para%20llevar" target="_blank" rel="noopener">Pedir ahora</a></div>
+      <div class="s"><div class="n">02</div><h3>Grupos y celebraciones</h3><p>Menús cerrados, mesa grande y trato cercano.</p><a href="https://wa.me/34912511592?text=Hola%2C%20quiero%20informaci%C3%B3n%20para%20un%20grupo" target="_blank" rel="noopener">Consultar</a></div>
+      <div class="s"><div class="n">03</div><h3>Reserva online</h3><p>Reserva en 30 segundos y te lo confirmamos.</p><a href="#reservar">Reservar mesa</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="opiniones" style="background:var(--paper)">
+  <div class="wrap rev-wrap">
+    <div class="reveal">
+      <div class="eyebrow">Opiniones</div>
+      <div class="score">3,0</div>
+      <div class="stars">★★★☆☆</div>
+      <p class="lead" style="margin:10px 0 24px">+1.000 opiniones en Google. Cuéntanos qué tal fue, nos ayuda a mejorar.</p>
+      <a class="btn dark" href="https://www.google.com/maps/search/?api=1&query=Restaurante+Los+Fogones+Vic%C3%A1lvaro" target="_blank" rel="noopener">Dejar una reseña</a>
+    </div>
+    <div class="quotes reveal">
+      <div class="q">“Espacio grande, ideal para ir en grupo. La fabada, de lo mejor.”<small>CLIENTE · EJEMPLO</small></div>
+      <div class="q">“Buen precio y raciones generosas. Repetiremos.”<small>CLIENTE · EJEMPLO</small></div>
+      <div class="q">“El cachopo enorme y la sidra bien escanciada.”<small>CLIENTE · EJEMPLO</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="reserve" id="reservar">
+  <div class="wrap">
+    <div class="rbox">
+      <div class="reveal">
+        <div class="eyebrow">Reservas</div>
+        <h2>Tu mesa te espera</h2>
+        <p class="lead">Rellena el formulario y te lo confirmamos por WhatsApp. También puedes llamarnos.</p>
+        <div class="info">
+          <div><b>Dónde estamos</b><span>C. de Enrique Urquijo, 170<br>Vicálvaro · 28052 Madrid</span></div>
+          <div><b>Teléfono</b><span><a href="tel:+34912511592">912 51 15 92</a></span></div>
+          <div><b>Horario</b><span>Abierto hasta las 00:00</span></div>
+        </div>
+      </div>
+      <form class="reveal" id="rform">
+        <div class="row">
+          <div><label>Nombre</label><input name="n" required placeholder="Tu nombre"></div>
+          <div><label>Personas</label><select name="p"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option><option>10+</option></select></div>
+        </div>
+        <div class="row">
+          <div><label>Fecha</label><input type="date" name="d" required></div>
+          <div><label>Hora</label><input type="time" name="h" required value="21:00"></div>
+        </div>
+        <button class="btn" type="submit" style="justify-content:center">Reservar por WhatsApp</button>
+      </form>
+    </div>
+    <div class="map reveal">
+      <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=Restaurante+Los+Fogones+Calle+de+Enrique+Urquijo+170+Madrid&output=embed" title="Mapa"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">© <span id="y"></span> Restaurante Los Fogones · Vicálvaro, Madrid<br>
+  <small>Propuesta de diseño web · no es la web oficial</small></div>
+</footer>
+
+<div class="float">
+  <a class="f-wa" href="https://wa.me/34912511592" aria-label="WhatsApp" target="_blank" rel="noopener">💬</a>
+  <a class="f-call" href="tel:+34912511592" aria-label="Llamar">📞</a>
+</div>
+
+<script>
+document.getElementById('y').textContent=new Date().getFullYear();
+const nav=document.getElementById('nav');
+const sc=()=>nav.classList.toggle('scrolled',scrollY>60);sc();addEventListener('scroll',sc);
+
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const tabs=document.querySelectorAll('.tab'),items=document.querySelectorAll('.item');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>x.classList.remove('active'));t.classList.add('active');
+  items.forEach(d=>d.classList.toggle('hidden',t.dataset.c!=='todo'&&d.dataset.c!==t.dataset.c));
+}));
+
+const f=document.getElementById('rform');
+f.d.min=new Date().toISOString().split('T')[0];
+f.addEventListener('submit',e=>{
+  e.preventDefault();
+  const m=`Hola, quiero reservar mesa en Los Fogones.%0ANombre: ${encodeURIComponent(f.n.value)}%0APersonas: ${f.p.value}%0AFecha: ${f.d.value}%0AHora: ${f.h.value}`;
+  window.open('https://wa.me/34912511592?text='+m,'_blank');
+});
+</script>
+</body>
+</html>
